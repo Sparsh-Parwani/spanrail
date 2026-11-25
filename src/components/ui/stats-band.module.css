@@ -1,0 +1,338 @@
+.band {
+  width: 100%;
+  --sb-ink: var(--ink-primary);
+  --sb-muted: var(--ink-secondary);
+  --sb-hair: var(--border-whisper);
+  --sb-accent: var(--accent-spark);
+  --sb-brand: var(--accent-brand);
+}
+
+.inner {
+  width: 100%;
+}
+
+.header {
+  margin-bottom: 1.75rem;
+}
+
+.title {
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+  color: var(--sb-ink);
+}
+
+.description {
+  margin-top: 0.45rem;
+  font-size: 0.9375rem;
+  color: var(--sb-muted);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  border-top: 1px solid var(--sb-hair);
+  border-bottom: 1px solid var(--sb-hair);
+  background: var(--bg-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@media (min-width: 640px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.stat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-bottom: 1px solid var(--sb-hair);
+  outline: none;
+  transition: background-color 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 640px) {
+  .stat {
+    border-right: 1px solid var(--sb-hair);
+  }
+  .stat:nth-child(2n) {
+    border-right: none;
+  }
+  .stat:nth-last-child(-n + 2) {
+    border-bottom: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stat:nth-child(2n) {
+    border-right: 1px solid var(--sb-hair);
+  }
+  .stat:nth-child(3n) {
+    border-right: none;
+  }
+  .stat:nth-last-child(-n + 2) {
+    border-bottom: 1px solid var(--sb-hair);
+  }
+  .stat:nth-last-child(-n + 3) {
+    border-bottom: none;
+  }
+}
+
+.stat:hover,
+.stat:focus-visible {
+  background: var(--bg-surface-subtle);
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--sb-muted);
+  letter-spacing: -0.005em;
+}
+
+.figure {
+  margin-top: 0.55rem;
+}
+
+.number {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(2.1rem, 3.2vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--sb-ink);
+}
+
+.prefix {
+  margin-right: 0.12em;
+  color: var(--sb-accent);
+}
+
+.digits {
+  position: relative;
+  display: inline-block;
+}
+
+.sizer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.live {
+  position: absolute;
+  inset: 0;
+}
+
+.suffix {
+  margin-left: 0.04em;
+  font-size: 0.62em;
+  color: var(--sb-brand);
+}
+
+.caption {
+  position: relative;
+  margin-top: 0.5rem;
+  min-height: 1.35rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--sb-muted);
+}
+
+.detail,
+.context {
+  display: block;
+  transition:
+    opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.context {
+  position: absolute;
+  inset: 0;
+  color: var(--accent-spark-text);
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.stat[data-context]:hover .detail,
+.stat[data-context]:focus-visible .detail {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.stat[data-context]:hover .context,
+.stat[data-context]:focus-visible .context {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.visual {
+  margin-top: 1.35rem;
+  height: 46px;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Trend Line + Area Chart */
+.trend {
+  position: relative;
+  width: 100%;
+  height: 42px;
+}
+
+.draw {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.area {
+  fill: var(--sb-brand);
+  opacity: 0;
+  transition:
+    opacity 550ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 80ms + 240ms),
+    fill 220ms ease;
+}
+
+.band[data-in-view] .area {
+  opacity: 0.14;
+}
+
+.stat:hover .area,
+.stat:focus-visible .area {
+  fill: var(--sb-accent);
+  opacity: 0.2;
+}
+
+.line {
+  fill: none;
+  stroke: var(--sb-brand);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+  transition:
+    stroke-dashoffset var(--draw, 720ms) cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 90ms + 120ms),
+    stroke 220ms ease;
+}
+
+.band[data-in-view] .line {
+  stroke-dashoffset: 0;
+}
+
+.stat:hover .line,
+.stat:focus-visible .line {
+  stroke: var(--sb-accent);
+}
+
+.endDot {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--sb-accent);
+  transform: translate(-50%, -50%) scale(0);
+  box-shadow: 0 0 0 3px var(--accent-spark-soft);
+  transition: transform 340ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 90ms + 560ms);
+}
+
+.band[data-in-view] .endDot {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Histogram & Uptime Bars */
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  width: 100%;
+  height: 40px;
+}
+
+.bars[data-dense] {
+  gap: 2px;
+}
+
+.bar {
+  flex: 1;
+  height: calc(var(--h, 0.5) * 100%);
+  border-radius: 2px 2px 0 0;
+  background: var(--border-hover);
+  transform-origin: bottom;
+  transform: scaleY(0);
+  transition:
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 80ms + var(--j, 0) * 280ms),
+    background-color 200ms ease;
+}
+
+.bar[data-ink] {
+  background: var(--sb-brand);
+}
+
+.stat:hover .bar[data-ink],
+.stat:focus-visible .bar[data-ink] {
+  background: var(--sb-accent);
+}
+
+.band[data-in-view] .bar {
+  transform: scaleY(1);
+}
+
+/* Dotted World Map */
+.map {
+  width: 100%;
+  height: 46px;
+}
+
+.land {
+  fill: var(--border-hover);
+  opacity: 0;
+  transition: opacity 420ms ease calc(var(--i, 0) * 80ms + 120ms);
+}
+
+.lit {
+  fill: var(--sb-brand);
+  opacity: 0;
+  transition:
+    opacity 460ms ease calc(var(--i, 0) * 80ms + 360ms),
+    fill 200ms ease;
+}
+
+.band[data-in-view] .land {
+  opacity: 0.72;
+}
+
+.band[data-in-view] .lit {
+  opacity: 1;
+}
+
+.stat:hover .lit,
+.stat:focus-visible .lit {
+  fill: var(--sb-accent);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

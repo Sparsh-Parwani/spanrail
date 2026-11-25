@@ -1,0 +1,135 @@
+"use client";
+
+import { PairedBars, type PairedBarGroup } from "@/components/ui/paired-bars";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
+
+const PRODUCTION_GROUPS: PairedBarGroup[] = [
+  {
+    label: "Trace resolution speed",
+    deltaBadge: "128× faster",
+    color: "var(--accent-brand)",
+    secondaryColor: "var(--accent-spark)",
+    a: {
+      label: "With Spanrail",
+      value: 94,
+      valueLabel: "22 secs",
+    },
+    b: {
+      label: "Without Spanrail",
+      value: 14,
+      valueLabel: "47 mins",
+    },
+  },
+  {
+    label: "Observability budget retained (10M traces)",
+    deltaBadge: "−86% invoice",
+    color: "var(--accent-brand)",
+    secondaryColor: "var(--accent-spark)",
+    a: {
+      label: "With Spanrail",
+      value: 86,
+      valueLabel: "$690/mo",
+    },
+    b: {
+      label: "Without Spanrail",
+      value: 21,
+      valueLabel: "$4,850/mo",
+    },
+  },
+  {
+    label: "Production PII & output containment",
+    deltaBadge: "−98.7% leak",
+    color: "var(--status-pass-dot)",
+    secondaryColor: "var(--accent-spark)",
+    a: {
+      label: "With Spanrail",
+      value: 96,
+      valueLabel: "< 0.05% leak",
+    },
+    b: {
+      label: "Without Spanrail",
+      value: 28,
+      valueLabel: "3.8% raw",
+    },
+  },
+  {
+    label: "Runaway retry loop prevention",
+    deltaBadge: "Halted < 2ms",
+    color: "var(--status-pass-dot)",
+    secondaryColor: "var(--accent-spark)",
+    a: {
+      label: "With Spanrail",
+      value: 91,
+      valueLabel: "< 2ms halt",
+    },
+    b: {
+      label: "Without Spanrail",
+      value: 11,
+      valueLabel: "Post-invoice",
+    },
+  },
+];
+
+export function BeforeAfterSection() {
+  return (
+    <section
+      id="compare"
+      aria-labelledby="compare-heading"
+      className="scroll-mt-20 py-14 md:py-20"
+    >
+      <div className="spanrail-container">
+        <ScrollReveal>
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-[560px]">
+              <h2 id="compare-heading" className="display-h2">
+                What changes in production.
+              </h2>
+              <p
+                className="mt-3 text-[16px] leading-[1.65] md:text-[17px]"
+                style={{ color: "var(--ink-secondary)" }}
+              >
+                Measured across engineering teams migrating multi-step agents
+                off raw log aggregation and legacy APM suites.
+              </p>
+            </div>
+
+            <div className="tabular-telemetry flex items-center gap-5 text-[12px]">
+              <span
+                className="inline-flex items-center gap-2 font-medium"
+                style={{ color: "var(--ink-primary)" }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="h-2.5 w-2.5 rounded-[2px]"
+                  style={{ backgroundColor: "var(--accent-brand)" }}
+                />
+                <span>With Spanrail</span>
+              </span>
+              <span
+                className="inline-flex items-center gap-2"
+                style={{ color: "var(--ink-secondary)" }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="h-2.5 w-2.5 rounded-[2px] opacity-60"
+                  style={{ backgroundColor: "var(--accent-spark)" }}
+                />
+                <span>Without Spanrail</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-10">
+            <PairedBars
+              barLabel="production efficiency score (higher is better)"
+              unit="%"
+              max={100}
+              ticks={[0, 25, 50, 75, 100]}
+              groups={PRODUCTION_GROUPS}
+            />
+          </div>
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
