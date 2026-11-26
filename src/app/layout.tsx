@@ -7,7 +7,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Spanrail — AI Agent Observability & Inline Guardrails",
+    default: "Spanrail",
     template: "%s · Spanrail",
   },
   description:
