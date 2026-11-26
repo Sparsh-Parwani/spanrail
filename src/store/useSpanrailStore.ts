@@ -88,7 +88,7 @@ function applyThemeToDocument(theme: ThemeMode): void {
 
 export const useSpanrailStore = create<SpanrailStoreState>((set, get) => ({
   theme: "dark",
-  isSoundEnabled: true,
+  isSoundEnabled: false,
 
   scenarioId: "refund",
   guardrails: {

@@ -98,10 +98,17 @@ export function HeroSection() {
     [scenarioId, guardrails]
   );
 
-  const maxSpanDuration = useMemo(
-    () => Math.max(...evaluated.spans.map((span) => span.baselineLatencyMs)),
-    [evaluated.spans]
-  );
+  const waterfallItems = useMemo(() => {
+    let elapsedMs = 0;
+    const total = Math.max(1, evaluated.totalLatencyMs);
+    return evaluated.spans.map((span) => {
+      const startPct = Math.min(95, (elapsedMs / total) * 100);
+      const rawWidth = (span.latencyMs / total) * 100;
+      const widthPct = Math.max(4, Math.min(100 - startPct, rawWidth));
+      elapsedMs += span.latencyMs;
+      return { span, startPct, widthPct };
+    });
+  }, [evaluated]);
 
   const latencyDropPct = Math.round(
     ((evaluated.baselineLatencyMs - evaluated.totalLatencyMs) /
@@ -128,7 +135,7 @@ export function HeroSection() {
     if (sandboxEl) {
       sandboxEl.scrollIntoView({
         behavior: prefersReducedMotion ? "auto" : "smooth",
-        block: "center",
+        block: "start",
       });
     }
     const firstBtn = firstSwitchRef.current?.querySelector<HTMLButtonElement>(
@@ -171,13 +178,12 @@ export function HeroSection() {
     <section
       id="hero-stage"
       aria-labelledby="hero-headline"
-      className="relative isolate pt-22 pb-10 md:pt-26 md:pb-14"
+      className="relative isolate pt-20 pb-10 md:pt-24 md:pb-12"
     >
       <div className="spanrail-container">
-        {/* Top Editorial Stage: Flush-Left Copy | Frameless Interactive 3D Neural Brain (Zero Box!) */}
         <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
           <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-7"
@@ -200,31 +206,24 @@ export function HeroSection() {
               <span>Live agent telemetry · OpenTelemetry native</span>
             </div>
 
-            <p
-              className="mt-3 text-[clamp(2.9rem,6vw,4.5rem)] leading-[0.98] font-medium tracking-[-0.042em]"
-              style={{ color: "var(--ink-primary)" }}
-            >
-              Spanrail
-              <span style={{ color: "var(--accent-spark)" }}>.</span>
-            </p>
-
             <h1
               id="hero-headline"
-              className="mt-4 max-w-[20ch] text-[clamp(1.65rem,2.9vw,2.45rem)] leading-[1.14] font-medium tracking-[-0.028em]"
+              className="mt-4 max-w-[16ch] text-[clamp(2.25rem,4.4vw,3.55rem)] leading-[1.06] font-medium tracking-[-0.034em]"
               style={{ color: "var(--ink-primary)" }}
             >
-              See every agent step. Stop slow runs and surprise bills.
+              See every agent step. Stop slow runs and surprise bills
+              <span style={{ color: "var(--accent-spark)" }}>.</span>
             </h1>
 
             <p
-              className="mt-4 max-w-[52ch] text-[16px] leading-[1.65]"
+              className="mt-4 max-w-[50ch] text-[16px] leading-[1.65]"
               style={{ color: "var(--ink-secondary)" }}
             >
               Real-time trace inspection, automatic PII and loop guardrails, and
               exact per-run token costs for production AI agents.
             </p>
 
-            <div className="mt-7 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
                 href="#demo"
                 className="btn-tactile inline-flex min-h-[46px] items-center justify-center rounded-full px-6 text-[14.5px] font-medium hover:bg-[var(--btn-primary-bg-hover)]"
@@ -257,24 +256,22 @@ export function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Right 5 Columns: Frameless Interactive 3D Neural Brain — No Box, No Border */}
           <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.94 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="h-[320px] w-full sm:h-[380px] lg:col-span-5 lg:h-[440px] lg:translate-x-[15%]"
+            transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+            className="h-[290px] w-full sm:h-[340px] lg:col-span-5 lg:h-[380px]"
           >
             <NeuralBrain />
           </motion.div>
         </div>
 
-        {/* Full-Width Interactive Live Trace Sandbox */}
         <motion.div
           id="sandbox"
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, delay: 0.14, ease: [0.22, 1, 0.36, 1] }}
-          className="surface-fade mt-8 scroll-mt-24 overflow-hidden rounded-3xl border md:mt-10"
+          transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+          className="surface-fade mt-6 scroll-mt-24 overflow-hidden rounded-3xl border md:mt-8"
           style={{
             backgroundColor: "var(--bg-surface)",
             borderColor: "var(--border-whisper)",
@@ -403,7 +400,7 @@ export function HeroSection() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{
                       duration: 0.35,
-                      delay: 0.2 + idx * 0.08,
+                      delay: 0.16 + idx * 0.07,
                       ease: [0.22, 1, 0.36, 1],
                     }}
                     className="surface-fade flex min-h-[54px] items-center justify-between gap-3 rounded-2xl border px-4 py-3"
@@ -455,20 +452,16 @@ export function HeroSection() {
             >
               <span>Trace step (click any row to inspect JSON)</span>
               <div className="flex items-center gap-6 pr-7">
-                <span className="w-[152px]">Duration</span>
+                <span className="w-[168px]">Waterfall timeline</span>
                 <span className="w-[62px] text-right">Time</span>
                 <span className="w-[56px] text-right">Cost</span>
               </div>
             </div>
 
             <ul className="divide-y divide-[var(--border-whisper)]">
-              {evaluated.spans.map((span, spanIdx) => {
+              {waterfallItems.map(({ span, startPct, widthPct }, spanIdx) => {
                 const isExpanded = expandedSpanId === span.id;
                 const panelId = `span-json-${span.id}`;
-                const barPercent = Math.max(
-                  3,
-                  Math.min(100, Math.round((span.latencyMs / maxSpanDuration) * 100))
-                );
 
                 return (
                   <li key={span.id}>
@@ -527,18 +520,25 @@ export function HeroSection() {
                           </div>
 
                           <div
-                            className="mt-2 h-1.5 w-full max-w-[180px] overflow-hidden rounded-full md:hidden"
+                            className="relative mt-2 h-1.5 w-full max-w-[180px] overflow-hidden rounded-full md:hidden"
                             style={{ backgroundColor: "var(--bg-surface-subtle)" }}
                           >
                             <motion.div
-                              initial={prefersReducedMotion ? false : { width: "0%" }}
-                              animate={{ width: `${barPercent}%` }}
+                              initial={
+                                prefersReducedMotion
+                                  ? false
+                                  : { left: "0%", width: "0%" }
+                              }
+                              animate={{
+                                left: `${startPct}%`,
+                                width: `${widthPct}%`,
+                              }}
                               transition={
                                 prefersReducedMotion
                                   ? REDUCED_TRANSITION
-                                  : { ...TACTILE_SPRING, delay: 0.1 + spanIdx * 0.04 }
+                                  : { ...TACTILE_SPRING, delay: 0.08 + spanIdx * 0.04 }
                               }
-                              className="h-full rounded-full"
+                              className="absolute inset-y-0 rounded-full"
                               style={{
                                 backgroundColor: getSpanBarColor(span.tone),
                               }}
@@ -549,7 +549,7 @@ export function HeroSection() {
 
                       <div className="flex shrink-0 items-center gap-3 md:gap-6">
                         <div
-                          className="hidden h-1.5 w-[152px] overflow-hidden rounded-full md:block"
+                          className="relative hidden h-1.5 w-[168px] overflow-hidden rounded-full md:block"
                           style={{
                             backgroundColor: isExpanded
                               ? "var(--bg-surface-solid)"
@@ -557,14 +557,21 @@ export function HeroSection() {
                           }}
                         >
                           <motion.div
-                            initial={prefersReducedMotion ? false : { width: "0%" }}
-                            animate={{ width: `${barPercent}%` }}
+                            initial={
+                              prefersReducedMotion
+                                ? false
+                                : { left: "0%", width: "0%" }
+                            }
+                            animate={{
+                              left: `${startPct}%`,
+                              width: `${widthPct}%`,
+                            }}
                             transition={
                               prefersReducedMotion
                                 ? REDUCED_TRANSITION
-                                : { ...TACTILE_SPRING, delay: 0.1 + spanIdx * 0.04 }
+                                : { ...TACTILE_SPRING, delay: 0.08 + spanIdx * 0.04 }
                             }
-                            className="h-full rounded-full"
+                            className="absolute inset-y-0 rounded-full"
                             style={{
                               backgroundColor: getSpanBarColor(span.tone),
                             }}

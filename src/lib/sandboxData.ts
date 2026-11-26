@@ -162,7 +162,7 @@ function buildRefundSpans(g: GuardrailState): EvaluatedSpan[] {
     baselineLatencyMs: 471,
     costUsd: g.piiRedaction ? 0.0 : 0.003,
     tokens: g.piiRedaction ? 0 : 380,
-    note: g.piiRedaction ? "Masked in 6ms" : "SSN exposed",
+    note: g.piiRedaction ? "Spanrail Edge SIMD · Masked in 6ms" : "Legacy LLM moderation · SSN exposed",
     tone: g.piiRedaction ? "pass" : "warn",
     payload: {
       trace_id: traceId,
@@ -297,7 +297,7 @@ function buildSqlSpans(g: GuardrailState): EvaluatedSpan[] {
     baselineLatencyMs: 380,
     costUsd: g.piiRedaction ? 0.0 : 0.002,
     tokens: g.piiRedaction ? 0 : 290,
-    note: g.piiRedaction ? "Masked in 5ms" : "Tax ID & SSN exposed",
+    note: g.piiRedaction ? "Spanrail Edge SIMD · Masked in 5ms" : "Legacy LLM moderation · SSN exposed",
     tone: g.piiRedaction ? "pass" : "warn",
     payload: {
       trace_id: traceId,

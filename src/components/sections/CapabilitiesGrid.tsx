@@ -71,21 +71,21 @@ const POLICY_RULES: readonly {
   {
     id: "injection",
     label: "Block Injection",
-    readoutLatency: "1.8ms edge check",
+    readoutLatency: "1.4ms total pipeline",
     readoutAction: "Prompt injection halted before model call",
     dotColor: "var(--status-warn-dot)",
   },
   {
     id: "budget",
     label: "Cap $0.05/run",
-    readoutLatency: "0.9ms ledger check",
+    readoutLatency: "1.1ms policy check",
     readoutAction: "Token budget enforced inline per trace",
     dotColor: "var(--accent-brand)",
   },
   {
     id: "fallback",
     label: "Fallback Fast",
-    readoutLatency: "1.2ms route switch",
+    readoutLatency: "1.4ms route switch",
     readoutAction: "Rerouted to gpt-4.1-mini on 429 spike",
     dotColor: "var(--status-pass-dot)",
   },
@@ -123,7 +123,7 @@ function GuardrailRouterStage() {
         </p>
 
         <div className="mt-7">
-          <Pipeline />
+          <Pipeline activeRule={activeRule} />
         </div>
       </div>
 
@@ -518,7 +518,7 @@ const PROVIDER_SLICES: readonly ProviderSlice[] = [
     sharePct: 10,
     costPer1k: "$11.60",
     avgTokens: "1,920 avg tokens/run",
-    color: "var(--status-pass-text)",
+    color: "#d4a259",
   },
   {
     id: "vllm",
@@ -560,27 +560,17 @@ function ProviderSpendStage() {
           hosted APIs and private inference clusters.
         </p>
 
-        {/* Horizontal Stacked Spend Bar */}
+        {/* Horizontal Stacked Spend Bar (pure visual; interactive controls sit cleanly in the 2x3 grid below) */}
         <div
+          aria-hidden="true"
           className="mt-7 flex h-3.5 w-full gap-[3px] overflow-hidden rounded-full"
-          role="group"
-          aria-label="Token spend breakdown by model provider"
         >
           {PROVIDER_SLICES.map((slice) => {
             const isSelected = slice.id === selectedId;
             return (
-              <button
+              <div
                 key={slice.id}
-                type="button"
-                aria-pressed={isSelected}
-                aria-label={`${slice.name}: ${slice.sharePct}% of spend, ${slice.costPer1k} per 1,000 runs`}
-                onMouseEnter={() => setSelectedId(slice.id)}
-                onFocus={() => setSelectedId(slice.id)}
-                onClick={() => {
-                  setSelectedId(slice.id);
-                  playSwitchClick(true);
-                }}
-                className="h-full cursor-pointer rounded-[2px] first:rounded-l-full last:rounded-r-full"
+                className="h-full rounded-[2px] first:rounded-l-full last:rounded-r-full"
                 style={{
                   width: `${slice.sharePct}%`,
                   backgroundColor: slice.color,
@@ -601,7 +591,6 @@ function ProviderSpendStage() {
                 key={slice.id}
                 type="button"
                 aria-pressed={isSelected}
-                onMouseEnter={() => setSelectedId(slice.id)}
                 onClick={() => {
                   setSelectedId(slice.id);
                   playSwitchClick(true);

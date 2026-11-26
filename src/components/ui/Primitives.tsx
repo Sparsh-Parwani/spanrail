@@ -98,7 +98,8 @@ export interface SoftSliderProps {
   step?: number;
   onValueChange: (value: number) => void;
   disabled?: boolean;
-  ariaLabel: string;
+  ariaLabel?: string;
+  ariaLabelledBy?: string;
   ariaValueText?: string;
 }
 
@@ -110,6 +111,7 @@ export function SoftSlider({
   onValueChange,
   disabled = false,
   ariaLabel,
+  ariaLabelledBy,
   ariaValueText,
 }: SoftSliderProps) {
   return (
@@ -139,6 +141,7 @@ export function SoftSlider({
 
       <SliderPrimitive.Thumb
         aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
         aria-valuetext={ariaValueText}
         className="relative block h-5 w-5 cursor-grab rounded-full border active:cursor-grabbing active:scale-95 hover:scale-105"
         style={{

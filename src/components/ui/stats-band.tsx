@@ -4,7 +4,6 @@ import {
   forwardRef,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
   useSyncExternalStore,
@@ -42,7 +41,6 @@ export interface StatsBandProps {
 
 const WORLD = { columns: 42, rows: 16, west: -165, east: 175, north: 70, south: -52 };
 
-// Compact 42x16 stylized world continent mask (1 = land, 0 = ocean)
 const WORLD_ROWS = [
   "000011111110000000111000001111111111100000",
   "001111111111000001111000111111111111110000",
@@ -62,9 +60,9 @@ const WORLD_ROWS = [
   "000000000000000000000000000000000000000000",
 ];
 
-const worldLand: number[] = WORLD_ROWS.join("")
+const worldLand: boolean[] = WORLD_ROWS.join("")
   .split("")
-  .map((c) => (c === "1" ? 1 : 0));
+  .map((c) => c === "1");
 
 const enter: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const STAGGER = 0.08;
@@ -137,11 +135,6 @@ function CountUp({
   const final = format(stat.value);
   const suffix = `${unit}${stat.suffix ?? ""}`;
 
-  useLayoutEffect(() => {
-    if (reduced || done.current || !live.current) return;
-    live.current.textContent = format(0);
-  }, [format, reduced]);
-
   useEffect(() => {
     const node = live.current;
     if (!node) return;
@@ -151,6 +144,7 @@ function CountUp({
       return;
     }
     if (!run || done.current) return;
+    node.textContent = format(0);
     const controls = animate(0, stat.value, {
       duration,
       delay,
@@ -166,24 +160,15 @@ function CountUp({
     return () => controls.stop();
   }, [run, reduced, stat.value, delay, duration, format, final]);
 
+  // Single clean DOM text node (SSR renders exact final value; CSS data-sizer prevents CLS)
   return (
-    <>
-      <span className={styles.srOnly}>
-        {stat.prefix}
-        {final}
-        {suffix}
+    <span className={styles.number}>
+      {stat.prefix ? <span className={styles.prefix}>{stat.prefix}</span> : null}
+      <span className={styles.digits} data-sizer={final}>
+        <span ref={live}>{final}</span>
       </span>
-      <span className={styles.number} aria-hidden="true">
-        {stat.prefix && <span className={styles.prefix}>{stat.prefix}</span>}
-        <span className={styles.digits}>
-          <span className={styles.sizer}>{final}</span>
-          <span ref={live} className={styles.live}>
-            {final}
-          </span>
-        </span>
-        {suffix && <span className={styles.suffix}>{suffix}</span>}
-      </span>
-    </>
+      {suffix ? <span className={styles.suffix}>{suffix}</span> : null}
+    </span>
   );
 }
 
@@ -328,18 +313,16 @@ function WorldMap({ points }: { points: [number, number][] }) {
         className={styles.draw}
         viewBox={`0 0 ${WORLD.columns} ${WORLD.rows}`}
       >
-        {worldLand.map(
-          (land, index) =>
-            land &&
-            !lit.has(index) && (
-              <circle
-                key={index}
-                className={styles.land}
-                cx={(index % WORLD.columns) + 0.5}
-                cy={Math.floor(index / WORLD.columns) + 0.5}
-                r={0.3}
-              />
-            )
+        {worldLand.map((isLand, index) =>
+          isLand && !lit.has(index) ? (
+            <circle
+              key={index}
+              className={styles.land}
+              cx={(index % WORLD.columns) + 0.5}
+              cy={Math.floor(index / WORLD.columns) + 0.5}
+              r={0.3}
+            />
+          ) : null
         )}
         {[...lit].map((index) => (
           <circle

@@ -150,14 +150,8 @@ export function calculatePricing(input: PricingInput): PricingBreakdown {
   const legacyEvalCost = (evalTier.value / 10_000) * 1.15;
   const legacySeatCost = extraSeats * 45;
   const legacyBase = 500;
-  const legacyApmMonthlyUsd = Math.round(
-    (legacyBase + legacyTraceCost + legacyEvalCost + legacySeatCost) *
-      retentionOption.multiplier
-  );
-  const monthlySavingsVsLegacyUsd = Math.max(
-    180,
-    legacyApmMonthlyUsd - monthlyTotalUsd
-  );
+  const legacyApmMonthlyUsd = Math.round(legacyBase + legacyTraceCost * retentionOption.multiplier + legacyEvalCost + legacySeatCost);
+  const monthlySavingsVsLegacyUsd = Math.max(0, legacyApmMonthlyUsd - monthlyTotalUsd);
 
   return {
     tracesCount: traceTier.value,

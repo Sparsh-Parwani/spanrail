@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 /* ==========================================================================
@@ -14,7 +14,7 @@
   --p-ink-900: #091318;
   --p-ink-850: #0e1a20;
   --p-ink-800: #14232b;
-  --p-slate-500: #627682;
+  --p-slate-500: #788d99;
   --p-slate-300: #93a6b1;
   --p-frost-50: #f0f5f7;
 
@@ -107,7 +107,6 @@ body {
   background-color: var(--bg-canvas);
   color: var(--ink-primary);
   font-family: var(--font-sans);
-  word-spacing: 0.06em;
   min-height: 100dvh;
   overflow-x: clip;
 }
@@ -189,4 +188,7 @@ code {
   .btn-tactile {
     transition-duration: 120ms !important;
   }
+}
+p {
+  word-spacing: 0.025em;
 }

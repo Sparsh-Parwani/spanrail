@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { animate, useInView } from "framer-motion";
+import { animate } from "framer-motion";
 import { ArrowRight, Check, Link2, Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -46,38 +47,8 @@ export function PricingCalculator() {
   const hydratePricing = useSpanrailStore((s) => s.hydratePricing);
 
   const { prefersReducedMotion } = useBreakpoint();
-  const sectionRef = useRef<HTMLElement>(null);
-  const inView = useInView(sectionRef, { once: true, amount: 0.18 });
-
   const [copiedUrl, setCopiedUrl] = useState(false);
-  const hydratedFromUrlRef = useRef(false);
-
-  // First-time scroll-in intro: sliders sweep cleanly from 0 -> active tier & total rolls up from $0
-  const [introDone, setIntroDone] = useState(false);
-  const [animTraceIdx, setAnimTraceIdx] = useState(0);
-  const [animEvalIdx, setAnimEvalIdx] = useState(0);
-  const [displayTotal, setDisplayTotal] = useState(0);
-
-  useEffect(() => {
-    const parsed = parsePricingFromSearch(window.location.search);
-    if (parsed) {
-      hydratePricing(parsed);
-    }
-    hydratedFromUrlRef.current = true;
-  }, [hydratePricing]);
-
-  useEffect(() => {
-    if (!hydratedFromUrlRef.current) return;
-    const query = serializePricingToQuery({
-      traceTierIndex,
-      evalTierIndex,
-      retentionDays,
-      seats,
-      billingCycle,
-    });
-    const nextUrl = `${window.location.pathname}${query}${window.location.hash}`;
-    window.history.replaceState(null, "", nextUrl);
-  }, [traceTierIndex, evalTierIndex, retentionDays, seats, billingCycle]);
+  const hasInteractedRef = useRef(false);
 
   const breakdown = useMemo(
     () =>
@@ -91,57 +62,54 @@ export function PricingCalculator() {
     [traceTierIndex, evalTierIndex, retentionDays, seats, billingCycle]
   );
 
+  // Initialize directly to real SSR total ($119/mo) so SSR HTML is 100% consistent
+  const [displayTotal, setDisplayTotal] = useState(breakdown.monthlyTotalUsd);
+  const prevTotalRef = useRef(breakdown.monthlyTotalUsd);
+
   useEffect(() => {
+    const parsed = parsePricingFromSearch(window.location.search);
+    if (parsed) {
+      hydratePricing(parsed);
+    }
+  }, [hydratePricing]);
+
+  useEffect(() => {
+    if (!hasInteractedRef.current) return;
+    const merged = new URLSearchParams(window.location.search);
+    const pricingParams = new URLSearchParams(
+      serializePricingToQuery({
+        traceTierIndex,
+        evalTierIndex,
+        retentionDays,
+        seats,
+        billingCycle,
+      })
+    );
+    pricingParams.forEach((value, key) => merged.set(key, value));
+    const nextUrl = `${window.location.pathname}?${merged.toString()}${window.location.hash}`;
+    window.history.replaceState(null, "", nextUrl);
+  }, [traceTierIndex, evalTierIndex, retentionDays, seats, billingCycle]);
+
+  // Animate total smoothly whenever user interacts with sliders/controls
+  useEffect(() => {
+    const from = prevTotalRef.current;
+    const to = breakdown.monthlyTotalUsd;
+    prevTotalRef.current = to;
+    if (from === to) return;
+
     if (prefersReducedMotion) {
-      setIntroDone(true);
-      setDisplayTotal(breakdown.monthlyTotalUsd);
+      setDisplayTotal(to);
       return;
     }
-    if (!inView || introDone) return;
 
-    const cTrace = animate(0, traceTierIndex, {
-      duration: 0.72,
-      ease: [0.22, 1, 0.36, 1],
-      onUpdate: (v) => setAnimTraceIdx(Math.round(v)),
-    });
-    const cEval = animate(0, evalTierIndex, {
-      duration: 0.72,
-      delay: 0.1,
-      ease: [0.22, 1, 0.36, 1],
-      onUpdate: (v) => setAnimEvalIdx(Math.round(v)),
-    });
-    const cTotal = animate(0, breakdown.monthlyTotalUsd, {
-      duration: 0.9,
-      ease: [0.22, 1, 0.36, 1],
-      onUpdate: (v) => setDisplayTotal(Math.round(v)),
-      onComplete: () => setIntroDone(true),
-    });
-
-    return () => {
-      cTrace.stop();
-      cEval.stop();
-      cTotal.stop();
-    };
-  }, [inView, introDone, prefersReducedMotion, traceTierIndex, evalTierIndex, breakdown.monthlyTotalUsd]);
-
-  // Smoothly roll total when user changes sliders after intro completes
-  useEffect(() => {
-    if (!introDone) return;
-    if (prefersReducedMotion) {
-      setDisplayTotal(breakdown.monthlyTotalUsd);
-      return;
-    }
-    const ctrl = animate(displayTotal, breakdown.monthlyTotalUsd, {
+    const ctrl = animate(from, to, {
       duration: 0.28,
       ease: [0.22, 1, 0.36, 1],
       onUpdate: (v) => setDisplayTotal(Math.round(v)),
+      onComplete: () => setDisplayTotal(to),
     });
     return () => ctrl.stop();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [breakdown.monthlyTotalUsd, introDone, prefersReducedMotion]);
-
-  const shownTraceIndex = introDone ? traceTierIndex : animTraceIdx;
-  const shownEvalIndex = introDone ? evalTierIndex : animEvalIdx;
+  }, [breakdown.monthlyTotalUsd, prefersReducedMotion]);
 
   const handleCopyEstimateLink = async () => {
     try {
@@ -165,7 +133,6 @@ export function PricingCalculator() {
 
   return (
     <section
-      ref={sectionRef}
       id="pricing"
       aria-labelledby="pricing-heading"
       className="scroll-mt-20 py-14 md:py-20"
@@ -194,8 +161,7 @@ export function PricingCalculator() {
                 ]}
                 value={billingCycle}
                 onChange={(next) => {
-                  setIntroDone(true);
-                  setBillingCycle(next);
+                  hasInteractedRef.current = true; setBillingCycle(next);
                   playSwitchClick(next === "annual");
                 }}
                 ariaLabel="Select billing cycle"
@@ -227,7 +193,7 @@ export function PricingCalculator() {
                 className="text-[12px]"
                 style={{ color: "var(--status-pass-text)" }}
               >
-                Est. {formatUsd(breakdown.monthlySavingsVsLegacyUsd)}/mo saved
+                Est. {formatUsd(breakdown.monthlySavingsVsLegacyUsd)}/mo vs list APM
               </span>
             </div>
             <div className="tabular-telemetry text-right">
@@ -257,18 +223,18 @@ export function PricingCalculator() {
             >
               <div>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <label
-                    htmlFor="slider-traces"
+                  <span
+                    id="label-traces"
                     className="text-[15px] font-medium"
                     style={{ color: "var(--ink-primary)" }}
                   >
                     Monthly agent traces
-                  </label>
+                  </span>
                   <span
                     className="tabular-telemetry text-[16px] font-medium"
                     style={{ color: "var(--accent-brand-text)" }}
                   >
-                    {(TRACE_TIERS[shownTraceIndex] ?? TRACE_TIERS[3]!).label} / mo
+                    {breakdown.tracesLabel} / mo
                   </span>
                 </div>
                 <p
@@ -281,16 +247,15 @@ export function PricingCalculator() {
 
                 <div className="mt-3" id="slider-traces">
                   <SoftSlider
-                    value={shownTraceIndex}
+                    value={traceTierIndex}
                     min={0}
                     max={TRACE_TIERS.length - 1}
                     step={1}
-                    ariaLabel="Monthly agent traces volume"
+                    ariaLabelledBy="label-traces"
                     ariaValueText={`${breakdown.tracesLabel} traces per month`}
                     onValueChange={(next) => {
-                      setIntroDone(true);
                       if (next !== traceTierIndex) {
-                        setTraceTierIndex(next);
+                        hasInteractedRef.current = true; setTraceTierIndex(next);
                         playSliderTick();
                       }
                     }}
@@ -304,8 +269,7 @@ export function PricingCalculator() {
                         key={tier.label}
                         type="button"
                         onClick={() => {
-                          setIntroDone(true);
-                          setTraceTierIndex(idx);
+                          hasInteractedRef.current = true; setTraceTierIndex(idx);
                           playSliderTick();
                         }}
                         className={`cursor-pointer rounded px-1 py-0.5 hover:text-[var(--ink-primary)] ${
@@ -315,10 +279,10 @@ export function PricingCalculator() {
                         }`}
                         style={{
                           color:
-                            idx === shownTraceIndex
+                            idx === traceTierIndex
                               ? "var(--ink-primary)"
                               : "var(--ink-secondary)",
-                          fontWeight: idx === shownTraceIndex ? 500 : 400,
+                          fontWeight: idx === traceTierIndex ? 500 : 400,
                         }}
                       >
                         {tier.label}
@@ -332,18 +296,18 @@ export function PricingCalculator() {
 
               <div>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <label
-                    htmlFor="slider-evals"
+                  <span
+                    id="label-evals"
                     className="text-[15px] font-medium"
                     style={{ color: "var(--ink-primary)" }}
                   >
                     Automated eval runs
-                  </label>
+                  </span>
                   <span
                     className="tabular-telemetry text-[16px] font-medium"
                     style={{ color: "var(--accent-brand-text)" }}
                   >
-                    {(EVAL_TIERS[shownEvalIndex] ?? EVAL_TIERS[2]!).label} / mo
+                    {breakdown.evalsLabel} / mo
                   </span>
                 </div>
                 <p
@@ -356,16 +320,15 @@ export function PricingCalculator() {
 
                 <div className="mt-3" id="slider-evals">
                   <SoftSlider
-                    value={shownEvalIndex}
+                    value={evalTierIndex}
                     min={0}
                     max={EVAL_TIERS.length - 1}
                     step={1}
-                    ariaLabel="Monthly automated evaluation runs"
+                    ariaLabelledBy="label-evals"
                     ariaValueText={`${breakdown.evalsLabel} evaluation runs per month`}
                     onValueChange={(next) => {
-                      setIntroDone(true);
                       if (next !== evalTierIndex) {
-                        setEvalTierIndex(next);
+                        hasInteractedRef.current = true; setEvalTierIndex(next);
                         playSliderTick();
                       }
                     }}
@@ -379,17 +342,16 @@ export function PricingCalculator() {
                         key={tier.label}
                         type="button"
                         onClick={() => {
-                          setIntroDone(true);
-                          setEvalTierIndex(idx);
+                          hasInteractedRef.current = true; setEvalTierIndex(idx);
                           playSliderTick();
                         }}
                         className="cursor-pointer rounded px-1 py-0.5 hover:text-[var(--ink-primary)]"
                         style={{
                           color:
-                            idx === shownEvalIndex
+                            idx === evalTierIndex
                               ? "var(--ink-primary)"
                               : "var(--ink-secondary)",
-                          fontWeight: idx === shownEvalIndex ? 500 : 400,
+                          fontWeight: idx === evalTierIndex ? 500 : 400,
                         }}
                       >
                         {tier.label}
@@ -425,8 +387,7 @@ export function PricingCalculator() {
                   }))}
                   value={`${retentionDays}`}
                   onChange={(next) => {
-                    setIntroDone(true);
-                    setRetentionDays(Number(next) as RetentionDays);
+                    hasInteractedRef.current = true; setRetentionDays(Number(next) as RetentionDays);
                     playSwitchClick(true);
                   }}
                   ariaLabel="Select trace retention period"
@@ -460,8 +421,7 @@ export function PricingCalculator() {
                     type="button"
                     disabled={seats <= MIN_SEATS}
                     onClick={() => {
-                      setIntroDone(true);
-                      setSeats(seats - 1);
+                      hasInteractedRef.current = true; setSeats(seats - 1);
                       playSwitchClick(false);
                     }}
                     aria-label="Decrease team seats"
@@ -477,7 +437,7 @@ export function PricingCalculator() {
 
                   <span
                     aria-live="polite"
-                    className="tabular-telemetry min-w-[36px] text-center text-[16px] font-medium"
+                    className="tabular-telemetry min-w-[36px] text-[center text-[16px] font-medium"
                     style={{ color: "var(--ink-primary)" }}
                   >
                     {seats}
@@ -487,8 +447,7 @@ export function PricingCalculator() {
                     type="button"
                     disabled={seats >= MAX_SEATS}
                     onClick={() => {
-                      setIntroDone(true);
-                      setSeats(seats + 1);
+                      hasInteractedRef.current = true; setSeats(seats + 1);
                       playSwitchClick(true);
                     }}
                     aria-label="Increase team seats"
@@ -535,7 +494,7 @@ export function PricingCalculator() {
 
                   <div className="mt-3 flex items-baseline gap-1.5">
                     <span
-                      className="tabular-telemetry text-[2.85rem] leading-none font-medium tracking-[-0.035em] md:text-[3.25rem]"
+                      className="tabular-telemetry text-[2.85rem] leading-[none font-medium tracking-[-0.035em] md:text-[3.25rem]"
                       style={{ color: "var(--ink-primary)" }}
                     >
                       {formatUsd(displayTotal)}
@@ -558,7 +517,7 @@ export function PricingCalculator() {
                   </p>
 
                   <dl
-                    className="mt-6 space-y-3 border-t pt-5 text-[13.5px]"
+                    className="mt-6 space-y-3 border-[t pt-5 text-[13.5px]"
                     style={{ borderColor: "var(--border-whisper)" }}
                   >
                     <div className="flex items-baseline justify-between gap-3">
@@ -641,7 +600,7 @@ export function PricingCalculator() {
 
                 <div className="mt-6">
                   <div
-                    className="flex items-start gap-2.5 rounded-xl p-3.5 text-[13px] leading-[1.5]"
+                    className="flex items-start gap-2.5 rounded-xl p-3.5 text-[12.5px] leading-[1.5]"
                     style={{
                       backgroundColor: "var(--status-pass-soft)",
                       color: "var(--status-pass-text)",
@@ -657,7 +616,8 @@ export function PricingCalculator() {
                       <span className="tabular-telemetry font-medium">
                         {formatUsd(breakdown.monthlySavingsVsLegacyUsd)}/mo
                       </span>{" "}
-                      less than legacy APM tools at this volume.
+                      below metered host + custom-metric APM list rates (e.g.
+                      Datadog / New Relic).
                     </span>
                   </div>
 
@@ -670,7 +630,7 @@ export function PricingCalculator() {
                         color: "var(--btn-primary-ink)",
                       }}
                     >
-                      Start 14-day free sandbox
+                      Configure sandbox &amp; book briefing
                     </a>
 
                     <button
@@ -702,7 +662,6 @@ export function PricingCalculator() {
             </div>
           </div>
 
-          {/* Full-Width Aligned Enterprise Bar */}
           <div
             className="surface-fade mt-6 flex flex-col items-start justify-between gap-6 rounded-3xl border px-6 py-6 md:flex-row md:items-center md:px-8 md:py-7"
             style={{
@@ -727,8 +686,8 @@ export function PricingCalculator() {
               </p>
             </div>
 
-            <a
-              href="#demo"
+            <Link
+              href="/security"
               className="btn-tactile group inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-full border px-5 text-[14px] font-medium hover:border-[var(--border-hover)]"
               style={{
                 backgroundColor: "var(--bg-surface-solid)",
@@ -736,14 +695,14 @@ export function PricingCalculator() {
                 color: "var(--ink-primary)",
               }}
             >
-              <span>Talk to engineering</span>
+              <span>Security &amp; VPC specs</span>
               <ArrowRight
                 aria-hidden="true"
                 className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
                 strokeWidth={1.85}
                 style={{ color: "var(--accent-spark)" }}
               />
-            </a>
+            </Link>
           </div>
         </ScrollReveal>
       </div>

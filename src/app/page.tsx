@@ -52,17 +52,16 @@ export default function SpanrailLandingPage() {
         return;
       }
 
-      if (key === "1") {
-        if (store.scenarioId !== "refund") {
-          store.setScenarioId("refund");
-          playSwitchClick(true);
-        }
-        return;
-      }
+      if (key === "1" || key === "2") {
+        const sandbox = document.getElementById("sandbox");
+        if (!sandbox) return;
+        const rect = sandbox.getBoundingClientRect();
+        const sandboxVisible = rect.bottom > 80 && rect.top < window.innerHeight - 80;
+        if (!sandboxVisible) return;
 
-      if (key === "2") {
-        if (store.scenarioId !== "sql") {
-          store.setScenarioId("sql");
+        const targetScenario = key === "1" ? "refund" : "sql";
+        if (store.scenarioId !== targetScenario) {
+          store.setScenarioId(targetScenario);
           playSwitchClick(true);
         }
       }

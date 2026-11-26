@@ -21,18 +21,18 @@ const PRODUCTION_GROUPS: PairedBarGroup[] = [
     },
   },
   {
-    label: "Observability budget retained (10M traces)",
-    deltaBadge: "−86% invoice",
+    label: "Monthly bill retained (10M traces)",
+    deltaBadge: "−94% invoice",
     color: "var(--accent-brand)",
     secondaryColor: "var(--accent-spark)",
     a: {
       label: "With Spanrail",
-      value: 86,
-      valueLabel: "$690/mo",
+      value: 92,
+      valueLabel: "$275/mo",
     },
     b: {
       label: "Without Spanrail",
-      value: 21,
+      value: 16,
       valueLabel: "$4,850/mo",
     },
   },
@@ -88,8 +88,9 @@ export function BeforeAfterSection() {
                 className="mt-3 text-[16px] leading-[1.65] md:text-[17px]"
                 style={{ color: "var(--ink-secondary)" }}
               >
-                Measured across engineering teams migrating multi-step agents
-                off raw log aggregation and legacy APM suites.
+                Modeled at 10M traces/mo (30-day retention, 5 seats) comparing
+                Spanrail flat OTLP metering against raw logs and list-rate APM
+                suites.
               </p>
             </div>
 
@@ -121,13 +122,20 @@ export function BeforeAfterSection() {
 
           <div className="mt-10">
             <PairedBars
-              barLabel="production efficiency score (higher is better)"
-              unit="%"
+              barLabel="normalized SLA index (0–100 · higher is stronger)"
+              unit=""
               max={100}
               ticks={[0, 25, 50, 75, 100]}
               groups={PRODUCTION_GROUPS}
             />
           </div>
+
+          <p
+            className="mt-3 text-[12px]"
+            style={{ color: "var(--ink-muted)" }}
+          >
+            Bars map each heterogeneous metric onto a 0–100 normalized SLA index; exact observed figures appear on the right. Spanrail 10M trace cost ($99 base + 975 × $0.18 = $274.50/mo) matches the live calculator below.
+          </p>
         </ScrollReveal>
       </div>
     </section>

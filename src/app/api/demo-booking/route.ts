@@ -59,7 +59,7 @@ ${stackIntegrations}
       ttlSeconds: 1800,
     },
     piiRedaction: {
-      enabled: ${enablePiiStrict ? "true" : "true"},
+      enabled: true,
       mode: "${enablePiiStrict ? "block_and_mask_inline" : "mask_inline"}",
       detectors: ["ssn", "credit_card", "api_key", "email"],
     },
@@ -133,5 +133,6 @@ export async function POST(request: Request) {
     otelConfigContent,
   };
 
+  // Production note: wire CRM/webhook persistence (e.g. Resend / HubSpot / Slack webhook) here before launch.
   return NextResponse.json(payload, { status: 201 });
 }

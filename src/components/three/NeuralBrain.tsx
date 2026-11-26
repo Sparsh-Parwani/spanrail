@@ -40,10 +40,6 @@ function createCircleSpriteTexture(): THREE.CanvasTexture {
   return tex;
 }
 
-/**
- * Deterministic sculpted 3D human brain cortex (dual hemispheres, longitudinal fissure,
- * frontal/temporal/occipital lobes, cortical gyri folds, and tucked cerebellum).
- */
 function buildNeuralBrainData(nodeCount: number): BrainGeometryData {
   let seed = 1337;
   const rand = () => {
@@ -55,10 +51,8 @@ function buildNeuralBrainData(nodeCount: number): BrainGeometryData {
   const cerebellumCount = Math.floor(nodeCount * 0.13);
   const cortexCount = nodeCount - cerebellumCount;
 
-  // 1. Dual cerebral hemispheres
   for (let i = 0; i < cortexCount; i++) {
     const side = i % 2 === 0 ? 1 : -1;
-    // Uniform hemisphere shell + subtle interior density
     const u = rand() * Math.PI * 2;
     const cosPhi = rand() * 2 - 1;
     const sinPhi = Math.sqrt(Math.max(0, 1 - cosPhi * cosPhi));
@@ -68,7 +62,6 @@ function buildNeuralBrainData(nodeCount: number): BrainGeometryData {
     let ly = cosPhi * 0.92;
     let lz = sinPhi * Math.sin(u) * 1.24;
 
-    // Taper frontal lobe slightly, broaden parietal/temporal sides, tuck inferior base
     if (lz > 0) {
       lx *= 1 - lz * 0.14;
       ly *= 1 - lz * 0.08;
@@ -77,19 +70,16 @@ function buildNeuralBrainData(nodeCount: number): BrainGeometryData {
     }
     if (ly < -0.18) {
       ly = -0.18 + (ly + 0.18) * 0.45;
-      // Subtle temporal lobe outward curve
       if (lz > -0.45 && lz < 0.55) {
         lx += 0.14 * (1 - Math.abs(lz) * 0.8);
       }
     }
 
-    // Cortical gyri/sulci ridges
     const fold =
       0.065 * Math.sin(lz * 6.2 + ly * 5.1) +
       0.04 * Math.cos(lx * 7.5 - lz * 4.4);
     const r = radialShell + fold;
 
-    // Longitudinal central fissure separation between left & right hemispheres
     const fissureGap = 0.085 + (1 - Math.abs(ly)) * 0.04;
     const x = side * (lx * r + fissureGap);
     const y = ly * r + 0.14;
@@ -100,7 +90,6 @@ function buildNeuralBrainData(nodeCount: number): BrainGeometryData {
     basePositions[i * 3 + 2] = z;
   }
 
-  // 2. Tucked posterior cerebellum + short brainstem root
   for (let j = 0; j < cerebellumCount; j++) {
     const i = cortexCount + j;
     const side = j % 2 === 0 ? 1 : -1;
@@ -109,16 +98,11 @@ function buildNeuralBrainData(nodeCount: number): BrainGeometryData {
     const s = Math.sqrt(Math.max(0, 1 - v * v));
     const r = 0.85 + rand() * 0.15;
 
-    const x = side * (Math.abs(s * Math.cos(u)) * 0.48 * r + 0.04);
-    const y = v * 0.34 * r - 0.52;
-    const z = s * Math.sin(u) * 0.44 * r - 0.62;
-
-    basePositions[i * 3] = x;
-    basePositions[i * 3 + 1] = y;
-    basePositions[i * 3 + 2] = z;
+    basePositions[i * 3] = side * (Math.abs(s * Math.cos(u)) * 0.48 * r + 0.04);
+    basePositions[i * 3 + 1] = v * 0.34 * r - 0.52;
+    basePositions[i * 3 + 2] = s * Math.sin(u) * 0.44 * r - 0.62;
   }
 
-  // 3. Synaptic connections (nearest neighbors + a few cross-hemisphere corpus callosum links)
   const edges: number[] = [];
   const maxDistSq = 0.38 * 0.38;
   const maxEdgesPerNode = 3;
@@ -141,17 +125,17 @@ function buildNeuralBrainData(nodeCount: number): BrainGeometryData {
     }
   }
 
-  // Pick ~40 traveling neural signals along real synaptic edges
-  const signalCount = Math.min(40, Math.floor(edges.length / 2));
-  const signalEdges: Array<[number, number, number, number]> = [];
   const totalEdges = Math.floor(edges.length / 2);
+  const signalCount = Math.min(40, totalEdges);
+  const signalEdges: Array<[number, number, number, number]> = [];
   for (let k = 0; k < signalCount; k++) {
     const edgeIdx = Math.floor((k / signalCount) * totalEdges) * 2;
-    const a = edges[edgeIdx];
-    const b = edges[edgeIdx + 1];
-    const speed = 0.42 + rand() * 0.65;
-    const phase = rand();
-    signalEdges.push([a, b, speed, phase]);
+    signalEdges.push([
+      edges[edgeIdx],
+      edges[edgeIdx + 1],
+      0.42 + rand() * 0.65,
+      rand(),
+    ]);
   }
 
   return {
@@ -188,11 +172,12 @@ function NeuralBrainMesh({
   const data = useMemo(() => buildNeuralBrainData(nodeCount), [nodeCount]);
   const spriteTex = useMemo(() => createCircleSpriteTexture(), []);
 
-  // Live deformable vertex buffers
   const nodeGeo = useMemo(() => {
     const geo = new THREE.BufferGeometry();
-    const pos = new Float32Array(data.basePositions);
-    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute(
+      "position",
+      new THREE.BufferAttribute(new Float32Array(data.basePositions), 3)
+    );
     return geo;
   }, [data]);
 
@@ -211,8 +196,10 @@ function NeuralBrainMesh({
 
   const signalGeo = useMemo(() => {
     const geo = new THREE.BufferGeometry();
-    const pos = new Float32Array(data.signalEdges.length * 3);
-    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute(
+      "position",
+      new THREE.BufferAttribute(new Float32Array(data.signalEdges.length * 3), 3)
+    );
     return geo;
   }, [data]);
 
@@ -225,7 +212,7 @@ function NeuralBrainMesh({
         opacity: 0.92,
         depthWrite: false,
         sizeAttenuation: true,
-        color: new THREE.Color("#d96b27"),
+        color: new THREE.Color("#f2994a"),
       }),
     [isPhone, spriteTex]
   );
@@ -234,9 +221,9 @@ function NeuralBrainMesh({
     () =>
       new THREE.LineBasicMaterial({
         transparent: true,
-        opacity: 0.24,
+        opacity: 0.28,
         depthWrite: false,
-        color: new THREE.Color("#118ab2"),
+        color: new THREE.Color("#2ea8d1"),
       }),
     []
   );
@@ -250,7 +237,7 @@ function NeuralBrainMesh({
         opacity: 0.96,
         depthWrite: false,
         sizeAttenuation: true,
-        color: new THREE.Color("#f2994a"),
+        color: new THREE.Color("#ffd099"),
       }),
     [isPhone, spriteTex]
   );
@@ -269,14 +256,10 @@ function NeuralBrainMesh({
 
   const palette = useMemo(
     () => ({
-      warnLight: new THREE.Color("#c9561a"),
-      warnDark: new THREE.Color("#f2994a"),
-      oceanLight: new THREE.Color("#0d7294"),
-      oceanDark: new THREE.Color("#2ea8d1"),
-      sageLight: new THREE.Color("#1f8a4c"),
-      sageDark: new THREE.Color("#82d96e"),
-      sparkLight: new THREE.Color("#d96b27"),
-      sparkDark: new THREE.Color("#ffd099"),
+      warn: new THREE.Color("#f2994a"),
+      ocean: new THREE.Color("#2ea8d1"),
+      sage: new THREE.Color("#82d96e"),
+      spark: new THREE.Color("#ffd099"),
       targetNode: new THREE.Color(),
       targetLine: new THREE.Color(),
       targetSignal: new THREE.Color(),
@@ -295,15 +278,12 @@ function NeuralBrainMesh({
   useFrame((_, rawDelta) => {
     const dt = Math.min(rawDelta, 0.05);
     const store = useSpanrailStore.getState();
-    const isDark = store.theme === "dark";
     const activeCount =
       (store.guardrails.semanticCache ? 1 : 0) +
       (store.guardrails.piiRedaction ? 1 : 0) +
       (store.guardrails.loopBreaker ? 1 : 0);
 
     const a = animRef.current;
-
-    // Trigger physical pulsation + subtle kinematic movement whenever ANY guardrail toggle changes!
     if (activeCount !== a.prevActiveCount) {
       const dir = activeCount > a.prevActiveCount ? 1 : -1;
       a.toggleKick = 1.0;
@@ -315,17 +295,14 @@ function NeuralBrainMesh({
     a.spinKick = THREE.MathUtils.damp(a.spinKick, 0, 3.4, dt);
     a.smoothCalm = THREE.MathUtils.damp(a.smoothCalm, activeCount / 3, 3.2, dt);
 
-    // Faster energetic heartbeat when switches OFF; calm serene rhythm when locked ON
     const beatRate = THREE.MathUtils.lerp(2.6, 1.35, a.smoothCalm);
     a.clock += dt * beatRate;
 
-    // Continuous subtle organic pulsation + toggle kick expansion
     const breath =
       1 +
       Math.sin(a.clock) * (0.028 + (1 - a.smoothCalm) * 0.015) +
       a.toggleKick * 0.095;
 
-    // Drag inertia + smooth idle rotation + toggle spin kick
     const inter = interactionRef.current;
     if (!inter.dragging) {
       inter.velX *= Math.exp(-dt * 4.5);
@@ -335,43 +312,34 @@ function NeuralBrainMesh({
     }
 
     if (groupRef.current) {
+      groupRef.current.position.x = isPhone ? 0 : 0.22;
       groupRef.current.rotation.y = inter.rotY;
       groupRef.current.rotation.x = inter.rotX;
       groupRef.current.rotation.z = Math.sin(a.clock * 0.45) * 0.05;
       groupRef.current.scale.setScalar(breath * 0.85);
     }
 
-    // Subtle color shift driven by active switches (Copper/Warn -> Ocean -> Ocean+Sage)
-    const warn = isDark ? palette.warnDark : palette.warnLight;
-    const ocean = isDark ? palette.oceanDark : palette.oceanLight;
-    const sage = isDark ? palette.sageDark : palette.sageLight;
-    const spark = isDark ? palette.sparkDark : palette.sparkLight;
-
     if (a.smoothCalm < 0.5) {
       const t = a.smoothCalm * 2;
-      palette.targetNode.copy(warn).lerp(ocean, t);
-      palette.targetLine.copy(warn).lerp(ocean, t * 0.85);
+      palette.targetNode.copy(palette.warn).lerp(palette.ocean, t);
+      palette.targetLine.copy(palette.warn).lerp(palette.ocean, t * 0.85);
     } else {
       const t = (a.smoothCalm - 0.5) * 2;
-      palette.targetNode.copy(ocean).lerp(sage, t * 0.72);
-      palette.targetLine.copy(ocean).lerp(sage, t * 0.5);
+      palette.targetNode.copy(palette.ocean).lerp(palette.sage, t * 0.72);
+      palette.targetLine.copy(palette.ocean).lerp(palette.sage, t * 0.5);
     }
-    palette.targetSignal.copy(spark).lerp(sage, a.smoothCalm * 0.6);
+    palette.targetSignal.copy(palette.spark).lerp(palette.sage, a.smoothCalm * 0.6);
 
     nodeMat.color.lerp(palette.targetNode, Math.min(1, dt * 6));
     lineMat.color.lerp(palette.targetLine, Math.min(1, dt * 6));
     signalMat.color.lerp(palette.targetSignal, Math.min(1, dt * 6));
-    lineMat.opacity = isDark
-      ? 0.28 + a.toggleKick * 0.18
-      : 0.24 + a.toggleKick * 0.16;
+    lineMat.opacity = 0.28 + a.toggleKick * 0.18;
     nodeMat.size = (isPhone ? 0.085 : 0.09) * (1 + a.toggleKick * 0.25);
 
-    // Subtle cursor ripple & neural breathing on cortex particles
+    // 1. Deform cortex particle positions
     const posAttr = nodeGeo.getAttribute("position") as THREE.BufferAttribute;
     const posArr = posAttr.array as Float32Array;
     const base = data.basePositions;
-
-    // Map cursor to local brain space gently
     const mx = inter.hovering ? inter.hoverX * 1.4 : 99;
     const my = inter.hovering ? inter.hoverY * 1.4 : 99;
     const rippleOn = inter.hovering && !isPhone;
@@ -408,7 +376,20 @@ function NeuralBrainMesh({
     }
     posAttr.needsUpdate = true;
 
-    // Animate traveling luminous signals along synaptic paths
+    // 2. Weld every synaptic line endpoint directly to the live deformed vertices
+    const lineAttr = lineGeo.getAttribute("position") as THREE.BufferAttribute;
+    const lineArr = lineAttr.array as Float32Array;
+    const indices = data.lineIndices;
+    for (let i = 0; i < indices.length; i++) {
+      const n3 = indices[i] * 3;
+      const l3 = i * 3;
+      lineArr[l3] = posArr[n3];
+      lineArr[l3 + 1] = posArr[n3 + 1];
+      lineArr[l3 + 2] = posArr[n3 + 2];
+    }
+    lineAttr.needsUpdate = true;
+
+    // 3. Move traveling signals along those exact live synaptic segments
     const sigAttr = signalGeo.getAttribute("position") as THREE.BufferAttribute;
     const sigArr = sigAttr.array as Float32Array;
     const sigSpeedBoost = 1 + a.toggleKick * 1.8;
@@ -426,7 +407,7 @@ function NeuralBrainMesh({
   });
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} position={[isPhone ? 0 : 0.22, 0, 0]} scale={0.85}>
       <points geometry={nodeGeo} material={nodeMat} />
       <lineSegments geometry={lineGeo} material={lineMat} />
       <points geometry={signalGeo} material={signalMat} />
@@ -453,7 +434,6 @@ export default function NeuralBrain() {
     hovering: false,
   });
 
-  // Pause rendering completely when scrolled past Hero (0% GPU offscreen!)
   useEffect(() => {
     const el = containerRef.current;
     if (!el || typeof IntersectionObserver === "undefined") return;

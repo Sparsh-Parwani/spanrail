@@ -1,31 +1,40 @@
 import type { Metadata, Viewport } from "next";
+import "@fontsource-variable/plus-jakarta-sans";
+import "@fontsource-variable/jetbrains-mono";
+import "@fontsource/instrument-serif/400.css";
+import "@fontsource/instrument-serif/400-italic.css";
 import { Toaster } from "sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Spanrail",
+  title: {
+    default: "Spanrail — AI Agent Observability & Inline Guardrails",
+    template: "%s · Spanrail",
+  },
   description:
-    "Watch every step your production AI agents take. Catch slow tool calls and retry loops, mask customer PII inline, and keep token bills predictable.",
-  metadataBase: new URL("https://spanrail.dev"),
+    "Real-time OpenTelemetry trace inspection, inline PII and retry-loop guardrails, and exact per-run token cost accounting for production AI agents.",
+  metadataBase: new URL("https://spanrail.vercel.app"),
   openGraph: {
-    title: "Spanrail",
+    title: "Spanrail — Real-Time Observability & Guardrails for AI Agents",
     description:
-      "Real-time trace inspection, automatic PII and loop guardrails, and exact per-run token costs for production AI agents.",
+      "See every agent step. Catch slow tool calls and retry loops, mask customer PII inline, and keep token bills predictable.",
     type: "website",
     siteName: "Spanrail",
+    url: "https://spanrail.vercel.app",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Spanrail — Real-Time Observability & Guardrails for AI Agents",
+    description:
+      "Real-time trace inspection, inline PII and loop guardrails, and flat OTLP pricing for production LLM agents.",
   },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#050B0F" },
-    { media: "(prefers-color-scheme: dark)", color: "#071014" },
-  ],
+  themeColor: "#050B0F",
 };
-
-const THEME_INIT_SCRIPT = `(function(){try{var k='spanrail-theme';var saved=window.localStorage.getItem(k);var theme=(saved==='dark'||saved==='light')?'dark':'dark';document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme;}catch(e){document.documentElement.dataset.theme='dark';}})();`;
 
 export default function RootLayout({
   children,
@@ -33,24 +42,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=Syne:wght@600;700&display=swap"
-          rel="stylesheet"
-        />
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-      </head>
+    <html lang="en" data-theme="dark" style={{ colorScheme: "dark" }}>
       <body className="antialiased selection:bg-[var(--accent-spark-soft)]">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-[var(--btn-primary-bg)] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-[var(--btn-primary-ink)]"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-[var(--btn-primary-bg)] focus:px-4 focus:py-2 focus:text-[sm focus:font-medium focus:text-[var(--btn-primary-ink)]"
         >
           Skip to content
         </a>

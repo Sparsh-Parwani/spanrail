@@ -34,45 +34,37 @@ import { QuietStatusPill } from "@/components/ui/Primitives";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const STEPS = [
-  { id: "contact", title: "Work Details" },
-  { id: "runtime", title: "Agent Stack" },
-  { id: "goals", title: "Objectives" },
-  { id: "guardrails", title: "Guardrails" },
+  { id: "contact", title: "Work Details & Volume" },
+  { id: "runtime", title: "Agent Stack & Goal" },
 ] as const;
-
-const DEPLOYMENT_MODES = [
-  { value: "cloud", label: "Spanrail Cloud (US / EU / Asia)" },
-  { value: "vpc", label: "Dedicated Private VPC" },
-  { value: "hipaa", label: "HIPAA BAA / Isolated Cluster" },
-] as const;
-
-const GUARDRAIL_FEATURES = [
-  "Semantic Cache",
-  "Inline PII Masking",
-  "Loop Breaker",
-  "Prompt Replay Diff",
-  "Per-Run Cost Caps",
-  "OTLP Collector Sync",
-] as const;
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.28 } },
-};
 
 const contentVariants = {
-  hidden: { opacity: 0, x: 42 },
+  hidden: { opacity: 0, x: 40 },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.26, ease: [0.22, 1, 0.36, 1] as const },
   },
   exit: {
     opacity: 0,
-    x: -42,
+    x: -40,
     transition: { duration: 0.18, ease: [0.4, 0, 1, 1] as const },
   },
 };
+
+const GENERIC_STARTER_CONFIG = `import { initSpanrail } from "@spanrail/otel";
+
+export const spanrail = initSpanrail({
+  serviceName: "agent-service",
+  apiKey: process.env.SPANRAIL_API_KEY!,
+  otlpEndpoint: "https://ingest.spanrail.dev/v1/traces",
+  guardrails: {
+    semanticCache: { enabled: true, similarityThreshold: 0.96, ttlSeconds: 1800 },
+    piiRedaction: { enabled: true, mode: "mask_inline", detectors: ["ssn", "credit_card", "api_key"] },
+    loopBreaker: { enabled: true, maxRepeatedToolCalls: 2, maxRunCostUsd: 0.05 },
+  },
+});
+`;
 
 export function DemoBookingForm() {
   const traceTierIndex = useSpanrailStore((s) => s.traceTierIndex);
@@ -100,29 +92,18 @@ export function DemoBookingForm() {
   );
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [emailTouched, setEmailTouched] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [company, setCompany] = useState("");
 
   const [volumeTier, setVolumeTier] = useState<VolumeTier>(syncedVolume);
   const userOverrodeVolumeRef = useRef(false);
   const [agentStacks, setAgentStacks] = useState<AgentStack[]>([
     "Vercel AI SDK",
   ]);
-
   const [primaryGoal, setPrimaryGoal] = useState<PrimaryGoal>(
     "PII & safety guardrails"
   );
-  const [deploymentMode, setDeploymentMode] = useState("cloud");
-
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([
-    "Semantic Cache",
-    "Inline PII Masking",
-    "Loop Breaker",
-  ]);
-  const [notes, setNotes] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -157,48 +138,21 @@ export function DemoBookingForm() {
     });
   };
 
-  const toggleFeature = (feat: string) => {
-    setSelectedFeatures((prev) => {
-      const exists = prev.includes(feat);
-      playSwitchClick(!exists);
-      return exists ? prev.filter((f) => f !== feat) : [...prev, feat];
-    });
-  };
-
   const isStepValid = (): boolean => {
-    if (currentStep === 0) {
-      return name.trim().length > 0 && validateEmail(email) === null;
-    }
-    if (currentStep === 1) {
-      return agentStacks.length > 0;
-    }
-    if (currentStep === 2) {
-      return Boolean(primaryGoal && deploymentMode);
-    }
-    return true;
+    if (currentStep === 0) return validateEmail(email) === null;
+    return agentStacks.length > 0 && Boolean(primaryGoal);
   };
 
   const handleNext = () => {
-    if (currentStep === 0) {
-      setEmailTouched(true);
-      const err = validateEmail(email);
-      setEmailError(err);
-      if (err || name.trim().length === 0) {
-        playSwitchClick(false);
-        return;
-      }
-    }
-    if (currentStep < STEPS.length - 1) {
-      setCurrentStep((prev) => prev + 1);
-      playSwitchClick(true);
-    }
-  };
-
-  const handlePrev = () => {
-    if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1);
+    setEmailTouched(true);
+    const err = validateEmail(email);
+    setEmailError(err);
+    if (err) {
       playSwitchClick(false);
+      return;
     }
+    setCurrentStep(1);
+    playSwitchClick(true);
   };
 
   const handleSubmit = async () => {
@@ -217,7 +171,7 @@ export function DemoBookingForm() {
         setEmailError(fieldErrors.email[0]);
         setCurrentStep(0);
       }
-      setSubmitError("Please check your work email and agent stack selection.");
+      setSubmitError("Please review your work email and agent stack.");
       playSwitchClick(false);
       return;
     }
@@ -253,21 +207,20 @@ export function DemoBookingForm() {
     }
   };
 
-  const handleDownloadStarterConfig = () => {
-    if (!confirmation) return;
-    const blob = new Blob([confirmation.otelConfigContent], {
+  const triggerDownload = (filename: string, content: string) => {
+    const blob = new Blob([content], {
       type: "text/typescript;charset=utf-8",
     });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = confirmation.otelConfigFilename;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
     playSuccessConfirm();
-    toast.success(`Downloaded ${confirmation.otelConfigFilename}`);
+    toast.success(`Downloaded ${filename}`);
   };
 
   const handleReset = () => {
@@ -293,13 +246,12 @@ export function DemoBookingForm() {
               className="mx-auto mt-3 max-w-[48ch] text-[15.5px] leading-[1.6]"
               style={{ color: "var(--ink-secondary)" }}
             >
-              Tell us how your production agents run. We&apos;ll prepare a
-              tailored OpenTelemetry starter config and review it live.
+              Book a 25-minute review with a systems engineer, or grab the
+              starter OpenTelemetry config below with zero signup.
             </p>
           </div>
 
           <div className="mx-auto mt-9 w-full max-w-[580px]">
-            {/* Animated Dot Stepper + Smooth Glowing Progress Bar (21st.dev OnboardingForm Aesthetic) */}
             {!confirmation && (
               <div className="mb-7">
                 <div className="mb-2.5 flex justify-between px-1">
@@ -313,7 +265,7 @@ export function DemoBookingForm() {
                         key={step.id}
                         type="button"
                         disabled={!canJump}
-                        whileHover={canJump ? { scale: 1.08 } : undefined}
+                        whileHover={canJump ? { scale: 1.06 } : undefined}
                         whileTap={canJump ? { scale: 0.95 } : undefined}
                         onClick={() => {
                           if (canJump) {
@@ -321,10 +273,10 @@ export function DemoBookingForm() {
                             playSwitchClick(true);
                           }
                         }}
-                        className="flex cursor-pointer flex-col items-center disabled:cursor-default"
+                        className="flex cursor-pointer items-center gap-2.5 disabled:cursor-default"
                       >
                         <span
-                          className="h-4 w-4 rounded-full"
+                          className="h-3.5 w-3.5 rounded-full"
                           style={{
                             backgroundColor:
                               isCompleted || isActive
@@ -338,7 +290,7 @@ export function DemoBookingForm() {
                           }}
                         />
                         <span
-                          className="mt-2 hidden text-[12px] sm:block"
+                          className="text-[12.5px]"
                           style={{
                             color: isActive
                               ? "var(--ink-primary)"
@@ -360,17 +312,14 @@ export function DemoBookingForm() {
                   <motion.div
                     className="h-full rounded-full"
                     style={{ backgroundColor: "var(--accent-spark)" }}
-                    initial={{ width: "0%" }}
-                    animate={{
-                      width: `${(currentStep / (STEPS.length - 1)) * 100}%`,
-                    }}
-                    transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+                    initial={false}
+                    animate={{ width: currentStep === 0 ? "50%" : "100%" }}
+                    transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
                   />
                 </div>
               </div>
             )}
 
-            {/* Main Animated Form Card */}
             <div
               className="surface-fade overflow-hidden rounded-3xl border"
               style={{
@@ -402,7 +351,7 @@ export function DemoBookingForm() {
                     className="mt-5 text-[21px] font-medium tracking-[-0.02em]"
                     style={{ color: "var(--ink-primary)" }}
                   >
-                    Your starter environment is ready, {name.trim() || "team"}.
+                    Your starter environment is ready.
                   </h3>
 
                   <p
@@ -428,7 +377,12 @@ export function DemoBookingForm() {
                       type="button"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.97 }}
-                      onClick={handleDownloadStarterConfig}
+                      onClick={() =>
+                        triggerDownload(
+                          confirmation.otelConfigFilename,
+                          confirmation.otelConfigContent
+                        )
+                      }
                       className="inline-flex min-h-[46px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl px-5 text-[14px] font-medium"
                       style={{
                         backgroundColor: "var(--btn-primary-bg)",
@@ -455,7 +409,7 @@ export function DemoBookingForm() {
                 </motion.div>
               ) : (
                 <div>
-                  <div className="min-h-[340px] p-6 sm:p-8">
+                  <div className="min-h-[300px] p-6 sm:p-8">
                     <AnimatePresence mode="wait" initial={false}>
                       <motion.div
                         key={currentStep}
@@ -466,70 +420,32 @@ export function DemoBookingForm() {
                         exit={prefersReducedMotion ? { opacity: 0 } : "exit"}
                         variants={contentVariants}
                       >
-                        {/* STEP 1 — WORK DETAILS */}
                         {currentStep === 0 && (
-                          <div className="space-y-4">
+                          <div className="space-y-5">
                             <div>
-                              <h3
-                                className="text-[20px] font-medium tracking-[-0.02em]"
-                                style={{ color: "var(--ink-primary)" }}
-                              >
-                                Tell us about your team
-                              </h3>
-                              <p
-                                className="mt-1 text-[13.5px]"
-                                style={{ color: "var(--ink-secondary)" }}
-                              >
-                                Start with your work contact so we can provision
-                                a sandbox.
-                              </p>
-                            </div>
-
-                            <motion.div variants={fadeInUp} className="space-y-1.5">
-                              <label
-                                htmlFor="demo-name"
-                                className="block text-[13px] font-medium"
-                                style={{ color: "var(--ink-primary)" }}
-                              >
-                                Full Name
-                              </label>
-                              <input
-                                id="demo-name"
-                                type="text"
-                                placeholder="Alex Rivera"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="h-11 w-full rounded-xl border px-3.5 text-[14.5px] outline-none placeholder:text-[var(--ink-muted)]"
-                                style={{
-                                  backgroundColor: "var(--bg-surface-subtle)",
-                                  borderColor: "var(--border-whisper)",
-                                  color: "var(--ink-primary)",
-                                }}
-                              />
-                            </motion.div>
-
-                            <motion.div variants={fadeInUp} className="space-y-1.5">
                               <label
                                 htmlFor="demo-work-email"
-                                className="block text-[13px] font-medium"
+                                className="block text-[13.5px] font-medium"
                                 style={{ color: "var(--ink-primary)" }}
                               >
-                                Work Email
+                                Work email
                               </label>
                               <input
                                 id="demo-work-email"
                                 type="email"
                                 inputMode="email"
+                                autoComplete="email"
                                 placeholder="alex@company.com"
                                 value={email}
                                 onChange={(e) => handleEmailChange(e.target.value)}
                                 onBlur={() => {
                                   setEmailTouched(true);
-                                  if (email.trim()) setEmailError(validateEmail(email));
+                                  if (email.trim())
+                                    setEmailError(validateEmail(email));
                                 }}
                                 aria-invalid={Boolean(emailError)}
                                 aria-describedby="demo-email-err"
-                                className="h-11 w-full rounded-xl border px-3.5 text-[14.5px] outline-none placeholder:text-[var(--ink-muted)]"
+                                className="mt-2 h-12 w-full rounded-xl border px-4 text-[15px] placeholder:text-[var(--ink-muted)]"
                                 style={{
                                   backgroundColor: "var(--bg-surface-subtle)",
                                   borderColor: emailError
@@ -541,7 +457,7 @@ export function DemoBookingForm() {
                               <p
                                 id="demo-email-err"
                                 role={emailError ? "alert" : undefined}
-                                className="min-h-[18px] text-[12px]"
+                                className="mt-1.5 min-h-[18px] text-[12px]"
                                 style={{
                                   color: emailError
                                     ? "var(--status-warn-text)"
@@ -549,62 +465,29 @@ export function DemoBookingForm() {
                                 }}
                               >
                                 {emailError ??
-                                  "Work domains only (Gmail, Yahoo, Outlook & iCloud blocked)."}
-                              </p>
-                            </motion.div>
-
-                            <motion.div variants={fadeInUp} className="space-y-1.5">
-                              <label
-                                htmlFor="demo-company"
-                                className="block text-[13px] font-medium"
-                                style={{ color: "var(--ink-primary)" }}
-                              >
-                                Company / Engineering Org (Optional)
-                              </label>
-                              <input
-                                id="demo-company"
-                                type="text"
-                                placeholder="Northstar Freight"
-                                value={company}
-                                onChange={(e) => setCompany(e.target.value)}
-                                className="h-11 w-full rounded-xl border px-3.5 text-[14.5px] outline-none placeholder:text-[var(--ink-muted)]"
-                                style={{
-                                  backgroundColor: "var(--bg-surface-subtle)",
-                                  borderColor: "var(--border-whisper)",
-                                  color: "var(--ink-primary)",
-                                }}
-                              />
-                            </motion.div>
-                          </div>
-                        )}
-
-                        {/* STEP 2 — SCALE & AGENT RUNTIME */}
-                        {currentStep === 1 && (
-                          <div className="space-y-5">
-                            <div>
-                              <h3
-                                className="text-[20px] font-medium tracking-[-0.02em]"
-                                style={{ color: "var(--ink-primary)" }}
-                              >
-                                Agent runtime &amp; trace scale
-                              </h3>
-                              <p
-                                className="mt-1 text-[13.5px]"
-                                style={{ color: "var(--ink-secondary)" }}
-                              >
-                                Auto-synced with your pricing slider above.
+                                  "Work email required for dedicated sandbox provisioning."}
                               </p>
                             </div>
 
-                            <motion.div variants={fadeInUp} className="space-y-2">
-                              <span
-                                className="block text-[13px] font-medium"
-                                style={{ color: "var(--ink-primary)" }}
-                              >
-                                Monthly trace volume
-                              </span>
+                            <div className="space-y-2">
+                              <div className="flex items-baseline justify-between gap-2">
+                                <span
+                                  className="text-[13.5px] font-medium"
+                                  style={{ color: "var(--ink-primary)" }}
+                                >
+                                  Monthly trace volume
+                                </span>
+                                {!userOverrodeVolumeRef.current && (
+                                  <span
+                                    className="text-[12px]"
+                                    style={{ color: "var(--ink-secondary)" }}
+                                  >
+                                    Synced from calculator
+                                  </span>
+                                )}
+                              </div>
                               <div className="grid grid-cols-2 gap-2">
-                                {VOLUME_TIERS.map((tier, idx) => {
+                                {VOLUME_TIERS.map((tier) => {
                                   const active = volumeTier === tier;
                                   return (
                                     <motion.button
@@ -612,12 +495,6 @@ export function DemoBookingForm() {
                                       type="button"
                                       whileHover={{ scale: 1.02 }}
                                       whileTap={{ scale: 0.98 }}
-                                      initial={{ opacity: 0, y: 8 }}
-                                      animate={{
-                                        opacity: 1,
-                                        y: 0,
-                                        transition: { delay: idx * 0.05 },
-                                      }}
                                       onClick={() => {
                                         userOverrodeVolumeRef.current = true;
                                         setVolumeTier(tier);
@@ -641,17 +518,21 @@ export function DemoBookingForm() {
                                   );
                                 })}
                               </div>
-                            </motion.div>
+                            </div>
+                          </div>
+                        )}
 
-                            <motion.div variants={fadeInUp} className="space-y-2">
+                        {currentStep === 1 && (
+                          <div className="space-y-5">
+                            <div className="space-y-2">
                               <span
-                                className="block text-[13px] font-medium"
+                                className="block text-[13.5px] font-medium"
                                 style={{ color: "var(--ink-primary)" }}
                               >
-                                Primary agent stack (select at least one)
+                                Primary agent stack
                               </span>
                               <div className="grid grid-cols-2 gap-2">
-                                {AGENT_STACKS.map((stack, idx) => {
+                                {AGENT_STACKS.map((stack) => {
                                   const active = agentStacks.includes(stack);
                                   return (
                                     <motion.button
@@ -659,14 +540,8 @@ export function DemoBookingForm() {
                                       type="button"
                                       whileHover={{ scale: 1.02 }}
                                       whileTap={{ scale: 0.98 }}
-                                      initial={{ opacity: 0, x: -8 }}
-                                      animate={{
-                                        opacity: 1,
-                                        x: 0,
-                                        transition: { delay: 0.06 * idx },
-                                      }}
                                       onClick={() => toggleStack(stack)}
-                                      className="flex min-h-[44px] cursor-pointer items-center justify-between rounded-xl border px-3.5 text-left text-[13px] font-medium"
+                                      className="flex min-h-[44px] cursor-pointer items-center justify-between rounded-xl border px-3.5 text-[left text-[13px] font-medium"
                                       style={{
                                         backgroundColor: active
                                           ? "var(--accent-spark-soft)"
@@ -687,197 +562,47 @@ export function DemoBookingForm() {
                                   );
                                 })}
                               </div>
-                            </motion.div>
-                          </div>
-                        )}
-
-                        {/* STEP 3 — OBJECTIVES & DEPLOYMENT */}
-                        {currentStep === 2 && (
-                          <div className="space-y-5">
-                            <div>
-                              <h3
-                                className="text-[20px] font-medium tracking-[-0.02em]"
-                                style={{ color: "var(--ink-primary)" }}
-                              >
-                                Primary engineering objective
-                              </h3>
-                              <p
-                                className="mt-1 text-[13.5px]"
-                                style={{ color: "var(--ink-secondary)" }}
-                              >
-                                Shapes the default rules inside your starter
-                                OpenTelemetry config.
-                              </p>
                             </div>
 
                             <div className="space-y-2">
-                              {PRIMARY_GOALS.map((goal, idx) => {
-                                const active = primaryGoal === goal;
-                                return (
-                                  <motion.button
-                                    key={goal}
-                                    type="button"
-                                    whileHover={{ scale: 1.015 }}
-                                    whileTap={{ scale: 0.985 }}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{
-                                      opacity: 1,
-                                      x: 0,
-                                      transition: { delay: 0.07 * idx },
-                                    }}
-                                    onClick={() => {
-                                      setPrimaryGoal(goal);
-                                      playSwitchClick(true);
-                                    }}
-                                    className="flex min-h-[44px] w-full cursor-pointer items-center justify-between rounded-xl border px-4 text-left text-[13.5px] font-medium"
-                                    style={{
-                                      backgroundColor: active
-                                        ? "var(--accent-brand-soft)"
-                                        : "var(--bg-surface-subtle)",
-                                      borderColor: active
-                                        ? "var(--accent-brand)"
-                                        : "var(--border-whisper)",
-                                      color: active
-                                        ? "var(--accent-brand-text)"
-                                        : "var(--ink-primary)",
-                                    }}
-                                  >
-                                    <span>{goal}</span>
-                                    <span
-                                      className="h-3.5 w-3.5 rounded-full border"
-                                      style={{
-                                        borderColor: active
-                                          ? "var(--accent-brand)"
-                                          : "var(--border-hover)",
-                                        backgroundColor: active
-                                          ? "var(--accent-brand)"
-                                          : "transparent",
+                              <span
+                                className="block text-[13.5px] font-medium"
+                                style={{ color: "var(--ink-primary)" }}
+                              >
+                                Main engineering goal
+                              </span>
+                              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                {PRIMARY_GOALS.map((goal) => {
+                                  const active = primaryGoal === goal;
+                                  return (
+                                    <motion.button
+                                      key={goal}
+                                      type="button"
+                                      whileHover={{ scale: 1.015 }}
+                                      whileTap={{ scale: 0.985 }}
+                                      onClick={() => {
+                                        setPrimaryGoal(goal);
+                                        playSwitchClick(true);
                                       }}
-                                    />
-                                  </motion.button>
-                                );
-                              })}
-                            </div>
-
-                            <motion.div variants={fadeInUp} className="space-y-1.5">
-                              <label
-                                htmlFor="demo-deploy"
-                                className="block text-[13px] font-medium"
-                                style={{ color: "var(--ink-primary)" }}
-                              >
-                                Deployment environment
-                              </label>
-                              <select
-                                id="demo-deploy"
-                                value={deploymentMode}
-                                onChange={(e) => setDeploymentMode(e.target.value)}
-                                className="h-11 w-full rounded-xl border px-3.5 text-[14px] outline-none"
-                                style={{
-                                  backgroundColor: "var(--bg-surface-subtle)",
-                                  borderColor: "var(--border-whisper)",
-                                  color: "var(--ink-primary)",
-                                }}
-                              >
-                                {DEPLOYMENT_MODES.map((m) => (
-                                  <option key={m.value} value={m.value}>
-                                    {m.label}
-                                  </option>
-                                ))}
-                              </select>
-                            </motion.div>
-                          </div>
-                        )}
-
-                        {/* STEP 4 — GUARDRAILS & FINAL NOTES */}
-                        {currentStep === 3 && (
-                          <div className="space-y-5">
-                            <div>
-                              <h3
-                                className="text-[20px] font-medium tracking-[-0.02em]"
-                                style={{ color: "var(--ink-primary)" }}
-                              >
-                                Guardrails &amp; notes
-                              </h3>
-                              <p
-                                className="mt-1 text-[13.5px]"
-                                style={{ color: "var(--ink-secondary)" }}
-                              >
-                                Select any inline switches to pre-enable in your
-                                briefing sandbox.
-                              </p>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-2">
-                              {GUARDRAIL_FEATURES.map((feat, idx) => {
-                                const active = selectedFeatures.includes(feat);
-                                return (
-                                  <motion.button
-                                    key={feat}
-                                    type="button"
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    initial={{ opacity: 0, y: 8 }}
-                                    animate={{
-                                      opacity: 1,
-                                      y: 0,
-                                      transition: { delay: 0.04 * idx },
-                                    }}
-                                    onClick={() => toggleFeature(feat)}
-                                    className="flex min-h-[42px] cursor-pointer items-center gap-2.5 rounded-xl border px-3 text-left text-[12.5px] font-medium"
-                                    style={{
-                                      backgroundColor: active
-                                        ? "var(--accent-spark-soft)"
-                                        : "var(--bg-surface-subtle)",
-                                      borderColor: active
-                                        ? "var(--accent-spark)"
-                                        : "var(--border-whisper)",
-                                      color: active
-                                        ? "var(--accent-spark-text)"
-                                        : "var(--ink-primary)",
-                                    }}
-                                  >
-                                    <span
-                                      className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded border"
+                                      className="flex min-h-[44px] cursor-pointer items-center justify-between rounded-xl border px-3.5 text-[left text-[13px] font-medium"
                                       style={{
-                                        borderColor: active
-                                          ? "var(--accent-spark)"
-                                          : "var(--border-hover)",
                                         backgroundColor: active
-                                          ? "var(--accent-spark)"
-                                          : "transparent",
-                                        color: "#ffffff",
+                                          ? "var(--accent-brand-soft)"
+                                          : "var(--bg-surface-subtle)",
+                                        borderColor: active
+                                          ? "var(--accent-brand)"
+                                          : "var(--border-whisper)",
+                                        color: active
+                                          ? "var(--accent-brand-text)"
+                                          : "var(--ink-primary)",
                                       }}
                                     >
-                                      {active && <Check className="h-3 w-3" />}
-                                    </span>
-                                    <span className="truncate">{feat}</span>
-                                  </motion.button>
-                                );
-                              })}
+                                      <span>{goal}</span>
+                                    </motion.button>
+                                  );
+                                })}
+                              </div>
                             </div>
-
-                            <motion.div variants={fadeInUp} className="space-y-1.5">
-                              <label
-                                htmlFor="demo-notes"
-                                className="block text-[13px] font-medium"
-                                style={{ color: "var(--ink-primary)" }}
-                              >
-                                Architecture notes (Optional)
-                              </label>
-                              <textarea
-                                id="demo-notes"
-                                rows={3}
-                                placeholder="e.g. Multi-agent customer support flow calling Stripe & Postgres..."
-                                value={notes}
-                                onChange={(e) => setNotes(e.target.value)}
-                                className="w-full rounded-xl border p-3.5 text-[14px] outline-none placeholder:text-[var(--ink-muted)]"
-                                style={{
-                                  backgroundColor: "var(--bg-surface-subtle)",
-                                  borderColor: "var(--border-whisper)",
-                                  color: "var(--ink-primary)",
-                                }}
-                              />
-                            </motion.div>
 
                             {submitError && (
                               <div
@@ -897,7 +622,6 @@ export function DemoBookingForm() {
                     </AnimatePresence>
                   </div>
 
-                  {/* Animated Back / Next Footer Bar */}
                   <div
                     className="flex items-center justify-between border-t px-6 py-4 sm:px-8"
                     style={{ borderColor: "var(--border-whisper)" }}
@@ -906,7 +630,10 @@ export function DemoBookingForm() {
                       type="button"
                       whileHover={currentStep > 0 ? { scale: 1.04 } : undefined}
                       whileTap={currentStep > 0 ? { scale: 0.96 } : undefined}
-                      onClick={handlePrev}
+                      onClick={() => {
+                        setCurrentStep(0);
+                        playSwitchClick(false);
+                      }}
                       disabled={currentStep === 0 || isSubmitting}
                       className="inline-flex min-h-[42px] cursor-pointer items-center gap-1 rounded-2xl border px-4 text-[13.5px] font-medium disabled:cursor-not-allowed disabled:opacity-40"
                       style={{
@@ -932,7 +659,7 @@ export function DemoBookingForm() {
                           : undefined
                       }
                       onClick={
-                        currentStep === STEPS.length - 1
+                        currentStep === 1
                           ? () => void handleSubmit()
                           : handleNext
                       }
@@ -948,7 +675,7 @@ export function DemoBookingForm() {
                           <Loader2 className="h-4 w-4 animate-spin" />
                           <span>Provisioning…</span>
                         </>
-                      ) : currentStep === STEPS.length - 1 ? (
+                      ) : currentStep === 1 ? (
                         <>
                           <span>Confirm briefing</span>
                           <Check className="h-4 w-4" />
@@ -965,14 +692,27 @@ export function DemoBookingForm() {
               )}
             </div>
 
+            {/* Zero-Gate Self-Serve Escape Hatch for Developers */}
             {!confirmation && (
-              <p
-                className="tabular-telemetry mt-4 text-center text-[12.5px]"
-                style={{ color: "var(--ink-secondary)" }}
-              >
-                Step {currentStep + 1} of {STEPS.length}:{" "}
-                {STEPS[currentStep]!.title}
-              </p>
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-2 px-1 text-[12.5px]">
+                <span
+                  className="tabular-telemetry"
+                  style={{ color: "var(--ink-secondary)" }}
+                >
+                  Step {currentStep + 1} of 2 · {STEPS[currentStep]!.title}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    triggerDownload("spanrail.otel.ts", GENERIC_STARTER_CONFIG)
+                  }
+                  className="inline-flex cursor-pointer items-center gap-1.5 font-medium underline-offset-4 hover:underline"
+                  style={{ color: "var(--accent-brand-text)" }}
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Just evaluating? Download generic OTel config</span>
+                </button>
+              </div>
             )}
           </div>
         </ScrollReveal>

@@ -1,42 +1,42 @@
 "use client";
 
+import Link from "next/link";
 import { SpanrailMark } from "@/components/layout/TopNav";
 
 const FOOTER_COLUMNS = [
   {
     title: "Product",
     links: [
-      { label: "Live Trace Sandbox", href: "#sandbox" },
-      { label: "Guardrail Router", href: "#capabilities" },
-      { label: "Production Impact", href: "#compare" },
-      { label: "Usage Pricing", href: "#pricing" },
+      { label: "Live Trace Sandbox", href: "/#sandbox" },
+      { label: "Guardrail Router", href: "/#capabilities" },
+      { label: "Production Impact", href: "/#compare" },
+      { label: "Usage Pricing", href: "/#pricing" },
     ],
   },
   {
     title: "Developers",
     links: [
-      { label: "OpenTelemetry (OTLP)", href: "#capabilities" },
-      { label: "TypeScript SDK", href: "#capabilities" },
-      { label: "Python SDK", href: "#capabilities" },
-      { label: "Starter Config", href: "#demo" },
+      { label: "Quickstart Docs", href: "/docs" },
+      { label: "TypeScript & Python SDK", href: "/docs#sdk" },
+      { label: "OTLP Wire Spec", href: "/docs#otlp" },
+      { label: "Starter Config", href: "/#demo" },
     ],
   },
   {
-    title: "Security",
+    title: "Security & Trust",
     links: [
-      { label: "Inline PII Redaction", href: "#sandbox" },
-      { label: "Retention Policies", href: "#pricing" },
-      { label: "VPC & HIPAA BAA", href: "#pricing" },
-      { label: "Architecture Review", href: "#demo" },
+      { label: "Security Architecture", href: "/security" },
+      { label: "Inline PII Redaction", href: "/security#pii" },
+      { label: "VPC & HIPAA BAA", href: "/security#vpc" },
+      { label: "Data Retention", href: "/#pricing" },
     ],
   },
   {
-    title: "Company",
+    title: "Legal & Company",
     links: [
-      { label: "Engineering Teams", href: "#compare" },
-      { label: "Book a Demo", href: "#demo" },
-      { label: "Transparent Pricing", href: "#pricing" },
-      { label: "spanrail.dev", href: "#" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
+      { label: "Book Engineering Review", href: "/#demo" },
     ],
   },
 ] as const;
@@ -49,16 +49,15 @@ export function Footer() {
     >
       <div className="spanrail-container">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-8">
-          {/* Brand Summary */}
           <div className="md:col-span-4">
-            <a
-              href="#"
+            <Link
+              href="/"
               className="inline-flex items-center gap-2.5 text-[15.5px] font-medium tracking-[-0.02em]"
               style={{ color: "var(--ink-primary)" }}
             >
-              <SpanrailMark className="h-[20px] w-[20px]" />
+              <SpanrailMark className="h-[22px] w-[22px]" />
               <span>Spanrail</span>
-            </a>
+            </Link>
             <p
               className="mt-3 max-w-[30ch] text-[13.5px] leading-[1.6]"
               style={{ color: "var(--ink-secondary)" }}
@@ -67,20 +66,20 @@ export function Footer() {
               production AI agents.
             </p>
 
-            {/* Quiet Operational Status Indicator */}
-            <div className="mt-5 inline-flex items-center gap-2 text-[12.5px]">
+            <Link
+              href="/security"
+              className="mt-5 inline-flex items-center gap-2 text-[12.5px] hover:text-[var(--ink-primary)]"
+              style={{ color: "var(--ink-secondary)" }}
+            >
               <span
                 aria-hidden="true"
                 className="h-1.5 w-1.5 rounded-full"
                 style={{ backgroundColor: "var(--status-pass-dot)" }}
               />
-              <span style={{ color: "var(--ink-secondary)" }}>
-                All ingestion regions operational
-              </span>
-            </div>
+              <span>Multi-region OTLP architecture</span>
+            </Link>
           </div>
 
-          {/* Minimal 4-Column Index */}
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 md:col-span-8">
             {FOOTER_COLUMNS.map((col) => (
               <div key={col.title}>
@@ -93,7 +92,7 @@ export function Footer() {
                 <ul className="mt-3.5 space-y-2.5">
                   {col.links.map((item) => (
                     <li key={item.label}>
-                      <a
+                      <Link
                         href={item.href}
                         className="inline-block text-[13px] hover:text-[var(--ink-primary)]"
                         style={{
@@ -102,7 +101,7 @@ export function Footer() {
                         }}
                       >
                         {item.label}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -111,9 +110,8 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Copyright & Subtle Desktop Shortcut Hint */}
         <div
-          className="mt-14 flex flex-col items-start justify-between gap-3 border-t pt-6 text-[12.5px] sm:flex-row sm:items-center"
+          className="mt-14 flex flex-col items-start justify-between gap-3 border-[t pt-6 text-[12.5px] sm:flex-row sm:items-center"
           style={{
             borderColor: "var(--border-whisper)",
             color: "var(--ink-secondary)",

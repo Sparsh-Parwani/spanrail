@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, Volume2, VolumeX, X } from "lucide-react";
@@ -9,9 +10,10 @@ import { useBreakpoint } from "@/lib/useBreakpoint";
 import { REDUCED_TRANSITION } from "@/components/ui/Primitives";
 
 const NAV_LINKS = [
-  { href: "#sandbox", label: "Sandbox" },
-  { href: "#capabilities", label: "Capabilities" },
-  { href: "#pricing", label: "Pricing" },
+  { href: "/#sandbox", label: "Sandbox" },
+  { href: "/#capabilities", label: "Capabilities" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/docs", label: "Docs" },
 ] as const;
 
 export function SpanrailMark({ className = "h-6 w-6" }: { className?: string }) {
@@ -125,22 +127,22 @@ export function TopNav() {
       }}
     >
       <div className="spanrail-container flex h-14 items-center justify-between md:grid md:h-16 md:grid-cols-[1fr_auto_1fr]">
-        <a
-          href="#"
+        <Link
+          href="/"
           className="inline-flex min-h-[44px] items-center gap-2.5 justify-self-start rounded-lg text-[15.5px] font-medium tracking-[-0.02em]"
           style={{ color: "var(--ink-primary)" }}
           aria-label="Spanrail home"
         >
           <SpanrailMark className="h-[24px] w-[24px]" />
           <span>Spanrail</span>
-        </a>
+        </Link>
 
         <nav
           aria-label="Primary navigation"
           className="hidden items-center justify-center gap-1 justify-self-center md:flex"
         >
           {NAV_LINKS.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="inline-flex min-h-[44px] items-center rounded-full px-4 text-[14px] font-medium hover:text-[var(--ink-primary)]"
@@ -150,7 +152,7 @@ export function TopNav() {
               }}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -179,8 +181,8 @@ export function TopNav() {
             )}
           </button>
 
-          <a
-            href="#demo"
+          <Link
+            href="/#demo"
             className="btn-tactile ml-1 hidden min-h-[38px] items-center justify-center rounded-full px-4 text-[13.5px] font-medium hover:bg-[var(--btn-primary-bg-hover)] md:inline-flex"
             style={{
               backgroundColor: "var(--btn-primary-bg)",
@@ -188,7 +190,7 @@ export function TopNav() {
             }}
           >
             Book a demo
-          </a>
+          </Link>
 
           <button
             type="button"
@@ -241,7 +243,7 @@ export function TopNav() {
           >
             <div className="spanrail-container flex flex-col gap-1 py-4">
               {NAV_LINKS.map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
@@ -249,12 +251,12 @@ export function TopNav() {
                   style={{ color: "var(--ink-primary)" }}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
 
               <div className="pt-2">
-                <a
-                  href="#demo"
+                <Link
+                  href="/#demo"
                   onClick={() => setMobileMenuOpen(false)}
                   className="btn-tactile flex min-h-[48px] w-full items-center justify-center rounded-full text-[15px] font-medium"
                   style={{
@@ -263,7 +265,7 @@ export function TopNav() {
                   }}
                 >
                   Book a demo
-                </a>
+                </Link>
               </div>
             </div>
           </motion.nav>
