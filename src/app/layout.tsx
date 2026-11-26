@@ -46,7 +46,7 @@ export default function RootLayout({
       <body className="antialiased selection:bg-[var(--accent-spark-soft)]">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-[var(--btn-primary-bg)] focus:px-4 focus:py-2 focus:text-[sm focus:font-medium focus:text-[var(--btn-primary-ink)]"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-[var(--btn-primary-bg)] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-[var(--btn-primary-ink)]"
         >
           Skip to content
         </a>
