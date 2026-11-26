@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { Check, Copy } from "lucide-react";
 import { toast } from "sonner";
 import Pipeline from "@/components/react-bits/pipeline";
@@ -447,7 +447,7 @@ function PromptComparisonStage() {
                 className="h-2 w-full overflow-hidden rounded-full"
                 style={{ backgroundColor: "var(--bg-surface-subtle)" }}
               >
-                <motion.div
+                <m.div
                   initial={false}
                   animate={{ width: `${row.pct}%` }}
                   transition={
@@ -751,7 +751,7 @@ export function CapabilitiesGrid() {
                 >
                   {/* Crisp Ocean Blue Left Active Rail */}
                   {isSelected && (
-                    <motion.span
+                    <m.span
                       layoutId="capabilities-active-rail"
                       aria-hidden="true"
                       transition={
@@ -802,7 +802,7 @@ export function CapabilitiesGrid() {
             }}
           >
             <AnimatePresence mode="wait" initial={false}>
-              <motion.div
+              <m.div
                 key={activeTab}
                 initial={
                   prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 8 }
@@ -824,7 +824,7 @@ export function CapabilitiesGrid() {
                 {activeTab === "sdk" && <DropInSdkStage />}
                 {activeTab === "prompts" && <PromptComparisonStage />}
                 {activeTab === "spend" && <ProviderSpendStage />}
-              </motion.div>
+              </m.div>
             </AnimatePresence>
           </div>
         </div>

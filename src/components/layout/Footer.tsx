@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { SpanrailMark } from "@/components/layout/TopNav";
+import { SpanrailMark } from "@/components/ui/SpanrailMark";
 
 const FOOTER_COLUMNS = [
   {

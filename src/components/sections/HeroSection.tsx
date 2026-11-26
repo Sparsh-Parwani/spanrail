@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { ArrowDown, Check, ChevronDown, Copy } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -181,13 +181,9 @@ export function HeroSection() {
       className="relative isolate pt-20 pb-10 md:pt-24 md:pb-12"
     >
       <div className="spanrail-container">
+        {/* Instant Frame-0 LCP Paint (zero opacity:0 wait on async LazyMotion chunk) */}
         <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
-          <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-7"
-          >
+          <div className="lg:col-span-7">
             <div
               className="tabular-telemetry inline-flex items-center gap-2 text-[12px] tracking-[0.02em]"
               style={{ color: "var(--ink-secondary)" }}
@@ -254,23 +250,16 @@ export function HeroSection() {
                 />
               </button>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="h-[290px] w-full sm:h-[340px] lg:col-span-5 lg:h-[380px]"
-          >
+          <div className="h-[290px] w-full sm:h-[340px] lg:col-span-5 lg:h-[380px]">
             <NeuralBrain />
-          </motion.div>
+          </div>
         </div>
 
-        <motion.div
+        {/* Full-Width Interactive Live Trace Sandbox (visible immediately on Frame 0) */}
+        <div
           id="sandbox"
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
           className="surface-fade mt-6 scroll-mt-24 overflow-hidden rounded-3xl border md:mt-8"
           style={{
             backgroundColor: "var(--bg-surface)",
@@ -388,21 +377,14 @@ export function HeroSection() {
             </div>
 
             <div className="grid grid-cols-1 gap-2.5 md:grid-cols-3 md:gap-3">
-              {GUARDRAIL_CONTROLS.map((ctrl, idx) => {
+              {GUARDRAIL_CONTROLS.map((ctrl) => {
                 const isOn = guardrails[ctrl.key];
                 const switchId = `hero-switch-${ctrl.key}`;
                 const captionId = `hero-caption-${ctrl.key}`;
 
                 return (
-                  <motion.div
+                  <div
                     key={ctrl.key}
-                    initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.35,
-                      delay: 0.16 + idx * 0.07,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
                     className="surface-fade flex min-h-[54px] items-center justify-between gap-3 rounded-2xl border px-4 py-3"
                     style={{
                       backgroundColor: "var(--bg-surface-solid)",
@@ -436,7 +418,7 @@ export function HeroSection() {
                       onCheckedChange={() => handleToggleGuardrail(ctrl.key)}
                       ariaDescribedBy={captionId}
                     />
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
@@ -519,27 +501,29 @@ export function HeroSection() {
                             </span>
                           </div>
 
+                          {/* Phone GPU-only x + scaleX waterfall bar */}
                           <div
-                            className="relative mt-2 h-1.5 w-full max-w-[180px] overflow-hidden rounded-full md:hidden"
+                            className="relative mt-2 h-1.5 w-full max-w-[180px] overflow-hidden rounded-[2px] md:hidden"
                             style={{ backgroundColor: "var(--bg-surface-subtle)" }}
                           >
-                            <motion.div
+                            <m.div
                               initial={
                                 prefersReducedMotion
                                   ? false
-                                  : { left: "0%", width: "0%" }
+                                  : { x: `${startPct}%`, scaleX: 0 }
                               }
                               animate={{
-                                left: `${startPct}%`,
-                                width: `${widthPct}%`,
+                                x: `${startPct}%`,
+                                scaleX: widthPct / 100,
                               }}
                               transition={
                                 prefersReducedMotion
                                   ? REDUCED_TRANSITION
-                                  : { ...TACTILE_SPRING, delay: 0.08 + spanIdx * 0.04 }
+                                  : { ...TACTILE_SPRING, delay: 0.05 + spanIdx * 0.03 }
                               }
-                              className="absolute inset-y-0 rounded-full"
+                              className="absolute inset-0 w-full rounded-[2px] will-change-transform"
                               style={{
+                                transformOrigin: "left center",
                                 backgroundColor: getSpanBarColor(span.tone),
                               }}
                             />
@@ -548,31 +532,33 @@ export function HeroSection() {
                       </div>
 
                       <div className="flex shrink-0 items-center gap-3 md:gap-6">
+                        {/* Desktop GPU-only x + scaleX waterfall bar */}
                         <div
-                          className="relative hidden h-1.5 w-[168px] overflow-hidden rounded-full md:block"
+                          className="relative hidden h-1.5 w-[168px] overflow-hidden rounded-[2px] md:block"
                           style={{
                             backgroundColor: isExpanded
                               ? "var(--bg-surface-solid)"
                               : "var(--bg-surface-subtle)",
                           }}
                         >
-                          <motion.div
+                          <m.div
                             initial={
                               prefersReducedMotion
                                 ? false
-                                : { left: "0%", width: "0%" }
+                                : { x: `${startPct}%`, scaleX: 0 }
                             }
                             animate={{
-                              left: `${startPct}%`,
-                              width: `${widthPct}%`,
+                              x: `${startPct}%`,
+                              scaleX: widthPct / 100,
                             }}
                             transition={
                               prefersReducedMotion
                                 ? REDUCED_TRANSITION
-                                : { ...TACTILE_SPRING, delay: 0.08 + spanIdx * 0.04 }
+                                : { ...TACTILE_SPRING, delay: 0.05 + spanIdx * 0.03 }
                             }
-                            className="absolute inset-y-0 rounded-full"
+                            className="absolute inset-0 w-full rounded-[2px] will-change-transform"
                             style={{
+                              transformOrigin: "left center",
                               backgroundColor: getSpanBarColor(span.tone),
                             }}
                           />
@@ -609,7 +595,7 @@ export function HeroSection() {
 
                     <AnimatePresence initial={false}>
                       {isExpanded && (
-                        <motion.div
+                        <m.div
                           id={panelId}
                           role="region"
                           aria-label={`${span.name} JSON payload`}
@@ -704,7 +690,7 @@ export function HeroSection() {
                               </pre>
                             </div>
                           </div>
-                        </motion.div>
+                        </m.div>
                       )}
                     </AnimatePresence>
                   </li>
@@ -712,7 +698,7 @@ export function HeroSection() {
               })}
             </ul>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

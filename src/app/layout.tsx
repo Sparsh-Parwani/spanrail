@@ -1,9 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/plus-jakarta-sans";
 import "@fontsource-variable/jetbrains-mono";
-import "@fontsource/instrument-serif/400.css";
-import "@fontsource/instrument-serif/400-italic.css";
 import { Toaster } from "sonner";
+import { MotionProvider } from "@/components/ui/MotionProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -51,7 +50,7 @@ export default function RootLayout({
           Skip to content
         </a>
 
-        {children}
+        <MotionProvider>{children}</MotionProvider>
 
         <Toaster
           position="bottom-right"

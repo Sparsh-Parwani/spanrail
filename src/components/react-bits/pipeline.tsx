@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useBreakpoint } from "@/lib/useBreakpoint";
 
 export type PipelineRuleId = "injection" | "budget" | "fallback";
@@ -156,7 +156,7 @@ export default function Pipeline({
                   }}
                 >
                   {!prefersReducedMotion && isActive && !(activeRule === "injection" && idx === 2) && (
-                    <motion.span
+                    <m.span
                       key={`flow-${activeRule}-${activeIndex}-${idx}`}
                       initial={{ x: "-100%" }}
                       animate={{ x: "120%" }}

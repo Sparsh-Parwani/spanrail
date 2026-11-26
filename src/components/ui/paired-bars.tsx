@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useBreakpoint } from "@/lib/useBreakpoint";
 
 export type PairedBarMeasure = {
@@ -153,7 +153,7 @@ export function PairedBars({
                           title={`${group.label} · ${measure.label} · ${valueLabel}`}
                         >
                           <GridLines ticks={axisTicks} max={axisMax} />
-                          <motion.div
+                          <m.div
                             initial={
                               prefersReducedMotion ? false : { scaleX: 0 }
                             }

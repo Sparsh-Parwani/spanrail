@@ -10,7 +10,7 @@ import {
 import * as SwitchPrimitive from "@radix-ui/react-switch";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useBreakpoint } from "@/lib/useBreakpoint";
 
 export const TACTILE_SPRING = {
@@ -72,7 +72,7 @@ export function SoftSwitch({
         className="pointer-events-none absolute -inset-x-1 -inset-y-2.5"
       />
       <SwitchPrimitive.Thumb asChild>
-        <motion.span
+        <m.span
           layout={false}
           initial={false}
           animate={{ x: checked ? 18 : 0 }}
@@ -265,7 +265,7 @@ export function SoftTabsTrigger({
       }}
     >
       {isActive && ctx && (
-        <motion.span
+        <m.span
           layoutId={ctx.indicatorId}
           aria-hidden="true"
           transition={
@@ -369,7 +369,7 @@ export function SegmentedControl<T extends string>({
             }}
           >
             {isActive && (
-              <motion.span
+              <m.span
                 layoutId={indicatorId}
                 aria-hidden="true"
                 transition={

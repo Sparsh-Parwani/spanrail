@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useSpanrailStore } from "@/store/useSpanrailStore";
 import { calculatePricing, formatUsd } from "@/lib/pricing";
@@ -79,7 +79,7 @@ export function MobileBottomDock() {
   return (
     <AnimatePresence>
       {shouldShow && (
-        <motion.aside
+        <m.aside
           aria-label="Live plan estimate and demo shortcut"
           initial={
             prefersReducedMotion
@@ -147,7 +147,7 @@ export function MobileBottomDock() {
               <ArrowUpRight className="h-4 w-4" strokeWidth={1.85} />
             </a>
           </div>
-        </motion.aside>
+        </m.aside>
       )}
     </AnimatePresence>
   );

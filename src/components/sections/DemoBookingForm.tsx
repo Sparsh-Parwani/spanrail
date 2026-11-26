@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import {
   Check,
   ChevronLeft,
@@ -261,7 +261,7 @@ export function DemoBookingForm() {
                     const canJump = index <= currentStep;
 
                     return (
-                      <motion.button
+                      <m.button
                         key={step.id}
                         type="button"
                         disabled={!canJump}
@@ -300,7 +300,7 @@ export function DemoBookingForm() {
                         >
                           {step.title}
                         </span>
-                      </motion.button>
+                      </m.button>
                     );
                   })}
                 </div>
@@ -309,7 +309,7 @@ export function DemoBookingForm() {
                   className="mt-2 h-1.5 w-full overflow-hidden rounded-full"
                   style={{ backgroundColor: "var(--bg-surface-subtle)" }}
                 >
-                  <motion.div
+                  <m.div
                     className="h-full rounded-full"
                     style={{ backgroundColor: "var(--accent-spark)" }}
                     initial={false}
@@ -329,7 +329,7 @@ export function DemoBookingForm() {
               }}
             >
               {confirmation ? (
-                <motion.div
+                <m.div
                   initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
@@ -373,7 +373,7 @@ export function DemoBookingForm() {
                   </pre>
 
                   <div className="mt-6 flex flex-wrap items-center gap-3">
-                    <motion.button
+                    <m.button
                       type="button"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.97 }}
@@ -391,7 +391,7 @@ export function DemoBookingForm() {
                     >
                       <Download className="h-4 w-4" />
                       <span>Download starter spanrail.otel.ts</span>
-                    </motion.button>
+                    </m.button>
 
                     <button
                       type="button"
@@ -406,12 +406,12 @@ export function DemoBookingForm() {
                       <span>Reset</span>
                     </button>
                   </div>
-                </motion.div>
+                </m.div>
               ) : (
                 <div>
                   <div className="min-h-[300px] p-6 sm:p-8">
                     <AnimatePresence mode="wait" initial={false}>
-                      <motion.div
+                      <m.div
                         key={currentStep}
                         initial={prefersReducedMotion ? { opacity: 0 } : "hidden"}
                         animate={
@@ -490,7 +490,7 @@ export function DemoBookingForm() {
                                 {VOLUME_TIERS.map((tier) => {
                                   const active = volumeTier === tier;
                                   return (
-                                    <motion.button
+                                    <m.button
                                       key={tier}
                                       type="button"
                                       whileHover={{ scale: 1.02 }}
@@ -514,7 +514,7 @@ export function DemoBookingForm() {
                                       }}
                                     >
                                       {tier}
-                                    </motion.button>
+                                    </m.button>
                                   );
                                 })}
                               </div>
@@ -535,7 +535,7 @@ export function DemoBookingForm() {
                                 {AGENT_STACKS.map((stack) => {
                                   const active = agentStacks.includes(stack);
                                   return (
-                                    <motion.button
+                                    <m.button
                                       key={stack}
                                       type="button"
                                       whileHover={{ scale: 1.02 }}
@@ -558,7 +558,7 @@ export function DemoBookingForm() {
                                       {active && (
                                         <Check className="h-3.5 w-3.5 shrink-0" />
                                       )}
-                                    </motion.button>
+                                    </m.button>
                                   );
                                 })}
                               </div>
@@ -575,7 +575,7 @@ export function DemoBookingForm() {
                                 {PRIMARY_GOALS.map((goal) => {
                                   const active = primaryGoal === goal;
                                   return (
-                                    <motion.button
+                                    <m.button
                                       key={goal}
                                       type="button"
                                       whileHover={{ scale: 1.015 }}
@@ -598,7 +598,7 @@ export function DemoBookingForm() {
                                       }}
                                     >
                                       <span>{goal}</span>
-                                    </motion.button>
+                                    </m.button>
                                   );
                                 })}
                               </div>
@@ -618,7 +618,7 @@ export function DemoBookingForm() {
                             )}
                           </div>
                         )}
-                      </motion.div>
+                      </m.div>
                     </AnimatePresence>
                   </div>
 
@@ -626,7 +626,7 @@ export function DemoBookingForm() {
                     className="flex items-center justify-between border-t px-6 py-4 sm:px-8"
                     style={{ borderColor: "var(--border-whisper)" }}
                   >
-                    <motion.button
+                    <m.button
                       type="button"
                       whileHover={currentStep > 0 ? { scale: 1.04 } : undefined}
                       whileTap={currentStep > 0 ? { scale: 0.96 } : undefined}
@@ -644,9 +644,9 @@ export function DemoBookingForm() {
                     >
                       <ChevronLeft className="h-4 w-4" />
                       <span>Back</span>
-                    </motion.button>
+                    </m.button>
 
-                    <motion.button
+                    <m.button
                       type="button"
                       whileHover={
                         isStepValid() && !isSubmitting
@@ -686,7 +686,7 @@ export function DemoBookingForm() {
                           <ChevronRight className="h-4 w-4" />
                         </>
                       )}
-                    </motion.button>
+                    </m.button>
                   </div>
                 </div>
               )}

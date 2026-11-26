@@ -15,7 +15,7 @@ interface CustomerLogo {
 
 const SANS = '"Plus Jakarta Sans Variable", "Plus Jakarta Sans", sans-serif';
 const MONO = '"JetBrains Mono Variable", "JetBrains Mono", monospace';
-const SERIF = '"Instrument Serif", Georgia, serif';
+const SERIF = SANS;
 
 const CUSTOMERS: readonly CustomerLogo[] = [
   {
@@ -32,7 +32,7 @@ const CUSTOMERS: readonly CustomerLogo[] = [
   {
     name: "Kestrel Pay",
     markPosition: "right",
-    fontStyle: { fontFamily: SERIF, fontSize: "25px", letterSpacing: "-0.01em", fontWeight: 400 },
+    fontStyle: { fontFamily: SERIF, fontSize: "19.5px", letterSpacing: "0.08em", fontWeight: 400, textTransform: "uppercase" },
     mark: (
       <svg viewBox="0 0 28 28" fill="none" aria-hidden="true" className="h-7 w-7 shrink-0">
         <path d="M4 21L12.5 6H24L15.5 21H4Z" stroke="currentColor" strokeWidth="1.9" strokeLinejoin="round" />
@@ -99,7 +99,7 @@ const CUSTOMERS: readonly CustomerLogo[] = [
   {
     name: "Alder Bio",
     markPosition: "right",
-    fontStyle: { fontFamily: SERIF, fontStyle: "italic", fontSize: "25px", fontWeight: 400 },
+    fontStyle: { fontFamily: SERIF, fontStyle: "italic", fontSize: "21px", letterSpacing: "-0.02em", fontWeight: 500 },
     mark: (
       <svg viewBox="0 0 28 28" fill="none" aria-hidden="true" className="h-7 w-7 shrink-0">
         <path d="M7 22C7 12.5 12 6 22 5C21 15 15.5 22 7 22Z" stroke="currentColor" strokeWidth="1.9" strokeLinejoin="round" />
@@ -135,7 +135,7 @@ const CUSTOMERS: readonly CustomerLogo[] = [
   {
     name: "Loomis Treasury",
     markPosition: "left",
-    fontStyle: { fontFamily: SERIF, fontSize: "25px", letterSpacing: "0.01em", fontWeight: 400 },
+    fontStyle: { fontFamily: SERIF, fontSize: "19.5px", letterSpacing: "0.04em", fontWeight: 400 },
     mark: (
       <svg viewBox="0 0 28 28" fill="none" aria-hidden="true" className="h-7 w-7 shrink-0">
         <path d="M5 21H23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />

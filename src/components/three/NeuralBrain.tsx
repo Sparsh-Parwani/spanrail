@@ -419,6 +419,8 @@ export default function NeuralBrain() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { isPhone, prefersReducedMotion, mounted } = useBreakpoint();
   const [inView, setInView] = useState(true);
+  const [tabHidden, setTabHidden] = useState(false);
+  const [deferredReady, setDeferredReady] = useState(false);
   const [contextLost, setContextLost] = useState(false);
 
   const interactionRef = useRef<InteractionRef>({
@@ -434,6 +436,26 @@ export default function NeuralBrain() {
     hovering: false,
   });
 
+  useEffect(() => {
+    let timer: number | undefined;
+    let idleId: number | undefined;
+    const win = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (win.requestIdleCallback) {
+      idleId = win.requestIdleCallback(() => setDeferredReady(true), { timeout: 220 });
+    } else {
+      timer = window.setTimeout(() => setDeferredReady(true), 180);
+    }
+    const onVis = () => setTabHidden(document.hidden);
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      if (idleId !== undefined) win.cancelIdleCallback?.(idleId);
+      if (timer !== undefined) window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, []);
   useEffect(() => {
     const el = containerRef.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
@@ -487,7 +509,7 @@ export default function NeuralBrain() {
     interactionRef.current.dragging = false;
   };
 
-  if (!mounted || contextLost) {
+  if (!mounted || !deferredReady || contextLost) {
     return <div className="h-full w-full" aria-hidden="true" />;
   }
 
@@ -504,7 +526,7 @@ export default function NeuralBrain() {
     >
       <Canvas
         dpr={[1, isPhone ? 1.25 : 1.5]}
-        frameloop={inView && !prefersReducedMotion ? "always" : "demand"}
+        frameloop={inView && !tabHidden && !prefersReducedMotion ? "always" : "demand"}
         camera={{ position: [0, 0.1, 4.15], fov: 38 }}
         gl={{
           antialias: true,

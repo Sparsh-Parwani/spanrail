@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 export type BreakpointTier = "phone" | "tablet" | "desktop";
 
@@ -13,7 +13,7 @@ export interface BreakpointState {
   mounted: boolean;
 }
 
-const DEFAULT_STATE: BreakpointState = {
+const SERVER_SNAPSHOT: BreakpointState = {
   tier: "desktop",
   isPhone: false,
   isTablet: false,
@@ -22,50 +22,84 @@ const DEFAULT_STATE: BreakpointState = {
   mounted: false,
 };
 
-function readCurrentState(): BreakpointState {
-  const width = window.innerWidth;
-  const tier: BreakpointTier =
-    width < 768 ? "phone" : width < 1024 ? "tablet" : "desktop";
+let currentSnapshot: BreakpointState = SERVER_SNAPSHOT;
+const listeners = new Set<() => void>();
+let initialized = false;
+
+function computeSnapshot(): BreakpointState {
+  if (typeof window === "undefined") return SERVER_SNAPSHOT;
+  const isPhone = window.matchMedia("(max-width: 767px)").matches;
+  const isTablet =
+    !isPhone && window.matchMedia("(max-width: 1023px)").matches;
+  const tier: BreakpointTier = isPhone
+    ? "phone"
+    : isTablet
+      ? "tablet"
+      : "desktop";
   const prefersReducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
   ).matches;
 
-  return {
+  if (
+    currentSnapshot.mounted &&
+    currentSnapshot.tier === tier &&
+    currentSnapshot.prefersReducedMotion === prefersReducedMotion
+  ) {
+    return currentSnapshot;
+  }
+
+  currentSnapshot = {
     tier,
-    isPhone: tier === "phone",
-    isTablet: tier === "tablet",
+    isPhone,
+    isTablet,
     isDesktop: tier === "desktop",
     prefersReducedMotion,
     mounted: true,
   };
+  return currentSnapshot;
+}
+
+function ensureInitialized() {
+  if (initialized || typeof window === "undefined") return;
+  initialized = true;
+  computeSnapshot();
+
+  const mqPhone = window.matchMedia("(max-width: 767px)");
+  const mqTablet = window.matchMedia(
+    "(min-width: 768px) and (max-width: 1023px)"
+  );
+  const mqReduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  const notify = () => {
+    const prev = currentSnapshot;
+    const next = computeSnapshot();
+    if (next !== prev) {
+      listeners.forEach((cb) => cb());
+    }
+  };
+
+  mqPhone.addEventListener("change", notify);
+  mqTablet.addEventListener("change", notify);
+  mqReduced.addEventListener("change", notify);
+}
+
+function subscribe(callback: () => void): () => void {
+  ensureInitialized();
+  listeners.add(callback);
+  return () => {
+    listeners.delete(callback);
+  };
+}
+
+function getSnapshot(): BreakpointState {
+  ensureInitialized();
+  return currentSnapshot;
+}
+
+function getServerSnapshot(): BreakpointState {
+  return SERVER_SNAPSHOT;
 }
 
 export function useBreakpoint(): BreakpointState {
-  const [state, setState] = useState<BreakpointState>(DEFAULT_STATE);
-
-  useEffect(() => {
-    const mqPhone = window.matchMedia("(max-width: 767px)");
-    const mqTablet = window.matchMedia(
-      "(min-width: 768px) and (max-width: 1023px)"
-    );
-    const mqReduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    const update = () => {
-      setState(readCurrentState());
-    };
-
-    update();
-
-    mqPhone.addEventListener("change", update);
-    mqTablet.addEventListener("change", update);
-    mqReduced.addEventListener("change", update);
-
-    return () => {
-      mqPhone.removeEventListener("change", update);
-      mqTablet.removeEventListener("change", update);
-      mqReduced.removeEventListener("change", update);
-    };
-  }, []);
-
-  return state;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

@@ -250,3 +250,26 @@ p {
     width: 100%;
   }
 }
+/* Layout containment isolates slider/form/comparison updates from full-page reflow */
+#compare,
+#demo {
+  contain: layout style;
+}
+
+#pricing {
+  contain: style;
+}
+
+/* Lighter elevation shadows on mobile/tablet GPUs (< 1024px) */
+@media (max-width: 1023px) {
+  :root,
+  [data-theme="dark"] {
+    --shadow-stage:
+      0 1px 2px rgba(0, 0, 0, 0.22),
+      0 10px 20px -10px rgba(0, 0, 0, 0.42),
+      inset 0 1px 0 rgba(240, 245, 247, 0.05);
+    --shadow-card:
+      0 1px 2px rgba(0, 0, 0, 0.18),
+      0 6px 14px -8px rgba(0, 0, 0, 0.34);
+  }
+}
