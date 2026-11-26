@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 import { useBreakpoint } from "@/lib/useBreakpoint";
 
 export type PipelineRuleId = "injection" | "budget" | "fallback";
@@ -50,6 +50,8 @@ export default function Pipeline({
   const { prefersReducedMotion } = useBreakpoint();
   const stages = RULE_STAGES[activeRule];
   const maxStep = activeRule === "injection" ? 3 : stages.length;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { amount: 0.1 });
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -57,15 +59,16 @@ export default function Pipeline({
   }, [activeRule]);
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || !isInView) return;
     const id = window.setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % maxStep);
     }, 1050);
     return () => window.clearInterval(id);
-  }, [prefersReducedMotion, maxStep]);
+  }, [prefersReducedMotion, isInView, maxStep]);
 
   return (
     <div
+      ref={containerRef}
       className="relative overflow-hidden rounded-xl border px-3 py-5 sm:px-4"
       style={{
         backgroundColor: "var(--bg-surface-subtle)",

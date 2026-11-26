@@ -177,8 +177,6 @@ export function PricingCalculator() {
               backgroundColor: "var(--bg-nav-glass)",
               borderColor: "var(--border-whisper)",
               boxShadow: "var(--shadow-card)",
-              backdropFilter: "blur(14px)",
-              WebkitBackdropFilter: "blur(14px)",
             }}
           >
             <div>

@@ -1,21 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { useMemo, type CSSProperties } from "react";
-import { useBreakpoint } from "@/lib/useBreakpoint";
+import type { CSSProperties } from "react";
 import { StatsBand, type Stat } from "@/components/ui/stats-band";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
-const LogoLoop = dynamic(() => import("@/components/LogoLoop"), {
-  ssr: false,
-  loading: () => (
-    <div className="spanrail-container flex items-center justify-between gap-8 overflow-hidden py-1 opacity-75">
-      {CUSTOMERS.slice(0, 5).map((customer) => (
-        <CustomerLockup key={customer.name} customer={customer} />
-      ))}
-    </div>
-  ),
-});
+
 
 interface CustomerLogo {
   name: string;
@@ -295,17 +284,6 @@ function CustomerLockup({ customer }: { customer: CustomerLogo }) {
 }
 
 export function TrustStrip() {
-  const { prefersReducedMotion } = useBreakpoint();
-
-  const logoItems = useMemo(
-    () =>
-      CUSTOMERS.map((customer) => ({
-        node: <CustomerLockup customer={customer} />,
-        title: customer.name,
-      })),
-    []
-  );
-
   return (
     <section
       aria-label="Production teams and platform telemetry"
@@ -335,27 +313,22 @@ export function TrustStrip() {
             ))}
           </ul>
 
-          {prefersReducedMotion ? (
-            <div className="spanrail-container flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
-              {CUSTOMERS.map((customer) => (
-                <CustomerLockup key={customer.name} customer={customer} />
-              ))}
+          <div className="mx-auto max-w-[1440px]">
+            <div className="marquee-viewport">
+              <div className="marquee-rail">
+                <div className="marquee-track">
+                  {CUSTOMERS.map((customer) => (
+                    <CustomerLockup key={`a-${customer.name}`} customer={customer} />
+                  ))}
+                </div>
+                <div className="marquee-track" aria-hidden="true">
+                  {CUSTOMERS.map((customer) => (
+                    <CustomerLockup key={`b-${customer.name}`} customer={customer} />
+                  ))}
+                </div>
+              </div>
             </div>
-          ) : (
-            <div className="mx-auto max-w-[1440px] px-2">
-              <LogoLoop
-                logos={logoItems}
-                speed={52}
-                direction="left"
-                logoHeight={44}
-                gap={68}
-                fadeOut
-                fadeOutColor="#050b0f"
-                scaleOnHover
-                ariaLabel="Representative engineering teams"
-              />
-            </div>
-          )}
+          </div>
         </div>
       </ScrollReveal>
 

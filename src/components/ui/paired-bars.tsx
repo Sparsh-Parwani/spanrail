@@ -155,20 +155,22 @@ export function PairedBars({
                           <GridLines ticks={axisTicks} max={axisMax} />
                           <motion.div
                             initial={
-                              prefersReducedMotion ? false : { width: "0%" }
+                              prefersReducedMotion ? false : { scaleX: 0 }
                             }
                             animate={
                               inView || prefersReducedMotion
-                                ? { width: targetWidth }
-                                : { width: "0%" }
+                                ? { scaleX: 1 }
+                                : { scaleX: 0 }
                             }
                             transition={{
-                              duration: 0.78,
-                              delay: groupIndex * 0.1 + measureIndex * 0.12,
+                              duration: 0.72,
+                              delay: groupIndex * 0.08 + measureIndex * 0.1,
                               ease: [0.22, 1, 0.36, 1],
                             }}
-                            className="absolute inset-y-[2px] left-0 rounded-[2px]"
+                            className="absolute inset-y-[2px] left-0 rounded-[2px] will-change-transform"
                             style={{
+                              width: targetWidth,
+                              transformOrigin: "left center",
                               backgroundColor: barColor,
                               opacity: isPrimary ? 1 : 0.55,
                             }}

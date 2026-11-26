@@ -167,7 +167,7 @@ function NeuralBrainMesh({
   interactionRef: React.MutableRefObject<InteractionRef>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
-  const nodeCount = isPhone ? 360 : 620;
+  const nodeCount = isPhone ? 320 : 460;
 
   const data = useMemo(() => buildNeuralBrainData(nodeCount), [nodeCount]);
   const spriteTex = useMemo(() => createCircleSpriteTexture(), []);
@@ -206,7 +206,7 @@ function NeuralBrainMesh({
   const nodeMat = useMemo(
     () =>
       new THREE.PointsMaterial({
-        size: isPhone ? 0.085 : 0.09,
+        size: isPhone ? 0.088 : 0.098,
         map: spriteTex,
         transparent: true,
         opacity: 0.92,
@@ -334,7 +334,7 @@ function NeuralBrainMesh({
     lineMat.color.lerp(palette.targetLine, Math.min(1, dt * 6));
     signalMat.color.lerp(palette.targetSignal, Math.min(1, dt * 6));
     lineMat.opacity = 0.28 + a.toggleKick * 0.18;
-    nodeMat.size = (isPhone ? 0.085 : 0.09) * (1 + a.toggleKick * 0.25);
+    nodeMat.size = (isPhone ? 0.088 : 0.098) * (1 + a.toggleKick * 0.25);
 
     // 1. Deform cortex particle positions
     const posAttr = nodeGeo.getAttribute("position") as THREE.BufferAttribute;
@@ -442,7 +442,7 @@ export default function NeuralBrain() {
         const entry = entries[0];
         if (entry) setInView(entry.isIntersecting);
       },
-      { rootMargin: "80px 0px" }
+      { rootMargin: "0px" }
     );
     observer.observe(el);
     return () => observer.disconnect();

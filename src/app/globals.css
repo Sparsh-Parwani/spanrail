@@ -33,10 +33,10 @@
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 
   --bg-canvas: var(--p-ink-950);
-  --bg-surface: rgba(12, 22, 28, 0.93);
+  --bg-surface: #0c161c;
   --bg-surface-solid: var(--p-ink-850);
   --bg-surface-subtle: var(--p-ink-800);
-  --bg-nav-glass: rgba(5, 11, 15, 0.82);
+  --bg-nav-glass: rgba(5, 11, 15, 0.96);
 
   --border-whisper: rgba(240, 245, 247, 0.09);
   --border-hover: rgba(240, 245, 247, 0.18);
@@ -191,4 +191,62 @@ code {
 }
 p {
   word-spacing: 0.025em;
+}
+
+/* Pure GPU-compositor seamless infinite marquee (0ms main-thread JS, native 144Hz/240Hz) */
+@keyframes spanrail-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee-viewport {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 7%,
+    #000 93%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 7%,
+    #000 93%,
+    transparent 100%
+  );
+}
+
+.marquee-rail {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: spanrail-marquee 38s linear infinite;
+}
+
+.marquee-viewport:hover .marquee-rail {
+  animation-play-state: paused;
+}
+
+.marquee-track {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4.25rem;
+  padding-right: 4.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-rail {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
 }

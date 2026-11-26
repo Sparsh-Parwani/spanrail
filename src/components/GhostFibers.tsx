@@ -3,8 +3,8 @@
 import { useEffect, useRef, type HTMLAttributes } from "react";
 import "./GhostFibers.css";
 
-const MAX_RENDER_DIM = 2400;
-const BLOOM_LEVELS = 3;
+const MAX_RENDER_DIM = 1280;
+const BLOOM_LEVELS = 2;
 const INTRO_SECONDS = 2.6;
 const CAMERA = 7.5;
 const FOV = 0.56;
@@ -777,6 +777,12 @@ export default function GhostFibers({
       flow: 0,
       frame: 0,
       scrollProgress: 0,
+      maxScroll: 1,
+      rectLeft: 0,
+      rectTop: 0,
+      lastFocusX: -999,
+      lastFocusY: -999,
+      cachedFocusGoal: CAMERA + settingsRef.current.focusDepth * 3,
       smoothScroll: 0,
       intro: settingsRef.current.intro && !reduce ? 0 : INTRO_SECONDS,
       width: 1,
@@ -929,6 +935,10 @@ export default function GhostFibers({
         canvas.width = pixelWidth;
         canvas.height = pixelHeight;
       }
+      const rect = container.getBoundingClientRect();
+      state.rectLeft = rect.left;
+      state.rectTop = rect.top;
+      state.maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       state.width = width;
       state.height = height;
       state.fit = clamp(width / height / 1.5, 0.6, 1);
@@ -1188,11 +1198,15 @@ export default function GhostFibers({
       const resting = CAMERA + (s.focusDepth + (state.smoothScroll - 0.5) * 0.35) * 3;
       let focusGoal = resting;
       if (active && s.hover === 0) {
-        const near = nearestOnRibbon(s, hover.x, hover.y);
-        if (near)
-          focusGoal =
-            resting +
-            (near.depth - resting) * hover.presence * Math.min(1, s.mouseStrength);
+        if (Math.hypot(hover.x - state.lastFocusX, hover.y - state.lastFocusY) > 3) {
+          state.lastFocusX = hover.x;
+          state.lastFocusY = hover.y;
+          const near = nearestOnRibbon(s, hover.x, hover.y);
+          state.cachedFocusGoal = near
+            ? resting + (near.depth - resting) * hover.presence * Math.min(1, s.mouseStrength)
+            : resting;
+        }
+        focusGoal = state.cachedFocusGoal;
       }
       state.focus += (focusGoal - state.focus) * (1 - Math.exp(-dt / 0.35));
 
@@ -1214,21 +1228,17 @@ export default function GhostFibers({
     };
 
     const onScroll = () => {
-      const maxScroll =
-        document.documentElement.scrollHeight - window.innerHeight;
-      state.scrollProgress =
-        maxScroll > 0 ? clamp(window.scrollY / maxScroll, 0, 1) : 0;
+      state.scrollProgress = clamp(window.scrollY / state.maxScroll, 0, 1);
       wake();
     };
 
     const onPointerMove = (event: PointerEvent) => {
-      const rect = container.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
+      const x = event.clientX - state.rectLeft;
+      const y = event.clientY - state.rectTop;
       state.pointer.x = x;
       state.pointer.y = y;
       state.pointer.inside =
-        x >= 0 && y >= 0 && x <= rect.width && y <= rect.height;
+        x >= 0 && y >= 0 && x <= state.width && y <= state.height;
       wake();
     };
 
@@ -1270,6 +1280,10 @@ export default function GhostFibers({
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(container);
+    const docResizeObserver = new ResizeObserver(() => {
+      state.maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    });
+    docResizeObserver.observe(document.body);
     const intersection = new IntersectionObserver((entries) => {
       visible = entries.some((entry) => entry.isIntersecting);
       if (visible) {
@@ -1298,6 +1312,7 @@ export default function GhostFibers({
       cancelAnimationFrame(raf);
       wakeRef.current = null;
       resizeObserver.disconnect();
+      docResizeObserver.disconnect();
       intersection.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onPointerMove);

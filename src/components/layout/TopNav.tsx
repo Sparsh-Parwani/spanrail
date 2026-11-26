@@ -114,10 +114,6 @@ export function TopNav() {
       style={{
         backgroundColor:
           scrolled || mobileMenuOpen ? "var(--bg-nav-glass)" : "transparent",
-        backdropFilter:
-          scrolled || mobileMenuOpen ? "blur(14px)" : "blur(0px)",
-        WebkitBackdropFilter:
-          scrolled || mobileMenuOpen ? "blur(14px)" : "blur(0px)",
         borderBottom:
           scrolled || mobileMenuOpen
             ? "1px solid var(--border-whisper)"

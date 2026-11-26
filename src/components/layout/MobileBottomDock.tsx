@@ -107,8 +107,6 @@ export function MobileBottomDock() {
               backgroundColor: "var(--bg-nav-glass)",
               borderColor: "var(--border-whisper)",
               boxShadow: "var(--shadow-stage)",
-              backdropFilter: "blur(16px)",
-              WebkitBackdropFilter: "blur(16px)",
             }}
           >
             <a

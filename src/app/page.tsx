@@ -77,7 +77,7 @@ export default function SpanrailLandingPage() {
         <div
           aria-hidden="true"
           className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
-          style={{ opacity: 0.6 }}
+          style={{ opacity: 0.6, contain: "strict", transform: "translateZ(0)" }}
         >
           <GhostFibers
             glowColor="#2ea8d1"
@@ -86,7 +86,7 @@ export default function SpanrailLandingPage() {
             gradient="depth"
             layers={3}
             twist={1.2}
-            threads={isPhone ? 34 : 56}
+            threads={isPhone ? 28 : 38}
             fiberStyle="dots"
             depthOfField={0.85}
             hoverEffect="focus"
@@ -96,12 +96,13 @@ export default function SpanrailLandingPage() {
             volume={0.9}
             rotation={21}
             perspective={1}
-            density={isPhone ? 0.85 : 1.15}
+            density={isPhone ? 0.7 : 0.8}
+            thickness={1.22}
             foldGlow={1.05}
             flow={0.72}
             focusDepth={0.25}
-            particles={isPhone ? 0.5 : 0.85}
-            brightness={1.48}
+            particles={isPhone ? 0.35 : 0.45}
+            brightness={1.62}
             glow={0.72}
             lightMode={false}
             dpr={1}
