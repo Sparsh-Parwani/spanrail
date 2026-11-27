@@ -20,7 +20,7 @@
 <br />
 
 <a href="https://spanrail.vercel.app/">
-  <img src="docs/media/desktop-hero.png" alt="Spanrail live production hero with 3D NeuralBrain and interactive trace waterfall sandbox" width="100%" />
+  <img src="docs/media/hero-demo.webp" alt="Spanrail live production hero with 3D NeuralBrain and interactive trace waterfall sandbox" width="100%" />
 </a>
 
 </div>
