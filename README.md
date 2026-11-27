@@ -17,13 +17,13 @@
 ![TypeScript Strict](https://img.shields.io/badge/TypeScript-strict-0c161c?style=flat&logo=typescript&logoColor=4cc0e6&labelColor=050b0f)
 ![License: MIT](https://img.shields.io/badge/License-MIT-0c161c?style=flat&labelColor=050b0f)
 
+</div>
+
 <br />
 
-<a href="https://spanrail.vercel.app/">
-  <img src="docs/media/hero-demo.webp" alt="Spanrail live production hero with 3D NeuralBrain and interactive trace waterfall sandbox" width="100%" />
-</a>
+https://github.com/user-attachments/assets/93e54801-9e41-4c02-bf9f-30ebdac053c9
 
-</div>
+<p align="center"><sub><strong>8.5s live walkthrough (1080p 60fps):</strong> Frame-0 load, toggling Semantic Cache / PII Redaction / Loop Breaker, real-time 3D <code>NeuralBrain</code> state coupling, and GPU waterfall collapse (<code>2,840ms → 780ms</code> · <code>$0.048 → $0.014</code>).</sub></p>
 
 ---
 
