@@ -248,7 +248,7 @@ export function DemoBookingForm() {
               Walk through your agent traces with engineering.
             </h2>
             <p
-              className="mx-auto mt-3 max-w-[48ch] text-[15px] leading-[1.6] sm:text-[15.5px]"
+              className="mx-auto mt-2.5 max-w-[44ch] text-[13.5px] leading-[1.6] md:text-[14px] lg:mt-3 lg:max-w-[48ch] lg:text-[15.5px]"
               style={{ color: "var(--ink-secondary)" }}
             >
               Book a 25-minute review with a systems engineer, or grab the
@@ -294,11 +294,11 @@ export function DemoBookingForm() {
                           }}
                         />
                         <span
-                          className="text-[12.5px] sm:text-[13px]"
+                          className="text-[12px] lg:text-[13px]"
                           style={{
                             color: isActive
                               ? "var(--ink-primary)"
-                              : "var(--ink-secondary)",
+                              : "var(--ink-muted)",
                             fontWeight: isActive ? 500 : 400,
                           }}
                         >
@@ -345,22 +345,22 @@ export function DemoBookingForm() {
                       Architecture briefing confirmed
                     </QuietStatusPill>
                     <span
-                      className="tabular-telemetry text-[12px] font-medium sm:text-[12.5px]"
-                      style={{ color: "var(--ink-secondary)" }}
+                      className="tabular-telemetry text-[11.5px] font-medium lg:text-[12.5px]"
+                      style={{ color: "var(--ink-muted)" }}
                     >
                       Ref · {confirmation.bookingRef}
                     </span>
                   </div>
 
                   <h3
-                    className="mt-5 text-[20px] font-medium tracking-[-0.02em] sm:text-[21px]"
+                    className="mt-5 text-[19px] font-medium tracking-[-0.02em] lg:text-[21px]"
                     style={{ color: "var(--ink-primary)" }}
                   >
                     Your starter environment is ready.
                   </h3>
 
                   <p
-                    className="mt-2.5 text-[14px] leading-[1.65] sm:text-[14.5px]"
+                    className="mt-2 text-[13px] leading-[1.6] md:text-[13.5px] lg:mt-2.5 lg:text-[14.5px] lg:leading-[1.65]"
                     style={{ color: "var(--ink-secondary)" }}
                   >
                     {confirmation.summary}
@@ -468,11 +468,11 @@ export function DemoBookingForm() {
                               <p
                                 id="demo-email-err"
                                 role={emailError ? "alert" : undefined}
-                                className="mt-1.5 min-h-[18px] text-[12px]"
+                                className="mt-1.5 min-h-[18px] text-[11.5px] lg:text-[12px]"
                                 style={{
                                   color: emailError
                                     ? "var(--status-warn-text)"
-                                    : "var(--ink-secondary)",
+                                    : "var(--ink-muted)",
                                 }}
                               >
                                 {emailError ??
@@ -490,8 +490,8 @@ export function DemoBookingForm() {
                                 </span>
                                 {!userOverrodeVolumeRef.current && (
                                   <span
-                                    className="text-[12px]"
-                                    style={{ color: "var(--ink-secondary)" }}
+                                    className="text-[11.5px] lg:text-[12px]"
+                                    style={{ color: "var(--ink-muted)" }}
                                   >
                                     Synced from calculator
                                   </span>
@@ -615,7 +615,7 @@ export function DemoBookingForm() {
                             {submitError && (
                               <div
                                 role="alert"
-                                className="rounded-xl px-3.5 py-2.5 text-[13px]"
+                                className="rounded-xl px-3.5 py-2.5 text-[12.5px] lg:text-[13px]"
                                 style={{
                                   backgroundColor: "var(--status-warn-soft)",
                                   color: "var(--status-warn-text)",
@@ -630,7 +630,6 @@ export function DemoBookingForm() {
                     </AnimatePresence>
                   </div>
 
-                  {/* Action Footer: Balanced full-width mobile buttons -> edge-aligned on >=640px */}
                   <div
                     className="flex items-center justify-between gap-2.5 border-t px-4 py-3.5 sm:px-8 sm:py-4"
                     style={{ borderColor: "var(--border-whisper)" }}
@@ -689,12 +688,11 @@ export function DemoBookingForm() {
               )}
             </div>
 
-            {/* Zero-Gate Self-Serve Escape Hatch for Developers */}
             {!confirmation && (
-              <div className="mt-4 flex flex-col items-start justify-between gap-1.5 px-1 text-[12.5px] sm:flex-row sm:items-center sm:gap-2">
+              <div className="mt-4 flex flex-col items-start justify-between gap-1.5 px-1 text-[12px] sm:flex-row sm:items-center sm:gap-2 lg:text-[12.5px]">
                 <span
                   className="tabular-telemetry"
-                  style={{ color: "var(--ink-secondary)" }}
+                  style={{ color: "var(--ink-muted)" }}
                 >
                   Step {currentStep + 1} of 2 — {STEPS[currentStep]!.title}
                 </span>

@@ -54,7 +54,7 @@ export default function SecurityPage() {
         <div className="spanrail-container max-w-[820px]">
           <Link
             href="/"
-            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13.5px] font-medium [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
+            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-medium lg:text-[13.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
             style={{ color: "var(--ink-secondary)" }}
           >
             <ArrowLeft className="h-4 w-4 shrink-0" />
@@ -65,7 +65,7 @@ export default function SecurityPage() {
             Designed for regulated production agents.
           </h1>
           <p
-            className="mt-3 max-w-[58ch] text-[15.5px] leading-[1.65] sm:text-[16px]"
+            className="mt-2.5 max-w-[54ch] text-[13.5px] leading-[1.6] md:text-[14px] lg:mt-3 lg:max-w-[58ch] lg:text-[16px] lg:leading-[1.65]"
             style={{ color: "var(--ink-secondary)" }}
           >
             Spanrail masks sensitive fields before span payloads reach storage,
@@ -73,7 +73,6 @@ export default function SecurityPage() {
             customer VPCs.
           </p>
 
-          {/* Compact architecture summary strip */}
           <dl
             className="mt-7 grid grid-cols-1 divide-y divide-[var(--border-whisper)] overflow-hidden rounded-2xl border sm:grid-cols-3 sm:divide-x sm:divide-y-0"
             style={{
@@ -94,7 +93,7 @@ export default function SecurityPage() {
                     {item.label}
                   </dt>
                   <p
-                    className="mt-0.5 text-[11.5px] sm:hidden"
+                    className="mt-0.5 text-[11px] sm:hidden"
                     style={{ color: "var(--ink-muted)" }}
                   >
                     {item.sub}
@@ -108,7 +107,7 @@ export default function SecurityPage() {
                     {item.value}
                   </dd>
                   <p
-                    className="mt-1 hidden text-[12px] sm:block"
+                    className="mt-1 hidden text-[11.5px] lg:text-[12px] sm:block"
                     style={{ color: "var(--ink-muted)" }}
                   >
                     {item.sub}
@@ -128,7 +127,7 @@ export default function SecurityPage() {
               }}
             >
               <h2
-                className="text-[18px] font-medium tracking-[-0.015em] sm:text-[19px]"
+                className="text-[17.5px] font-medium tracking-[-0.015em] lg:text-[19px]"
                 style={{ color: "var(--ink-primary)" }}
               >
                 Inline edge PII redaction (&lt; 6ms p99)
@@ -146,7 +145,7 @@ export default function SecurityPage() {
                       {item.name}
                     </dt>
                     <dd
-                      className="mt-1 text-[14px] leading-[1.6]"
+                      className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:text-[14px] lg:leading-[1.6]"
                       style={{ color: "var(--ink-secondary)" }}
                     >
                       {item.detail}
@@ -165,7 +164,7 @@ export default function SecurityPage() {
               }}
             >
               <h2
-                className="text-[18px] font-medium tracking-[-0.015em] sm:text-[19px]"
+                className="text-[17.5px] font-medium tracking-[-0.015em] lg:text-[19px]"
                 style={{ color: "var(--ink-primary)" }}
               >
                 Dedicated VPC, GDPR, and HIPAA BAA
@@ -183,7 +182,7 @@ export default function SecurityPage() {
                       {item.name}
                     </dt>
                     <dd
-                      className="mt-1 text-[14px] leading-[1.6]"
+                      className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:text-[14px] lg:leading-[1.6]"
                       style={{ color: "var(--ink-secondary)" }}
                     >
                       {item.detail}

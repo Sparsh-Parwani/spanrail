@@ -63,7 +63,6 @@ export function PricingCalculator() {
     [traceTierIndex, evalTierIndex, retentionDays, seats, billingCycle]
   );
 
-  // Initialize directly to real SSR total ($119/mo) so SSR HTML is 100% consistent
   const [displayTotal, setDisplayTotal] = useState(breakdown.monthlyTotalUsd);
   const prevTotalRef = useRef(breakdown.monthlyTotalUsd);
 
@@ -99,7 +98,6 @@ export function PricingCalculator() {
     window.history.replaceState(null, "", nextUrl);
   }, [traceTierIndex, evalTierIndex, retentionDays, seats, billingCycle]);
 
-  // Animate total smoothly whenever user interacts with sliders/controls
   useEffect(() => {
     const from = prevTotalRef.current;
     const to = breakdown.monthlyTotalUsd;
@@ -157,7 +155,7 @@ export function PricingCalculator() {
                 Simple usage pricing. Zero surprise overages.
               </h2>
               <p
-                className="mt-3 max-w-[48ch] text-[15.5px] leading-[1.65] md:text-[17px]"
+                className="mt-2.5 max-w-[46ch] text-[13.5px] leading-[1.6] md:text-[14px] lg:mt-3 lg:max-w-[48ch] lg:text-[17px] lg:leading-[1.65]"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 Metered strictly on traces and automated evals. Adjust volume
@@ -196,14 +194,14 @@ export function PricingCalculator() {
           >
             <div className="min-w-0">
               <span
-                className="block truncate text-[11.5px] font-medium"
-                style={{ color: "var(--ink-secondary)" }}
+                className="block truncate text-[11px] font-medium"
+                style={{ color: "var(--ink-muted)" }}
               >
                 {breakdown.tracesLabel} traces · {breakdown.retentionDays}d ·{" "}
                 {breakdown.seats} seats
               </span>
               <span
-                className="block truncate text-[12px]"
+                className="block truncate text-[11.5px]"
                 style={{ color: "var(--status-pass-text)" }}
               >
                 Save {formatUsd(breakdown.monthlySavingsVsLegacyUsd)}/mo vs list APM
@@ -217,7 +215,7 @@ export function PricingCalculator() {
                 {formatUsd(displayTotal)}
               </span>
               <span
-                className="text-[12px]"
+                className="text-[11.5px]"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 /mo
@@ -246,15 +244,15 @@ export function PricingCalculator() {
                     Monthly agent traces
                   </span>
                   <span
-                    className="tabular-telemetry text-[16px] font-medium"
+                    className="tabular-telemetry text-[15.5px] font-medium lg:text-[16px]"
                     style={{ color: "var(--accent-brand-text)" }}
                   >
                     {breakdown.tracesLabel} / mo
                   </span>
                 </div>
                 <p
-                  className="mt-1 text-[13px] leading-[1.5]"
-                  style={{ color: "var(--ink-secondary)" }}
+                  className="mt-1 text-[12px] leading-[1.45] lg:text-[13px] lg:leading-[1.5]"
+                  style={{ color: "var(--ink-muted)" }}
                 >
                   First {(INCLUDED_TRACES / 1000).toFixed(0)}k traces included.
                   $0.18 per 10k up to 10M, then $0.12 per 10k.
@@ -277,7 +275,7 @@ export function PricingCalculator() {
                     }}
                   />
                   <div
-                    className="tabular-telemetry mt-1 flex items-center justify-between text-[11.5px]"
+                    className="tabular-telemetry mt-1 flex items-center justify-between text-[11px] lg:text-[11.5px]"
                     style={{ color: "var(--ink-secondary)" }}
                   >
                     {TRACE_TIERS.map((tier, idx) => (
@@ -298,7 +296,7 @@ export function PricingCalculator() {
                           color:
                             idx === traceTierIndex
                               ? "var(--ink-primary)"
-                              : "var(--ink-secondary)",
+                              : "var(--ink-muted)",
                           fontWeight: idx === traceTierIndex ? 500 : 400,
                         }}
                       >
@@ -322,15 +320,15 @@ export function PricingCalculator() {
                     Automated eval runs
                   </span>
                   <span
-                    className="tabular-telemetry text-[16px] font-medium"
+                    className="tabular-telemetry text-[15.5px] font-medium lg:text-[16px]"
                     style={{ color: "var(--accent-brand-text)" }}
                   >
                     {breakdown.evalsLabel} / mo
                   </span>
                 </div>
                 <p
-                  className="mt-1 text-[13px] leading-[1.5]"
-                  style={{ color: "var(--ink-secondary)" }}
+                  className="mt-1 text-[12px] leading-[1.45] lg:text-[13px] lg:leading-[1.5]"
+                  style={{ color: "var(--ink-muted)" }}
                 >
                   First {(INCLUDED_EVALS / 1000).toFixed(0)}k evals included.
                   $0.40 per 10k additional online or CI eval runs.
@@ -353,7 +351,7 @@ export function PricingCalculator() {
                     }}
                   />
                   <div
-                    className="tabular-telemetry mt-1 flex items-center justify-between text-[11.5px]"
+                    className="tabular-telemetry mt-1 flex items-center justify-between text-[11px] lg:text-[11.5px]"
                     style={{ color: "var(--ink-secondary)" }}
                   >
                     {EVAL_TIERS.map((tier, idx) => (
@@ -370,7 +368,7 @@ export function PricingCalculator() {
                           color:
                             idx === evalTierIndex
                               ? "var(--ink-primary)"
-                              : "var(--ink-secondary)",
+                              : "var(--ink-muted)",
                           fontWeight: idx === evalTierIndex ? 500 : 400,
                         }}
                       >
@@ -383,7 +381,7 @@ export function PricingCalculator() {
 
               <hr style={{ borderColor: "var(--border-whisper)" }} />
 
-              {/* Retention Selector (Stacked 3-column mobile segmented tiles -> inline pill on >=640px) */}
+              {/* Retention Selector */}
               <div>
                 <div className="mb-3 flex flex-wrap items-baseline justify-between gap-1.5">
                   <span
@@ -393,8 +391,8 @@ export function PricingCalculator() {
                     Trace retention
                   </span>
                   <span
-                    className="text-[12.5px] sm:text-[13px]"
-                    style={{ color: "var(--ink-secondary)" }}
+                    className="text-[12px] lg:text-[13px]"
+                    style={{ color: "var(--ink-muted)" }}
                   >
                     Applied to trace storage subtotal
                   </span>
@@ -422,7 +420,7 @@ export function PricingCalculator() {
 
               <hr style={{ borderColor: "var(--border-whisper)" }} />
 
-              {/* Team Seats Stepper (Full-width locked 44px-1fr-44px mobile bar -> inline desktop row) */}
+              {/* Team Seats Stepper: Mobile track -> clean transparent inline stepper on >=640px */}
               <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div>
                   <span
@@ -432,21 +430,15 @@ export function PricingCalculator() {
                     Team seats
                   </span>
                   <span
-                    className="mt-0.5 block text-[13px]"
-                    style={{ color: "var(--ink-secondary)" }}
+                    className="mt-0.5 block text-[12px] lg:text-[13px]"
+                    style={{ color: "var(--ink-muted)" }}
                   >
                     First {INCLUDED_SEATS} seats included · $
                     {PRICE_PER_EXTRA_SEAT}/seat above {INCLUDED_SEATS}
                   </span>
                 </div>
 
-                <div
-                  className="grid w-full grid-cols-[44px_1fr_44px] items-center rounded-2xl border p-1.5 sm:inline-flex sm:w-auto sm:gap-3 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0"
-                  style={{
-                    backgroundColor: "var(--bg-surface-subtle)",
-                    borderColor: "var(--border-whisper)",
-                  }}
-                >
+                <div className="grid w-full grid-cols-[44px_1fr_44px] items-center rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface-subtle)] p-1.5 sm:inline-flex sm:w-auto sm:gap-3 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0">
                   <button
                     type="button"
                     disabled={seats <= MIN_SEATS}
@@ -456,12 +448,7 @@ export function PricingCalculator() {
                       playSwitchClick(false);
                     }}
                     aria-label="Decrease team seats"
-                    className="btn-tactile inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border sm:rounded-full [@media(hover:hover)]:hover:border-[var(--border-hover)] disabled:cursor-not-allowed disabled:opacity-40"
-                    style={{
-                      backgroundColor: "var(--bg-surface)",
-                      borderColor: "var(--border-whisper)",
-                      color: "var(--ink-primary)",
-                    }}
+                    className="btn-tactile inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] text-[var(--ink-primary)] sm:rounded-full sm:bg-[var(--bg-surface-subtle)] [@media(hover:hover)]:hover:border-[var(--border-hover)] disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <Minus className="h-4 w-4" strokeWidth={1.8} />
                   </button>
@@ -473,7 +460,7 @@ export function PricingCalculator() {
                   >
                     {seats}
                     <span
-                      className="ml-1.5 text-[12.5px] font-normal sm:hidden"
+                      className="ml-1.5 text-[12px] font-normal sm:hidden"
                       style={{ color: "var(--ink-secondary)" }}
                     >
                       {seats === 1 ? "seat" : "seats"}
@@ -489,12 +476,7 @@ export function PricingCalculator() {
                       playSwitchClick(true);
                     }}
                     aria-label="Increase team seats"
-                    className="btn-tactile inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border sm:rounded-full [@media(hover:hover)]:hover:border-[var(--border-hover)] disabled:cursor-not-allowed disabled:opacity-40"
-                    style={{
-                      backgroundColor: "var(--bg-surface)",
-                      borderColor: "var(--border-whisper)",
-                      color: "var(--ink-primary)",
-                    }}
+                    className="btn-tactile inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] text-[var(--ink-primary)] sm:rounded-full sm:bg-[var(--bg-surface-subtle)] [@media(hover:hover)]:hover:border-[var(--border-hover)] disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <Plus className="h-4 w-4" strokeWidth={1.8} />
                   </button>
@@ -515,13 +497,13 @@ export function PricingCalculator() {
                 <div>
                   <div className="flex items-center justify-between gap-2">
                     <span
-                      className="text-[13.5px] font-medium"
+                      className="text-[12.5px] font-medium lg:text-[13.5px]"
                       style={{ color: "var(--ink-secondary)" }}
                     >
                       Estimated monthly total
                     </span>
                     <span
-                      className="shrink-0 rounded-full px-2.5 py-0.5 text-[12px] font-medium"
+                      className="shrink-0 rounded-full px-2.5 py-0.5 text-[11.5px] font-medium lg:text-[12px]"
                       style={{
                         backgroundColor: "var(--accent-spark-soft)",
                         color: "var(--accent-spark-text)",
@@ -539,7 +521,7 @@ export function PricingCalculator() {
                       {formatUsd(displayTotal)}
                     </span>
                     <span
-                      className="text-[15px]"
+                      className="text-[14px] lg:text-[15px]"
                       style={{ color: "var(--ink-secondary)" }}
                     >
                       /mo
@@ -547,8 +529,8 @@ export function PricingCalculator() {
                   </div>
 
                   <p
-                    className="mt-2 min-h-[20px] text-[13px]"
-                    style={{ color: "var(--ink-secondary)" }}
+                    className="mt-2 min-h-[18px] text-[12px] lg:text-[13px]"
+                    style={{ color: "var(--ink-muted)" }}
                   >
                     {billingCycle === "annual"
                       ? `Saves ${formatUsd(breakdown.annualSavingsPerYearUsd)}/yr with annual billing`
@@ -556,7 +538,7 @@ export function PricingCalculator() {
                   </p>
 
                   <dl
-                    className="mt-6 space-y-3 border-t pt-5 text-[13.5px]"
+                    className="mt-5 space-y-2.5 border-t pt-4 text-[12.5px] lg:mt-6 lg:space-y-3 lg:pt-5 lg:text-[13.5px]"
                     style={{ borderColor: "var(--border-whisper)" }}
                   >
                     <div className="flex items-baseline justify-between gap-3">
@@ -616,7 +598,7 @@ export function PricingCalculator() {
 
                     {billingCycle === "annual" && (
                       <div
-                        className="flex items-baseline justify-between gap-3 border-t pt-3"
+                        className="flex items-baseline justify-between gap-3 border-t pt-2.5 lg:pt-3"
                         style={{ borderColor: "var(--border-whisper)" }}
                       >
                         <dt style={{ color: "var(--status-pass-text)" }}>
@@ -639,7 +621,7 @@ export function PricingCalculator() {
 
                 <div className="mt-6">
                   <div
-                    className="flex items-start gap-2.5 rounded-xl p-3.5 text-[12.5px] leading-[1.5]"
+                    className="flex items-start gap-2.5 rounded-xl p-3.5 text-[12px] leading-[1.5] lg:text-[12.5px]"
                     style={{
                       backgroundColor: "var(--status-pass-soft)",
                       color: "var(--status-pass-text)",
@@ -675,7 +657,7 @@ export function PricingCalculator() {
                     <button
                       type="button"
                       onClick={() => void handleCopyEstimateLink()}
-                      className="btn-tactile inline-grid min-h-[44px] w-full cursor-pointer items-center justify-items-center rounded-full text-[13px] font-medium [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
+                      className="btn-tactile inline-grid min-h-[44px] w-full cursor-pointer items-center justify-items-center rounded-full text-[12.5px] font-medium lg:text-[13px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
                       style={{ color: "var(--ink-secondary)" }}
                     >
                       <span
@@ -715,13 +697,13 @@ export function PricingCalculator() {
           >
             <div className="max-w-[660px]">
               <h3
-                className="text-[17px] font-medium tracking-[-0.015em]"
+                className="text-[16px] font-medium tracking-[-0.015em] lg:text-[17px]"
                 style={{ color: "var(--ink-primary)" }}
               >
                 50M+ traces or VPC deployment?
               </h3>
               <p
-                className="mt-1.5 text-[14px] leading-[1.6] sm:text-[14.5px]"
+                className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-1.5 lg:text-[14.5px] lg:leading-[1.6]"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 Dedicated cluster, HIPAA BAA, custom retention windows, and a

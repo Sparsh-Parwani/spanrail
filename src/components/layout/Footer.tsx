@@ -59,8 +59,8 @@ export function Footer() {
               <span translate="no">Spanrail</span>
             </Link>
             <p
-              className="mt-2.5 max-w-[30ch] text-[13.5px] leading-[1.6]"
-              style={{ color: "var(--ink-secondary)" }}
+              className="mt-2 max-w-[30ch] text-[12.5px] leading-[1.55] lg:mt-2.5 lg:text-[13.5px] lg:leading-[1.6]"
+              style={{ color: "var(--ink-muted)" }}
             >
               Real-time trace observability and inline safety switches for
               production AI agents.
@@ -68,7 +68,7 @@ export function Footer() {
 
             <Link
               href="/security"
-              className="mt-4 inline-flex min-h-[36px] items-center gap-2 text-[12.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
+              className="mt-4 inline-flex min-h-[36px] items-center gap-2 text-[12px] lg:text-[12.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
               style={{ color: "var(--ink-secondary)" }}
             >
               <span
@@ -94,7 +94,7 @@ export function Footer() {
                     <li key={item.label}>
                       <Link
                         href={item.href}
-                        className="inline-flex min-h-[36px] items-center text-[13px] sm:min-h-0 [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
+                        className="inline-flex min-h-[36px] items-center text-[12.5px] sm:min-h-0 lg:text-[13px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
                         style={{
                           color: "var(--ink-secondary)",
                           transition: "color 180ms var(--ease-enter)",
@@ -111,10 +111,10 @@ export function Footer() {
         </div>
 
         <div
-          className="mt-12 flex flex-col items-start justify-between gap-3 border-t pt-6 text-[12.5px] sm:mt-14 sm:flex-row sm:items-center"
+          className="mt-12 flex flex-col items-start justify-between gap-3 border-t pt-6 text-[12px] sm:mt-14 sm:flex-row sm:items-center lg:text-[12.5px]"
           style={{
             borderColor: "var(--border-whisper)",
-            color: "var(--ink-secondary)",
+            color: "var(--ink-muted)",
           }}
         >
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">

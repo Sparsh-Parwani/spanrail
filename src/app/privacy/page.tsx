@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         <div className="spanrail-container max-w-[740px]">
           <Link
             href="/"
-            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13.5px] font-medium [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
+            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-medium lg:text-[13.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
             style={{ color: "var(--ink-secondary)" }}
           >
             <ArrowLeft className="h-4 w-4 shrink-0" />
@@ -33,8 +33,8 @@ export default function PrivacyPage() {
 
           <h1 className="display-h2 mt-3">Privacy policy</h1>
           <p
-            className="tabular-telemetry mt-2 text-[12.5px]"
-            style={{ color: "var(--ink-secondary)" }}
+            className="tabular-telemetry mt-2 text-[11.5px] lg:text-[12.5px]"
+            style={{ color: "var(--ink-muted)" }}
           >
             Updated November 2026
           </p>
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
             >
               Core commitments
             </p>
-            <ul className="mt-2.5 space-y-2 text-[14px] leading-[1.55]">
+            <ul className="mt-2.5 space-y-2 text-[12.5px] leading-[1.55] md:text-[13px] lg:text-[14px]">
               {PRIVACY_SUMMARY.map((line) => (
                 <li
                   key={line}
@@ -71,7 +71,7 @@ export default function PrivacyPage() {
           </div>
 
           <div
-            className="mt-8 max-w-[62ch] space-y-7 divide-y divide-[var(--border-whisper)] text-[15px] leading-[1.7]"
+            className="mt-8 max-w-[62ch] space-y-7 divide-y divide-[var(--border-whisper)] text-[13.5px] leading-[1.65] md:text-[14px] lg:text-[15px] lg:leading-[1.7]"
             style={{ color: "var(--ink-secondary)" }}
           >
             <p>
@@ -83,12 +83,12 @@ export default function PrivacyPage() {
 
             <section className="pt-7">
               <h2
-                className="text-[17.5px] font-medium sm:text-[18px]"
+                className="text-[16.5px] font-medium lg:text-[18px]"
                 style={{ color: "var(--ink-primary)" }}
               >
                 1. Information submitted via briefing requests
               </h2>
-              <p className="mt-2.5">
+              <p className="mt-2">
                 When you request an architecture review, we use your work email,
                 estimated monthly trace volume, and selected runtime stack
                 solely to prepare a tailored starter configuration and
@@ -98,12 +98,12 @@ export default function PrivacyPage() {
 
             <section className="pt-7">
               <h2
-                className="text-[17.5px] font-medium sm:text-[18px]"
+                className="text-[16.5px] font-medium lg:text-[18px]"
                 style={{ color: "var(--ink-primary)" }}
               >
                 2. Telemetry and data retention
               </h2>
-              <p className="mt-2.5">
+              <p className="mt-2">
                 Production trace payloads are subject to customer-selected
                 retention windows (30, 90, or 365 days) and inline edge PII
                 redaction policies. EU and UK customers may pin ingestion and

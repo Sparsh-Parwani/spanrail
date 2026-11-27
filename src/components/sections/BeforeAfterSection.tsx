@@ -79,13 +79,13 @@ export function BeforeAfterSection() {
     >
       <div className="spanrail-container">
         <ScrollReveal>
-          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-5">
             <div className="max-w-[560px]">
               <h2 id="compare-heading" className="display-h2">
                 What changes in production.
               </h2>
               <p
-                className="mt-3 text-[16px] leading-[1.65] md:text-[17px]"
+                className="mt-2.5 max-w-[46ch] text-[13.5px] leading-[1.6] md:text-[14px] lg:mt-3 lg:max-w-[54ch] lg:text-[17px] lg:leading-[1.65]"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 Modeled at 10M traces/mo (30-day retention, 5 seats) comparing
@@ -94,7 +94,7 @@ export function BeforeAfterSection() {
               </p>
             </div>
 
-            <div className="tabular-telemetry flex items-center gap-5 text-[12px]">
+            <div className="tabular-telemetry flex flex-wrap items-center gap-4 text-[11.5px] lg:gap-5 lg:text-[12px]">
               <span
                 className="inline-flex items-center gap-2 font-medium"
                 style={{ color: "var(--ink-primary)" }}
@@ -120,7 +120,7 @@ export function BeforeAfterSection() {
             </div>
           </div>
 
-          <div className="mt-10">
+          <div className="mt-7 md:mt-10">
             <PairedBars
               barLabel="normalized SLA index (0–100 · higher is stronger)"
               unit=""
@@ -131,7 +131,7 @@ export function BeforeAfterSection() {
           </div>
 
           <p
-            className="mt-3 text-[12px]"
+            className="mt-3 text-[11.5px] leading-[1.5] lg:text-[12px]"
             style={{ color: "var(--ink-muted)" }}
           >
             Bars map each heterogeneous metric onto a 0–100 normalized SLA index; exact observed figures appear on the right. Spanrail 10M trace cost ($99 base + 975 × $0.18 = $274.50/mo) matches the live calculator below.

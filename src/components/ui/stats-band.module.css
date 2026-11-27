@@ -2,6 +2,7 @@
   width: 100%;
   --sb-ink: var(--ink-primary);
   --sb-muted: var(--ink-secondary);
+  --sb-subtle: var(--ink-muted);
   --sb-hair: var(--border-whisper);
   --sb-accent: var(--accent-spark);
   --sb-brand: var(--accent-brand);
@@ -25,7 +26,7 @@
 
 .description {
   margin-top: 0.45rem;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: var(--sb-muted);
 }
 
@@ -108,7 +109,7 @@
   letter-spacing: -0.005em;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 1024px) {
   .label {
     font-size: 0.8125rem;
   }
@@ -156,17 +157,24 @@
 
 .caption {
   display: grid;
-  margin-top: 0.45rem;
-  font-size: 0.75rem;
+  margin-top: 0.4rem;
+  font-size: 0.71875rem;
   line-height: 1.4;
-  color: var(--sb-muted);
+  color: var(--sb-subtle);
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
+  .caption {
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
   .caption {
     margin-top: 0.5rem;
     font-size: 0.8125rem;
     line-height: 1.45;
+    color: var(--sb-muted);
   }
 }
 
@@ -223,7 +231,6 @@
   }
 }
 
-/* Trend Line + Area Chart */
 .trend {
   position: relative;
   width: 100%;
@@ -310,7 +317,6 @@
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* Histogram & Uptime Bars */
 .bars {
   display: flex;
   align-items: flex-end;
@@ -367,7 +373,6 @@
   transform: scaleY(1);
 }
 
-/* Dotted World Map */
 .map {
   width: 100%;
   height: 38px;

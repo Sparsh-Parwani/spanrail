@@ -66,9 +66,6 @@ const CAPABILITY_INDEX: readonly {
   },
 ] as const;
 
-/* ============================================================================
-   STAGE 1 — INLINE GUARDRAIL ROUTER
-   ============================================================================ */
 type PolicyRuleId = "injection" | "budget" | "fallback";
 
 const POLICY_RULES: readonly {
@@ -115,13 +112,13 @@ function GuardrailRouterStage() {
       <div>
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h3
-            className="text-[18px] font-medium tracking-[-0.02em] sm:text-[20px]"
+            className="text-[17.5px] font-medium tracking-[-0.02em] md:text-[18.5px] lg:text-[20px]"
             style={{ color: "var(--ink-primary)" }}
           >
             Inline Guardrail Router
           </h3>
           <span
-            className="tabular-telemetry text-[12px] font-medium sm:text-[12.5px]"
+            className="tabular-telemetry text-[11.5px] font-medium lg:text-[12.5px]"
             style={{ color: "var(--accent-brand-text)" }}
           >
             {current.readoutLatency}
@@ -129,7 +126,7 @@ function GuardrailRouterStage() {
         </div>
 
         <p
-          className="mt-2 max-w-[52ch] text-[14px] leading-[1.6] sm:text-[14.5px]"
+          className="mt-1.5 max-w-[52ch] text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-2 lg:text-[14.5px] lg:leading-[1.6]"
           style={{ color: "var(--ink-secondary)" }}
         >
           Switch policies below to inspect real-time request-path routing and
@@ -179,10 +176,10 @@ function GuardrailRouterStage() {
         </div>
 
         <div
-          className="mt-5 flex items-center gap-2.5 border-t pt-4 text-[13px] sm:text-[13.5px]"
+          className="mt-5 flex items-center gap-2.5 border-t pt-4 text-[12px] lg:text-[13.5px]"
           style={{
             borderColor: "var(--border-whisper)",
-            color: "var(--ink-secondary)",
+            color: "var(--ink-muted)",
           }}
         >
           <span
@@ -197,9 +194,6 @@ function GuardrailRouterStage() {
   );
 }
 
-/* ============================================================================
-   STAGE 2 — TWO-LINE DROP-IN SDK
-   ============================================================================ */
 type SdkTabId = "typescript" | "python" | "curl";
 
 const INGEST_ENDPOINT = "https" + "://ingest.spanrail.dev/v1/traces";
@@ -270,13 +264,13 @@ function DropInSdkStage() {
     <div className="flex h-full flex-col justify-between">
       <div>
         <h3
-          className="text-[18px] font-medium tracking-[-0.02em] sm:text-[20px]"
+          className="text-[17.5px] font-medium tracking-[-0.02em] md:text-[18.5px] lg:text-[20px]"
           style={{ color: "var(--ink-primary)" }}
         >
           Two-Line Drop-In SDK
         </h3>
         <p
-          className="mt-2 max-w-[52ch] text-[14px] leading-[1.6] sm:text-[14.5px]"
+          className="mt-1.5 max-w-[52ch] text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-2 lg:text-[14.5px] lg:leading-[1.6]"
           style={{ color: "var(--ink-secondary)" }}
         >
           Standard OpenTelemetry exporters with automatic span capture across
@@ -311,15 +305,14 @@ function DropInSdkStage() {
                   borderColor: "var(--border-whisper)",
                 }}
               >
-                {/* Anchored code header with fixed-width zero-CLS Copy button */}
                 <div
                   className="flex items-center justify-between gap-2 border-b px-3.5 py-2 sm:px-4"
                   style={{ borderColor: "var(--border-whisper)" }}
                 >
                   <span
                     translate="no"
-                    className="tabular-telemetry truncate text-[12px]"
-                    style={{ color: "var(--ink-secondary)" }}
+                    className="tabular-telemetry truncate text-[11.5px] lg:text-[12px]"
+                    style={{ color: "var(--ink-muted)" }}
                   >
                     {SDK_SNIPPETS[lang].filename}
                   </span>
@@ -381,10 +374,10 @@ function DropInSdkStage() {
       </div>
 
       <p
-        className="mt-5 border-t pt-4 text-[12.5px] sm:mt-6 sm:text-[13px]"
+        className="mt-5 border-t pt-4 text-[12px] lg:mt-6 lg:text-[13px]"
         style={{
           borderColor: "var(--border-whisper)",
-          color: "var(--ink-secondary)",
+          color: "var(--ink-muted)",
         }}
       >
         Zero proprietary wrappers — export straight to OTLP/HTTP + Protobuf.
@@ -393,9 +386,6 @@ function DropInSdkStage() {
   );
 }
 
-/* ============================================================================
-   STAGE 3 — PROMPT VERSION COMPARISON
-   ============================================================================ */
 type PromptVersionId = "v14" | "v15";
 
 const PROMPT_VERSIONS: Record<
@@ -458,7 +448,7 @@ function PromptComparisonStage() {
       <div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <h3
-            className="text-[18px] font-medium tracking-[-0.02em] sm:text-[20px]"
+            className="text-[17.5px] font-medium tracking-[-0.02em] md:text-[18.5px] lg:text-[20px]"
             style={{ color: "var(--ink-primary)" }}
           >
             Prompt Version Comparison
@@ -483,7 +473,7 @@ function PromptComparisonStage() {
         </div>
 
         <p
-          className="mt-2.5 max-w-[52ch] text-[14px] leading-[1.6] sm:mt-2 sm:text-[14.5px]"
+          className="mt-2 max-w-[52ch] text-[12.5px] leading-[1.55] md:text-[13px] lg:text-[14.5px] lg:leading-[1.6]"
           style={{ color: "var(--ink-secondary)" }}
         >
           Replay historical production traces against candidate prompts and
@@ -495,7 +485,7 @@ function PromptComparisonStage() {
             <div key={row.label}>
               <div className="mb-2 flex items-baseline justify-between gap-3">
                 <span
-                  className="text-[13.5px] font-medium sm:text-[14px]"
+                  className="text-[12.5px] font-medium md:text-[13px] lg:text-[14px]"
                   style={{ color: "var(--ink-secondary)" }}
                 >
                   {row.label}
@@ -503,7 +493,7 @@ function PromptComparisonStage() {
                 <div className="tabular-telemetry flex items-baseline gap-2.5">
                   {row.delta && (
                     <span
-                      className="text-[12px] font-medium sm:text-[12.5px]"
+                      className="text-[11.5px] font-medium lg:text-[12.5px]"
                       style={{ color: "var(--status-pass-text)" }}
                     >
                       {row.delta}
@@ -538,10 +528,10 @@ function PromptComparisonStage() {
       </div>
 
       <p
-        className="mt-6 border-t pt-4 text-[12.5px] sm:mt-7 sm:text-[13px]"
+        className="mt-6 border-t pt-4 text-[12px] lg:mt-7 lg:text-[13px]"
         style={{
           borderColor: "var(--border-whisper)",
-          color: "var(--ink-secondary)",
+          color: "var(--ink-muted)",
         }}
       >
         {data.summary}
@@ -550,9 +540,6 @@ function PromptComparisonStage() {
   );
 }
 
-/* ============================================================================
-   STAGE 4 — MULTI-PROVIDER TOKEN SPEND (6 Providers)
-   ============================================================================ */
 interface ProviderSlice {
   id: string;
   name: string;
@@ -622,20 +609,19 @@ function ProviderSpendStage() {
     <div className="flex h-full flex-col justify-between">
       <div>
         <h3
-          className="text-[18px] font-medium tracking-[-0.02em] sm:text-[20px]"
+          className="text-[17.5px] font-medium tracking-[-0.02em] md:text-[18.5px] lg:text-[20px]"
           style={{ color: "var(--ink-primary)" }}
         >
           Multi-Provider Token Spend
         </h3>
         <p
-          className="mt-2 max-w-[52ch] text-[14px] leading-[1.6] sm:text-[14.5px]"
+          className="mt-1.5 max-w-[52ch] text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-2 lg:text-[14.5px] lg:leading-[1.6]"
           style={{ color: "var(--ink-secondary)" }}
         >
           Attribute token costs per tenant, prompt, and model provider across
           hosted APIs and private inference clusters.
         </p>
 
-        {/* Horizontal Stacked Spend Bar */}
         <div
           aria-hidden="true"
           className="mt-6 flex h-3 w-full gap-[3px] overflow-hidden rounded-full sm:mt-7 sm:h-3.5"
@@ -657,7 +643,6 @@ function ProviderSpendStage() {
           })}
         </div>
 
-        {/* 6 Providers: spacious 2-line tiles on phone, compact inline pills on >=640px */}
         <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-6 sm:grid-cols-3 sm:gap-2.5">
           {PROVIDER_SLICES.map((slice) => {
             const isSelected = slice.id === selectedId;
@@ -695,8 +680,8 @@ function ProviderSpendStage() {
                     </span>
                   </span>
                   <span
-                    className="tabular-telemetry text-[12px] sm:hidden"
-                    style={{ color: "var(--ink-secondary)" }}
+                    className="tabular-telemetry text-[11.5px] sm:hidden"
+                    style={{ color: "var(--ink-muted)" }}
                   >
                     {slice.sharePct}%
                   </span>
@@ -710,8 +695,8 @@ function ProviderSpendStage() {
                 </span>
 
                 <span
-                  className="tabular-telemetry hidden shrink-0 text-[12.5px] sm:inline"
-                  style={{ color: "var(--ink-secondary)" }}
+                  className="tabular-telemetry hidden shrink-0 text-[12px] lg:text-[12.5px] sm:inline"
+                  style={{ color: "var(--ink-muted)" }}
                 >
                   {slice.sharePct}%
                 </span>
@@ -721,14 +706,13 @@ function ProviderSpendStage() {
         </div>
       </div>
 
-      {/* Selected Provider Detail Ledger */}
       <div
         className="mt-6 flex flex-col gap-1.5 border-t pt-4 sm:mt-7 sm:flex-row sm:items-baseline sm:justify-between sm:gap-2"
         style={{ borderColor: "var(--border-whisper)" }}
       >
         <span
-          className="text-[13px]"
-          style={{ color: "var(--ink-secondary)" }}
+          className="text-[12px] lg:text-[13px]"
+          style={{ color: "var(--ink-muted)" }}
         >
           <strong className="font-medium" style={{ color: "var(--ink-primary)" }}>
             {active.name}
@@ -743,8 +727,8 @@ function ProviderSpendStage() {
             {active.costPer1k}
           </span>
           <span
-            className="ml-1 text-[12.5px]"
-            style={{ color: "var(--ink-secondary)" }}
+            className="ml-1 text-[12px] lg:text-[12.5px]"
+            style={{ color: "var(--ink-muted)" }}
           >
             / 1k runs
           </span>
@@ -754,11 +738,6 @@ function ProviderSpendStage() {
   );
 }
 
-/* ============================================================================
-   EDITORIAL INTERACTIVE FEATURE SHOWCASE
-   - Phone & Tablet (< 1024px): 2x2 full-visibility selector grid (zero scroll)
-   - Desktop (>= 1024px): Vertical hairline index + spacious stage
-   ============================================================================ */
 export function CapabilitiesGrid() {
   const [activeTab, setActiveTab] = useState<CapabilityId>("router");
   const { prefersReducedMotion } = useBreakpoint();
@@ -776,7 +755,7 @@ export function CapabilitiesGrid() {
               Built for teams shipping real agents.
             </h2>
             <p
-              className="mt-3 text-[15.5px] leading-[1.65] md:text-[17px]"
+              className="mt-2.5 max-w-[46ch] text-[13.5px] leading-[1.6] md:text-[14px] lg:mt-3 lg:max-w-[54ch] lg:text-[17px] lg:leading-[1.65]"
               style={{ color: "var(--ink-secondary)" }}
             >
               One quiet telemetry layer for inline safety switches, prompt
@@ -784,7 +763,7 @@ export function CapabilitiesGrid() {
             </p>
           </div>
 
-          {/* Phone & Tablet 2x2 Selector Grid — All 4 capabilities visible with zero scrolling */}
+          {/* Phone & Tablet 2x2 Selector Grid */}
           <div
             role="tablist"
             aria-label="Core Spanrail capabilities"
@@ -819,7 +798,7 @@ export function CapabilitiesGrid() {
                 >
                   <div className="flex w-full items-center justify-between gap-2">
                     <span
-                      className="tabular-telemetry text-[11px] font-medium"
+                      className="tabular-telemetry text-[10.5px] font-medium"
                       style={{
                         color: isSelected
                           ? "var(--accent-brand-text)"
@@ -829,11 +808,11 @@ export function CapabilitiesGrid() {
                       {item.code}
                     </span>
                     <span
-                      className="tabular-telemetry text-[11px]"
+                      className="tabular-telemetry text-[10.5px]"
                       style={{
                         color: isSelected
                           ? "var(--accent-brand-text)"
-                          : "var(--ink-secondary)",
+                          : "var(--ink-muted)",
                       }}
                     >
                       {item.mobileMeta}
@@ -856,9 +835,7 @@ export function CapabilitiesGrid() {
             })}
           </div>
 
-          {/* Desktop Editorial Index (Left 5 cols) + Interactive Stage (Right 7 cols) */}
           <div className="mt-4 grid grid-cols-1 items-stretch gap-8 lg:mt-10 lg:grid-cols-12 lg:gap-10">
-            {/* Left Vertical Hairline Index */}
             <div
               role="tablist"
               aria-label="Core Spanrail capabilities"
@@ -928,7 +905,6 @@ export function CapabilitiesGrid() {
               })}
             </div>
 
-            {/* Right Interactive Showcase Stage */}
             <div
               id="capabilities-stage-panel"
               role="tabpanel"

@@ -298,7 +298,7 @@ export function TrustStrip() {
         >
           <div className="spanrail-container mb-5 text-center md:mb-7">
             <p
-              className="text-[15px] font-medium tracking-[-0.015em] [text-wrap:balance] md:text-[18.5px]"
+              className="text-[13.5px] font-medium tracking-[-0.015em] [text-wrap:balance] md:text-[15px] lg:text-[18.5px]"
               style={{ color: "var(--ink-primary)" }}
             >
               Built for engineering teams running production LLM agents
@@ -342,7 +342,7 @@ export function TrustStrip() {
             <StatsBand stats={SPANRAIL_STATS} duration={1.4} />
           </div>
           <p
-            className="mt-3 text-left text-[11.5px] sm:text-right"
+            className="mt-3 text-left text-[11px] leading-[1.45] sm:text-right lg:text-[11.5px]"
             style={{ color: "var(--ink-muted)" }}
           >
             Modeled OTLP benchmark metrics across multi-step agent workloads — tap or hover any metric for context.

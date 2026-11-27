@@ -194,12 +194,11 @@ export function HeroSection() {
       className="relative isolate pt-20 pb-10 md:pt-24 md:pb-12"
     >
       <div className="spanrail-container">
-        {/* Instant Frame-0 LCP Paint (zero opacity:0 wait on async LazyMotion chunk) */}
         <div className="grid grid-cols-1 items-center gap-4 sm:gap-6 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <div
-              className="tabular-telemetry inline-flex items-center gap-2 text-[11.5px] tracking-[0.02em] sm:text-[12px]"
-              style={{ color: "var(--ink-secondary)" }}
+              className="tabular-telemetry inline-flex items-center gap-2 text-[11px] tracking-[0.02em] lg:text-[12px]"
+              style={{ color: "var(--ink-muted)" }}
             >
               <span
                 aria-hidden="true"
@@ -225,14 +224,13 @@ export function HeroSection() {
             </h1>
 
             <p
-              className="mt-3.5 max-w-[50ch] text-[15.5px] leading-[1.6] sm:mt-4 sm:text-[16px] sm:leading-[1.65]"
+              className="mt-3 max-w-[46ch] text-[14px] leading-[1.6] md:text-[14.5px] lg:mt-4 lg:max-w-[50ch] lg:text-[16px] lg:leading-[1.65]"
               style={{ color: "var(--ink-secondary)" }}
             >
               Real-time trace inspection, automatic PII and loop guardrails, and
               exact per-run token costs for production AI agents.
             </p>
 
-            {/* Balanced 2-column thumb CTA bar on Phone -> inline pills on >=640px */}
             <div className="mt-5 grid grid-cols-2 gap-2.5 sm:mt-6 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
               <a
                 href="#demo"
@@ -272,7 +270,7 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Full-Width Interactive Live Trace Sandbox (visible immediately on Frame 0) */}
+        {/* Full-Width Interactive Live Trace Sandbox */}
         <div
           id="sandbox"
           className="surface-fade mt-4 scroll-mt-20 overflow-hidden rounded-2xl border sm:mt-6 sm:rounded-3xl md:mt-8 md:scroll-mt-24"
@@ -286,7 +284,7 @@ export function HeroSection() {
             {`${evaluated.label} trace ${evaluated.traceId}: total latency ${formatLatencyMs(evaluated.totalLatencyMs)}, run cost ${formatCostUsd(evaluated.totalCostUsd)}, status ${evaluated.status}, ${evaluated.activeGuardrailCount} of 3 guardrails active.`}
           </div>
 
-          {/* Sandbox Header: Full-width scenario switch + 3-cell mobile telemetry bar */}
+          {/* Sandbox Header: Mobile HUD pill -> transparent inline row on >=768px */}
           <div
             className="flex flex-col gap-3.5 border-b px-4 py-4 md:flex-row md:items-center md:justify-between md:px-8 md:py-5"
             style={{ borderColor: "var(--border-whisper)" }}
@@ -302,17 +300,11 @@ export function HeroSection() {
               />
             </div>
 
-            <div
-              className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 rounded-2xl border px-3.5 py-2.5 md:flex md:items-center md:gap-5 md:rounded-none md:border-0 md:bg-transparent md:p-0"
-              style={{
-                backgroundColor: "var(--bg-surface-subtle)",
-                borderColor: "var(--border-whisper)",
-              }}
-            >
+            <div className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface-subtle)] px-3.5 py-2.5 md:flex md:items-center md:gap-5 md:rounded-none md:border-0 md:bg-transparent md:p-0">
               <div className="flex flex-col">
                 <span
-                  className="text-[11px] font-medium md:text-[11.5px]"
-                  style={{ color: "var(--ink-secondary)" }}
+                  className="text-[11px] font-medium lg:text-[11.5px]"
+                  style={{ color: "var(--ink-muted)" }}
                 >
                   Latency
                 </span>
@@ -335,8 +327,8 @@ export function HeroSection() {
                 style={{ borderColor: "var(--border-whisper)" }}
               >
                 <span
-                  className="text-[11px] font-medium md:text-[11.5px]"
-                  style={{ color: "var(--ink-secondary)" }}
+                  className="text-[11px] font-medium lg:text-[11.5px]"
+                  style={{ color: "var(--ink-muted)" }}
                 >
                   Run cost
                 </span>
@@ -373,7 +365,7 @@ export function HeroSection() {
           >
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <span
-                className="text-[12.5px] font-medium"
+                className="text-[12px] font-medium lg:text-[12.5px]"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 Inline guardrails{" "}
@@ -382,7 +374,7 @@ export function HeroSection() {
                 </span>
               </span>
               <span
-                className="text-[12.5px] font-medium"
+                className="text-[12px] font-medium lg:text-[12.5px]"
                 style={{
                   color:
                     evaluated.status === "Healthy"
@@ -426,8 +418,8 @@ export function HeroSection() {
                       </span>
                       <span
                         id={captionId}
-                        className="text-[12px] leading-snug"
-                        style={{ color: "var(--ink-secondary)" }}
+                        className="text-[11.5px] leading-snug lg:text-[12px]"
+                        style={{ color: "var(--ink-muted)" }}
                       >
                         {ctrl.caption}
                       </span>
@@ -447,19 +439,17 @@ export function HeroSection() {
 
           {/* Trace Waterfall Ledger */}
           <div>
-            {/* Mobile Trace Table Cue */}
             <div
               className="flex items-center justify-between border-b px-4 py-2 text-[11px] font-medium md:hidden"
               style={{
                 borderColor: "var(--border-whisper)",
-                color: "var(--ink-secondary)",
+                color: "var(--ink-muted)",
               }}
             >
               <span>Tap any step to inspect JSON</span>
               <span className="tabular-telemetry">Time · Cost</span>
             </div>
 
-            {/* Desktop Trace Table Header */}
             <div
               className="hidden items-center justify-between border-b px-8 py-2.5 text-[11.5px] font-medium md:flex"
               style={{
@@ -531,8 +521,8 @@ export function HeroSection() {
                               {formatLatencyMs(span.latencyMs)}
                             </span>
                             <span
-                              className="tabular-telemetry text-[11.5px]"
-                              style={{ color: "var(--ink-secondary)" }}
+                              className="tabular-telemetry text-[11px]"
+                              style={{ color: "var(--ink-muted)" }}
                             >
                               {formatCostUsd(span.costUsd)}
                             </span>
@@ -552,20 +542,19 @@ export function HeroSection() {
                         </div>
 
                         <p
-                          className="mt-1 pl-3.5 text-[12px] leading-snug"
+                          className="mt-1 pl-3.5 text-[11.5px] leading-snug"
                           style={{
                             color:
                               span.tone === "warn"
                                 ? "var(--status-warn-text)"
                                 : span.tone === "pass"
                                   ? "var(--status-pass-text)"
-                                  : "var(--ink-secondary)",
+                                  : "var(--ink-muted)",
                           }}
                         >
                           {span.note}
                         </p>
 
-                        {/* Full-width Phone GPU x + scaleX Waterfall Bar */}
                         <div
                           className="relative mt-2 ml-3.5 h-1.5 overflow-hidden rounded-[2px]"
                           style={{
@@ -627,7 +616,7 @@ export function HeroSection() {
                               {span.name}
                             </span>
                             <span
-                              className="truncate text-[12px]"
+                              className="truncate text-[11.5px] lg:text-[12px]"
                               style={{
                                 color:
                                   span.tone === "warn"
@@ -687,7 +676,7 @@ export function HeroSection() {
                         </span>
 
                         <span
-                          className="tabular-telemetry w-[56px] text-right text-[12.5px]"
+                          className="tabular-telemetry w-[56px] text-right text-[12px] lg:text-[12.5px]"
                           style={{ color: "var(--ink-secondary)" }}
                         >
                           {formatCostUsd(span.costUsd)}
@@ -749,8 +738,8 @@ export function HeroSection() {
                                 style={{ borderColor: "var(--border-whisper)" }}
                               >
                                 <div
-                                  className="tabular-telemetry flex min-w-0 items-center gap-2 text-[11.5px] sm:gap-3 sm:text-[12px]"
-                                  style={{ color: "var(--ink-secondary)" }}
+                                  className="tabular-telemetry flex min-w-0 items-center gap-2 text-[11px] sm:gap-3 lg:text-[12px]"
+                                  style={{ color: "var(--ink-muted)" }}
                                 >
                                   <span translate="no" className="truncate">
                                     {evaluated.traceId}

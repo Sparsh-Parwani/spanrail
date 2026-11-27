@@ -59,7 +59,7 @@ export default function DocsPage() {
         <div className="spanrail-container max-w-[820px]">
           <Link
             href="/"
-            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13.5px] font-medium [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
+            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-medium lg:text-[13.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
             style={{ color: "var(--ink-secondary)" }}
           >
             <ArrowLeft className="h-4 w-4 shrink-0" />
@@ -68,14 +68,13 @@ export default function DocsPage() {
 
           <h1 className="display-h2 mt-3">Quickstart and OTLP reference</h1>
           <p
-            className="mt-3 max-w-[58ch] text-[15.5px] leading-[1.65] sm:text-[16px]"
+            className="mt-2.5 max-w-[54ch] text-[13.5px] leading-[1.6] md:text-[14px] lg:mt-3 lg:max-w-[58ch] lg:text-[16px] lg:leading-[1.65]"
             style={{ color: "var(--ink-secondary)" }}
           >
             Spanrail ingests standard OpenTelemetry traces over OTLP/HTTP
             Protobuf and gRPC with zero proprietary wrapper lock-in.
           </p>
 
-          {/* In-page quick navigation — all 3 sections visible on phone & tablet */}
           <nav
             aria-label="Documentation sections"
             className="mt-6 grid grid-cols-3 gap-2 sm:inline-flex sm:gap-2.5"
@@ -103,13 +102,13 @@ export default function DocsPage() {
           <section id="sdk" className="mt-10 scroll-mt-24 space-y-4 sm:mt-12">
             <div>
               <h2
-                className="text-[18.5px] font-medium tracking-[-0.015em] sm:text-[20px]"
+                className="text-[17.5px] font-medium tracking-[-0.015em] md:text-[18.5px] lg:text-[20px]"
                 style={{ color: "var(--ink-primary)" }}
               >
                 1. Drop-in TypeScript SDK
               </h2>
               <p
-                className="mt-1.5 text-[14.5px] leading-[1.6]"
+                className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-1.5 lg:text-[14.5px] lg:leading-[1.6]"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 Auto-instruments Vercel AI SDK, OpenAI Agents, and Node.js
@@ -127,13 +126,13 @@ export default function DocsPage() {
           <section id="python" className="mt-10 scroll-mt-24 space-y-4">
             <div>
               <h2
-                className="text-[18.5px] font-medium tracking-[-0.015em] sm:text-[20px]"
+                className="text-[17.5px] font-medium tracking-[-0.015em] md:text-[18.5px] lg:text-[20px]"
                 style={{ color: "var(--ink-primary)" }}
               >
                 2. Python SDK for LangGraph and OpenAI Agents
               </h2>
               <p
-                className="mt-1.5 text-[14.5px] leading-[1.6]"
+                className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-1.5 lg:text-[14.5px] lg:leading-[1.6]"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 Exports OpenTelemetry spans asynchronously without blocking
@@ -155,13 +154,13 @@ export default function DocsPage() {
           >
             <div>
               <h2
-                className="text-[18.5px] font-medium tracking-[-0.015em] sm:text-[20px]"
+                className="text-[17.5px] font-medium tracking-[-0.015em] md:text-[18.5px] lg:text-[20px]"
                 style={{ color: "var(--ink-primary)" }}
               >
                 3. Direct OTLP collector endpoint
               </h2>
               <p
-                className="mt-1.5 text-[14.5px] leading-[1.65] sm:text-[15px]"
+                className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-1.5 lg:text-[15px] lg:leading-[1.65]"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 Already running an OpenTelemetry Collector? Point your OTLP/HTTP
@@ -182,15 +181,15 @@ export default function DocsPage() {
                   className="flex flex-col gap-1 py-3.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4"
                 >
                   <dt
-                    className="shrink-0 text-[12.5px] font-medium sm:text-[13px]"
-                    style={{ color: "var(--ink-secondary)" }}
+                    className="shrink-0 text-[12px] font-medium lg:text-[13px]"
+                    style={{ color: "var(--ink-muted)" }}
                   >
                     {spec.label}
                   </dt>
                   <dd
                     translate={spec.mono ? "no" : undefined}
                     className={`${
-                      spec.mono ? "tabular-telemetry break-all text-[12.5px]" : "text-[13.5px]"
+                      spec.mono ? "tabular-telemetry break-all text-[12px] lg:text-[12.5px]" : "text-[13px] lg:text-[13.5px]"
                     } sm:text-right`}
                     style={{ color: "var(--ink-primary)" }}
                   >
