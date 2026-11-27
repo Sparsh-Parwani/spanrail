@@ -18,6 +18,7 @@ export function MobileBottomDock() {
   const billingCycle = useSpanrailStore((s) => s.billingCycle);
 
   const [pastHero, setPastHero] = useState(false);
+  const [nearPricing, setNearPricing] = useState(false);
   const [nearDemoForm, setNearDemoForm] = useState(false);
 
   const pricing = useMemo(
@@ -33,20 +34,23 @@ export function MobileBottomDock() {
   );
 
   useEffect(() => {
-    if (!mounted || !isPhone) return;
+    if (!mounted || !isPhone || typeof IntersectionObserver === "undefined") {
+      return;
+    }
 
     const heroEl = document.getElementById("hero-stage");
+    const pricingEl = document.getElementById("pricing");
     const demoEl = document.getElementById("demo");
 
     let heroObserver: IntersectionObserver | null = null;
+    let pricingObserver: IntersectionObserver | null = null;
     let demoObserver: IntersectionObserver | null = null;
 
-    if (heroEl && typeof IntersectionObserver !== "undefined") {
+    if (heroEl) {
       heroObserver = new IntersectionObserver(
         (entries) => {
           const entry = entries[0];
           if (entry) {
-            // Show dock once hero leaves viewport upward
             setPastHero(!entry.isIntersecting && entry.boundingClientRect.top < 0);
           }
         },
@@ -55,7 +59,20 @@ export function MobileBottomDock() {
       heroObserver.observe(heroEl);
     }
 
-    if (demoEl && typeof IntersectionObserver !== "undefined") {
+    if (pricingEl) {
+      pricingObserver = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (entry) {
+            setNearPricing(entry.isIntersecting);
+          }
+        },
+        { threshold: 0.05 }
+      );
+      pricingObserver.observe(pricingEl);
+    }
+
+    if (demoEl) {
       demoObserver = new IntersectionObserver(
         (entries) => {
           const entry = entries[0];
@@ -63,18 +80,20 @@ export function MobileBottomDock() {
             setNearDemoForm(entry.isIntersecting);
           }
         },
-        { threshold: 0.15 }
+        { threshold: 0.12 }
       );
       demoObserver.observe(demoEl);
     }
 
     return () => {
       heroObserver?.disconnect();
+      pricingObserver?.disconnect();
       demoObserver?.disconnect();
     };
   }, [mounted, isPhone]);
 
-  const shouldShow = mounted && isPhone && pastHero && !nearDemoForm;
+  const shouldShow =
+    mounted && isPhone && pastHero && !nearPricing && !nearDemoForm;
 
   return (
     <AnimatePresence>
@@ -99,7 +118,7 @@ export function MobileBottomDock() {
           transition={
             prefersReducedMotion ? REDUCED_TRANSITION : TACTILE_SPRING
           }
-          className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 md:hidden"
+          className="fixed inset-x-4 bottom-[max(0.85rem,env(safe-area-inset-bottom))] z-30 md:hidden"
         >
           <div
             className="flex items-center justify-between gap-3 rounded-full border py-1.5 pr-1.5 pl-4"
@@ -111,11 +130,11 @@ export function MobileBottomDock() {
           >
             <a
               href="#pricing"
-              className="flex min-h-[44px] flex-col justify-center rounded-full pr-2"
+              className="flex min-h-[44px] min-w-0 flex-col justify-center rounded-full pr-2"
               aria-label={`Estimated monthly total ${formatUsd(pricing.monthlyTotalUsd)} per month for ${pricing.tracesLabel} traces. Jump to pricing calculator.`}
             >
               <span
-                className="text-[11px] font-medium leading-tight"
+                className="truncate text-[11px] font-medium leading-tight"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 {pricing.tracesLabel} traces ·{" "}
@@ -144,7 +163,7 @@ export function MobileBottomDock() {
               }}
             >
               <span>Book demo</span>
-              <ArrowUpRight className="h-4 w-4" strokeWidth={1.85} />
+              <ArrowUpRight className="h-4 w-4 shrink-0" strokeWidth={1.85} />
             </a>
           </div>
         </m.aside>

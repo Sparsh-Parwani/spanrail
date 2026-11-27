@@ -34,30 +34,32 @@ import { QuietStatusPill } from "@/components/ui/Primitives";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const STEPS = [
-  { id: "contact", title: "Work Details & Volume" },
-  { id: "runtime", title: "Agent Stack & Goal" },
+  { id: "contact", title: "Work details & volume", shortTitle: "Contact & volume" },
+  { id: "runtime", title: "Agent stack & goal", shortTitle: "Stack & goal" },
 ] as const;
 
 const contentVariants = {
-  hidden: { opacity: 0, x: 40 },
+  hidden: { opacity: 0, x: 32 },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.26, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.24, ease: [0.22, 1, 0.36, 1] as const },
   },
   exit: {
     opacity: 0,
-    x: -40,
-    transition: { duration: 0.18, ease: [0.4, 0, 1, 1] as const },
+    x: -32,
+    transition: { duration: 0.16, ease: [0.4, 0, 1, 1] as const },
   },
 };
+
+const INGEST_ENDPOINT = "https" + "://ingest.spanrail.dev/v1/traces";
 
 const GENERIC_STARTER_CONFIG = `import { initSpanrail } from "@spanrail/otel";
 
 export const spanrail = initSpanrail({
   serviceName: "agent-service",
   apiKey: process.env.SPANRAIL_API_KEY!,
-  otlpEndpoint: "https://ingest.spanrail.dev/v1/traces",
+  otlpEndpoint: "${INGEST_ENDPOINT}",
   guardrails: {
     semanticCache: { enabled: true, similarityThreshold: 0.96, ttlSeconds: 1800 },
     piiRedaction: { enabled: true, mode: "mask_inline", detectors: ["ssn", "credit_card", "api_key"] },
@@ -95,6 +97,7 @@ export function DemoBookingForm() {
   const [email, setEmail] = useState("");
   const [emailTouched, setEmailTouched] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const emailInputRef = useRef<HTMLInputElement | null>(null);
 
   const [volumeTier, setVolumeTier] = useState<VolumeTier>(syncedVolume);
   const userOverrodeVolumeRef = useRef(false);
@@ -149,6 +152,7 @@ export function DemoBookingForm() {
     setEmailError(err);
     if (err) {
       playSwitchClick(false);
+      emailInputRef.current?.focus();
       return;
     }
     setCurrentStep(1);
@@ -170,6 +174,7 @@ export function DemoBookingForm() {
       if (fieldErrors.email?.[0]) {
         setEmailError(fieldErrors.email[0]);
         setCurrentStep(0);
+        window.setTimeout(() => emailInputRef.current?.focus(), 60);
       }
       setSubmitError("Please review your work email and agent stack.");
       playSwitchClick(false);
@@ -198,7 +203,7 @@ export function DemoBookingForm() {
 
       setConfirmation(data as DemoBookingResponse);
       playSuccessConfirm();
-      toast.success("Architecture briefing confirmed!");
+      toast.success("Architecture briefing confirmed");
     } catch {
       setSubmitError("Network error while submitting. Please try again.");
       playSwitchClick(false);
@@ -243,7 +248,7 @@ export function DemoBookingForm() {
               Walk through your agent traces with engineering.
             </h2>
             <p
-              className="mx-auto mt-3 max-w-[48ch] text-[15.5px] leading-[1.6]"
+              className="mx-auto mt-3 max-w-[48ch] text-[15px] leading-[1.6] sm:text-[15.5px]"
               style={{ color: "var(--ink-secondary)" }}
             >
               Book a 25-minute review with a systems engineer, or grab the
@@ -251,46 +256,45 @@ export function DemoBookingForm() {
             </p>
           </div>
 
-          <div className="mx-auto mt-9 w-full max-w-[580px]">
+          <div className="mx-auto mt-8 w-full max-w-[580px] sm:mt-9">
             {!confirmation && (
-              <div className="mb-7">
-                <div className="mb-2.5 flex justify-between px-1">
+              <div className="mb-6 sm:mb-7">
+                <div className="mb-2 flex items-center justify-between gap-2 px-0.5">
                   {STEPS.map((step, index) => {
                     const isActive = index === currentStep;
                     const isCompleted = index < currentStep;
                     const canJump = index <= currentStep;
 
                     return (
-                      <m.button
+                      <button
                         key={step.id}
                         type="button"
                         disabled={!canJump}
-                        whileHover={canJump ? { scale: 1.06 } : undefined}
-                        whileTap={canJump ? { scale: 0.95 } : undefined}
                         onClick={() => {
                           if (canJump) {
                             setCurrentStep(index);
                             playSwitchClick(true);
                           }
                         }}
-                        className="flex cursor-pointer items-center gap-2.5 disabled:cursor-default"
+                        className="btn-tactile flex min-h-[40px] cursor-pointer items-center gap-2 rounded-lg px-1 disabled:cursor-default"
                       >
                         <span
-                          className="h-3.5 w-3.5 rounded-full"
+                          aria-hidden="true"
+                          className="h-3 w-3 shrink-0 rounded-full sm:h-3.5 sm:w-3.5"
                           style={{
                             backgroundColor:
                               isCompleted || isActive
                                 ? "var(--accent-spark)"
                                 : "var(--border-hover)",
                             boxShadow: isActive
-                              ? "0 0 0 5px var(--accent-spark-soft)"
+                              ? "0 0 0 4px var(--accent-spark-soft)"
                               : "none",
                             transition:
                               "background-color 260ms var(--ease-enter), box-shadow 260ms var(--ease-enter)",
                           }}
                         />
                         <span
-                          className="text-[12.5px]"
+                          className="text-[12.5px] sm:text-[13px]"
                           style={{
                             color: isActive
                               ? "var(--ink-primary)"
@@ -298,30 +302,31 @@ export function DemoBookingForm() {
                             fontWeight: isActive ? 500 : 400,
                           }}
                         >
-                          {step.title}
+                          <span className="sm:hidden">{step.shortTitle}</span>
+                          <span className="hidden sm:inline">{step.title}</span>
                         </span>
-                      </m.button>
+                      </button>
                     );
                   })}
                 </div>
 
                 <div
-                  className="mt-2 h-1.5 w-full overflow-hidden rounded-full"
+                  className="h-1.5 w-full overflow-hidden rounded-full"
                   style={{ backgroundColor: "var(--bg-surface-subtle)" }}
                 >
                   <m.div
-                    className="h-full rounded-full"
+                    className="h-full w-full origin-left rounded-full"
                     style={{ backgroundColor: "var(--accent-spark)" }}
                     initial={false}
-                    animate={{ width: currentStep === 0 ? "50%" : "100%" }}
-                    transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                    animate={{ scaleX: currentStep === 0 ? 0.5 : 1 }}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                   />
                 </div>
               </div>
             )}
 
             <div
-              className="surface-fade overflow-hidden rounded-3xl border"
+              className="surface-fade overflow-hidden rounded-2xl border sm:rounded-3xl"
               style={{
                 backgroundColor: "var(--bg-surface)",
                 borderColor: "var(--border-whisper)",
@@ -333,14 +338,14 @@ export function DemoBookingForm() {
                   initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="p-7 md:p-9"
+                  className="p-5 sm:p-7 md:p-9"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <QuietStatusPill tone="pass">
                       Architecture briefing confirmed
                     </QuietStatusPill>
                     <span
-                      className="tabular-telemetry text-[12.5px] font-medium"
+                      className="tabular-telemetry text-[12px] font-medium sm:text-[12.5px]"
                       style={{ color: "var(--ink-secondary)" }}
                     >
                       Ref · {confirmation.bookingRef}
@@ -348,21 +353,22 @@ export function DemoBookingForm() {
                   </div>
 
                   <h3
-                    className="mt-5 text-[21px] font-medium tracking-[-0.02em]"
+                    className="mt-5 text-[20px] font-medium tracking-[-0.02em] sm:text-[21px]"
                     style={{ color: "var(--ink-primary)" }}
                   >
                     Your starter environment is ready.
                   </h3>
 
                   <p
-                    className="mt-2.5 text-[14.5px] leading-[1.65]"
+                    className="mt-2.5 text-[14px] leading-[1.65] sm:text-[14.5px]"
                     style={{ color: "var(--ink-secondary)" }}
                   >
                     {confirmation.summary}
                   </p>
 
                   <pre
-                    className="tabular-telemetry mt-5 max-h-[210px] overflow-auto rounded-2xl border p-4 text-[12px] leading-[1.65]"
+                    translate="no"
+                    className="tabular-telemetry mt-5 max-h-[210px] overflow-auto rounded-2xl border p-3.5 text-[11.5px] leading-[1.65] sm:p-4 sm:text-[12px]"
                     style={{
                       backgroundColor: "var(--code-bg)",
                       borderColor: "var(--border-whisper)",
@@ -372,48 +378,48 @@ export function DemoBookingForm() {
                     <code>{confirmation.otelConfigContent}</code>
                   </pre>
 
-                  <div className="mt-6 flex flex-wrap items-center gap-3">
-                    <m.button
+                  <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3">
+                    <button
                       type="button"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.97 }}
                       onClick={() =>
                         triggerDownload(
                           confirmation.otelConfigFilename,
                           confirmation.otelConfigContent
                         )
                       }
-                      className="inline-flex min-h-[46px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl px-5 text-[14px] font-medium"
+                      className="btn-tactile inline-flex min-h-[46px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl px-5 text-[14px] font-medium"
                       style={{
                         backgroundColor: "var(--btn-primary-bg)",
                         color: "var(--btn-primary-ink)",
                       }}
                     >
-                      <Download className="h-4 w-4" />
+                      <Download className="h-4 w-4 shrink-0" />
                       <span>Download starter spanrail.otel.ts</span>
-                    </m.button>
+                    </button>
 
                     <button
                       type="button"
                       onClick={handleReset}
-                      className="btn-tactile inline-flex min-h-[46px] cursor-pointer items-center gap-1.5 rounded-2xl border px-4 text-[13px] font-medium hover:border-[var(--border-hover)]"
+                      className="btn-tactile inline-flex min-h-[46px] cursor-pointer items-center justify-center gap-1.5 rounded-2xl border px-4 text-[13px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)]"
                       style={{
                         borderColor: "var(--border-whisper)",
                         color: "var(--ink-secondary)",
                       }}
                     >
-                      <RotateCcw className="h-3.5 w-3.5" />
+                      <RotateCcw className="h-3.5 w-3.5 shrink-0" />
                       <span>Reset</span>
                     </button>
                   </div>
                 </m.div>
               ) : (
                 <div>
-                  <div className="min-h-[300px] p-6 sm:p-8">
+                  <div className="min-h-[286px] p-4 sm:min-h-[300px] sm:p-8">
                     <AnimatePresence mode="wait" initial={false}>
                       <m.div
                         key={currentStep}
-                        initial={prefersReducedMotion ? { opacity: 0 } : "hidden"}
+                        initial={
+                          prefersReducedMotion ? { opacity: 0 } : "hidden"
+                        }
                         animate={
                           prefersReducedMotion ? { opacity: 1 } : "visible"
                         }
@@ -431,13 +437,18 @@ export function DemoBookingForm() {
                                 Work email
                               </label>
                               <input
+                                ref={emailInputRef}
                                 id="demo-work-email"
                                 type="email"
                                 inputMode="email"
                                 autoComplete="email"
+                                autoCapitalize="none"
+                                spellCheck={false}
                                 placeholder="alex@company.com"
                                 value={email}
-                                onChange={(e) => handleEmailChange(e.target.value)}
+                                onChange={(e) =>
+                                  handleEmailChange(e.target.value)
+                                }
                                 onBlur={() => {
                                   setEmailTouched(true);
                                   if (email.trim())
@@ -445,7 +456,7 @@ export function DemoBookingForm() {
                                 }}
                                 aria-invalid={Boolean(emailError)}
                                 aria-describedby="demo-email-err"
-                                className="mt-2 h-12 w-full rounded-xl border px-4 text-[15px] placeholder:text-[var(--ink-muted)]"
+                                className="mt-2 h-12 w-full rounded-xl border px-3.5 text-[16px] placeholder:text-[var(--ink-muted)] sm:px-4 sm:text-[15px]"
                                 style={{
                                   backgroundColor: "var(--bg-surface-subtle)",
                                   borderColor: emailError
@@ -469,8 +480,8 @@ export function DemoBookingForm() {
                               </p>
                             </div>
 
-                            <div className="space-y-2">
-                              <div className="flex items-baseline justify-between gap-2">
+                            <div className="space-y-2.5">
+                              <div className="flex flex-wrap items-baseline justify-between gap-2">
                                 <span
                                   className="text-[13.5px] font-medium"
                                   style={{ color: "var(--ink-primary)" }}
@@ -490,17 +501,16 @@ export function DemoBookingForm() {
                                 {VOLUME_TIERS.map((tier) => {
                                   const active = volumeTier === tier;
                                   return (
-                                    <m.button
+                                    <button
                                       key={tier}
                                       type="button"
-                                      whileHover={{ scale: 1.02 }}
-                                      whileTap={{ scale: 0.98 }}
+                                      aria-pressed={active}
                                       onClick={() => {
                                         userOverrodeVolumeRef.current = true;
                                         setVolumeTier(tier);
                                         playSwitchClick(true);
                                       }}
-                                      className="tabular-telemetry min-h-[44px] cursor-pointer rounded-xl border px-3 text-[13.5px] font-medium"
+                                      className="btn-tactile tabular-telemetry min-h-[46px] cursor-pointer rounded-xl border px-3 text-[13.5px] font-medium"
                                       style={{
                                         backgroundColor: active
                                           ? "var(--accent-brand-soft)"
@@ -514,7 +524,7 @@ export function DemoBookingForm() {
                                       }}
                                     >
                                       {tier}
-                                    </m.button>
+                                    </button>
                                   );
                                 })}
                               </div>
@@ -524,7 +534,7 @@ export function DemoBookingForm() {
 
                         {currentStep === 1 && (
                           <div className="space-y-5">
-                            <div className="space-y-2">
+                            <div className="space-y-2.5">
                               <span
                                 className="block text-[13.5px] font-medium"
                                 style={{ color: "var(--ink-primary)" }}
@@ -535,13 +545,12 @@ export function DemoBookingForm() {
                                 {AGENT_STACKS.map((stack) => {
                                   const active = agentStacks.includes(stack);
                                   return (
-                                    <m.button
+                                    <button
                                       key={stack}
                                       type="button"
-                                      whileHover={{ scale: 1.02 }}
-                                      whileTap={{ scale: 0.98 }}
+                                      aria-pressed={active}
                                       onClick={() => toggleStack(stack)}
-                                      className="flex min-h-[44px] cursor-pointer items-center justify-between rounded-xl border px-3.5 text-[left text-[13px] font-medium"
+                                      className="btn-tactile flex min-h-[46px] cursor-pointer items-center justify-between gap-2 rounded-xl border px-3 text-left text-[13px] font-medium sm:px-3.5"
                                       style={{
                                         backgroundColor: active
                                           ? "var(--accent-spark-soft)"
@@ -558,13 +567,13 @@ export function DemoBookingForm() {
                                       {active && (
                                         <Check className="h-3.5 w-3.5 shrink-0" />
                                       )}
-                                    </m.button>
+                                    </button>
                                   );
                                 })}
                               </div>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-2.5">
                               <span
                                 className="block text-[13.5px] font-medium"
                                 style={{ color: "var(--ink-primary)" }}
@@ -575,16 +584,15 @@ export function DemoBookingForm() {
                                 {PRIMARY_GOALS.map((goal) => {
                                   const active = primaryGoal === goal;
                                   return (
-                                    <m.button
+                                    <button
                                       key={goal}
                                       type="button"
-                                      whileHover={{ scale: 1.015 }}
-                                      whileTap={{ scale: 0.985 }}
+                                      aria-pressed={active}
                                       onClick={() => {
                                         setPrimaryGoal(goal);
                                         playSwitchClick(true);
                                       }}
-                                      className="flex min-h-[44px] cursor-pointer items-center justify-between rounded-xl border px-3.5 text-[left text-[13px] font-medium"
+                                      className="btn-tactile flex min-h-[46px] cursor-pointer items-center justify-between rounded-xl border px-3.5 text-left text-[13px] font-medium"
                                       style={{
                                         backgroundColor: active
                                           ? "var(--accent-brand-soft)"
@@ -598,7 +606,7 @@ export function DemoBookingForm() {
                                       }}
                                     >
                                       <span>{goal}</span>
-                                    </m.button>
+                                    </button>
                                   );
                                 })}
                               </div>
@@ -622,49 +630,38 @@ export function DemoBookingForm() {
                     </AnimatePresence>
                   </div>
 
+                  {/* Action Footer: Balanced full-width mobile buttons -> edge-aligned on >=640px */}
                   <div
-                    className="flex items-center justify-between border-t px-6 py-4 sm:px-8"
+                    className="flex items-center justify-between gap-2.5 border-t px-4 py-3.5 sm:px-8 sm:py-4"
                     style={{ borderColor: "var(--border-whisper)" }}
                   >
-                    <m.button
+                    <button
                       type="button"
-                      whileHover={currentStep > 0 ? { scale: 1.04 } : undefined}
-                      whileTap={currentStep > 0 ? { scale: 0.96 } : undefined}
                       onClick={() => {
                         setCurrentStep(0);
                         playSwitchClick(false);
                       }}
                       disabled={currentStep === 0 || isSubmitting}
-                      className="inline-flex min-h-[42px] cursor-pointer items-center gap-1 rounded-2xl border px-4 text-[13.5px] font-medium disabled:cursor-not-allowed disabled:opacity-40"
+                      className="btn-tactile inline-flex min-h-[46px] flex-1 cursor-pointer items-center justify-center gap-1 rounded-2xl border px-4 text-[14px] font-medium sm:min-h-[42px] sm:flex-none sm:text-[13.5px] disabled:cursor-not-allowed disabled:opacity-40"
                       style={{
                         borderColor: "var(--border-whisper)",
                         backgroundColor: "var(--bg-surface-subtle)",
                         color: "var(--ink-primary)",
                       }}
                     >
-                      <ChevronLeft className="h-4 w-4" />
+                      <ChevronLeft className="h-4 w-4 shrink-0" />
                       <span>Back</span>
-                    </m.button>
+                    </button>
 
-                    <m.button
+                    <button
                       type="button"
-                      whileHover={
-                        isStepValid() && !isSubmitting
-                          ? { scale: 1.04 }
-                          : undefined
-                      }
-                      whileTap={
-                        isStepValid() && !isSubmitting
-                          ? { scale: 0.96 }
-                          : undefined
-                      }
                       onClick={
                         currentStep === 1
                           ? () => void handleSubmit()
                           : handleNext
                       }
                       disabled={!isStepValid() || isSubmitting}
-                      className="inline-flex min-h-[42px] cursor-pointer items-center gap-1.5 rounded-2xl px-5 text-[13.5px] font-medium disabled:cursor-not-allowed disabled:opacity-45"
+                      className="btn-tactile inline-flex min-h-[46px] flex-[1.5] cursor-pointer items-center justify-center gap-1.5 rounded-2xl px-5 text-[14px] font-medium sm:min-h-[42px] sm:flex-none sm:text-[13.5px] disabled:cursor-not-allowed disabled:opacity-45"
                       style={{
                         backgroundColor: "var(--btn-primary-bg)",
                         color: "var(--btn-primary-ink)",
@@ -672,21 +669,21 @@ export function DemoBookingForm() {
                     >
                       {isSubmitting ? (
                         <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
                           <span>Provisioning…</span>
                         </>
                       ) : currentStep === 1 ? (
                         <>
                           <span>Confirm briefing</span>
-                          <Check className="h-4 w-4" />
+                          <Check className="h-4 w-4 shrink-0" />
                         </>
                       ) : (
                         <>
                           <span>Next</span>
-                          <ChevronRight className="h-4 w-4" />
+                          <ChevronRight className="h-4 w-4 shrink-0" />
                         </>
                       )}
-                    </m.button>
+                    </button>
                   </div>
                 </div>
               )}
@@ -694,22 +691,22 @@ export function DemoBookingForm() {
 
             {/* Zero-Gate Self-Serve Escape Hatch for Developers */}
             {!confirmation && (
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-2 px-1 text-[12.5px]">
+              <div className="mt-4 flex flex-col items-start justify-between gap-1.5 px-1 text-[12.5px] sm:flex-row sm:items-center sm:gap-2">
                 <span
                   className="tabular-telemetry"
                   style={{ color: "var(--ink-secondary)" }}
                 >
-                  Step {currentStep + 1} of 2 · {STEPS[currentStep]!.title}
+                  Step {currentStep + 1} of 2 — {STEPS[currentStep]!.title}
                 </span>
                 <button
                   type="button"
                   onClick={() =>
                     triggerDownload("spanrail.otel.ts", GENERIC_STARTER_CONFIG)
                   }
-                  className="inline-flex cursor-pointer items-center gap-1.5 font-medium underline-offset-4 hover:underline"
+                  className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 font-medium underline-offset-4 sm:min-h-0 [@media(hover:hover)]:hover:underline"
                   style={{ color: "var(--accent-brand-text)" }}
                 >
-                  <Download className="h-3.5 w-3.5" />
+                  <Download className="h-3.5 w-3.5 shrink-0" />
                   <span>Just evaluating? Download generic OTel config</span>
                 </button>
               </div>

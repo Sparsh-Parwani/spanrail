@@ -130,7 +130,7 @@ export function SoftSlider({
       className="relative flex h-11 w-full touch-none items-center select-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45"
     >
       <SliderPrimitive.Track
-        className="relative h-1 w-full grow overflow-hidden rounded-full"
+        className="relative h-1.5 w-full grow overflow-hidden rounded-full sm:h-1"
         style={{ backgroundColor: "var(--slider-track-bg)" }}
       >
         <SliderPrimitive.Range
@@ -143,7 +143,7 @@ export function SoftSlider({
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
         aria-valuetext={ariaValueText}
-        className="relative block h-5 w-5 cursor-grab rounded-full border active:cursor-grabbing active:scale-95 hover:scale-105"
+        className="relative block h-5 w-5 cursor-grab rounded-full border active:scale-95 active:cursor-grabbing [@media(hover:hover)]:hover:scale-105"
         style={{
           backgroundColor: "var(--slider-thumb-bg)",
           borderColor: "var(--slider-thumb-border)",
@@ -257,7 +257,7 @@ export function SoftTabsTrigger({
   return (
     <TabsPrimitive.Trigger
       value={value}
-      className={`relative z-0 inline-flex min-h-[36px] cursor-pointer items-center justify-center rounded-full px-3.5 py-1.5 text-[13px] font-medium select-none active:scale-[0.98] ${className}`}
+      className={`relative z-0 inline-flex min-h-[40px] cursor-pointer items-center justify-center rounded-full px-3 py-1.5 text-[13px] font-medium select-none active:scale-[0.98] sm:min-h-[36px] sm:px-3.5 ${className}`}
       style={{
         color: isActive ? "var(--ink-primary)" : "var(--ink-secondary)",
         transition:
@@ -296,7 +296,10 @@ export function SoftTabsContent({
   children: ReactNode;
 }) {
   return (
-    <TabsPrimitive.Content value={value} className={`outline-none ${className}`}>
+    <TabsPrimitive.Content
+      value={value}
+      className={`rounded-2xl ${className}`}
+    >
       {children}
     </TabsPrimitive.Content>
   );
@@ -319,6 +322,7 @@ export interface SegmentedControlProps<T extends string> {
   layoutId?: string;
   fullWidth?: boolean;
   size?: "sm" | "md";
+  stackSublabelOnMobile?: boolean;
 }
 
 export function SegmentedControl<T extends string>({
@@ -329,6 +333,7 @@ export function SegmentedControl<T extends string>({
   layoutId,
   fullWidth = false,
   size = "sm",
+  stackSublabelOnMobile = false,
 }: SegmentedControlProps<T>) {
   const autoId = useId();
   const { prefersReducedMotion } = useBreakpoint();
@@ -338,8 +343,12 @@ export function SegmentedControl<T extends string>({
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className={`inline-flex items-center gap-0.5 rounded-full border p-1 ${
-        fullWidth ? "w-full" : ""
+      className={`${
+        stackSublabelOnMobile
+          ? "grid w-full auto-cols-fr grid-flow-col gap-1 rounded-2xl border p-1 sm:inline-flex sm:items-center sm:gap-0.5 sm:rounded-full"
+          : `inline-flex items-center gap-0.5 rounded-full border p-1 ${
+              fullWidth ? "w-full" : ""
+            }`
       }`}
       style={{
         backgroundColor: "var(--bg-surface-subtle)",
@@ -355,12 +364,14 @@ export function SegmentedControl<T extends string>({
             role="radio"
             aria-checked={isActive}
             onClick={() => onChange(option.value)}
-            className={`relative z-0 inline-flex cursor-pointer items-center justify-center rounded-full font-medium select-none active:scale-[0.98] ${
+            className={`relative z-0 inline-flex min-w-0 cursor-pointer items-center justify-center font-medium select-none active:scale-[0.98] ${
               fullWidth ? "flex-1" : ""
             } ${
-              size === "md"
-                ? "min-h-[40px] px-4 py-2 text-[13.5px]"
-                : "min-h-[36px] px-3.5 py-1.5 text-[13px]"
+              stackSublabelOnMobile
+                ? "min-h-[54px] rounded-xl px-2 py-2 text-[13px] sm:min-h-[40px] sm:rounded-full sm:px-4 sm:py-2 sm:text-[13.5px]"
+                : size === "md"
+                  ? "min-h-[44px] rounded-full px-3.5 py-2 text-[13.5px] sm:min-h-[40px] sm:px-4"
+                  : "min-h-[40px] rounded-full px-3 py-1.5 text-[13px] sm:min-h-[36px] sm:px-3.5"
             }`}
             style={{
               color: isActive ? "var(--ink-primary)" : "var(--ink-secondary)",
@@ -375,7 +386,11 @@ export function SegmentedControl<T extends string>({
                 transition={
                   prefersReducedMotion ? REDUCED_TRANSITION : TACTILE_SPRING
                 }
-                className="absolute inset-0 -z-10 rounded-full border"
+                className={`absolute inset-0 -z-10 border ${
+                  stackSublabelOnMobile
+                    ? "rounded-xl sm:rounded-full"
+                    : "rounded-full"
+                }`}
                 style={{
                   backgroundColor: "var(--bg-surface)",
                   borderColor: "var(--border-whisper)",
@@ -383,11 +398,17 @@ export function SegmentedControl<T extends string>({
                 }}
               />
             )}
-            <span className="relative z-10 inline-flex items-center gap-1.5 whitespace-nowrap">
+            <span
+              className={`relative z-10 inline-flex items-center whitespace-nowrap ${
+                stackSublabelOnMobile
+                  ? "flex-col gap-0.5 leading-tight sm:flex-row sm:gap-1.5"
+                  : "gap-1.5"
+              }`}
+            >
               <span>{option.label}</span>
               {option.sublabel && (
                 <span
-                  className="text-[11.5px] font-normal"
+                  className="tabular-telemetry text-[11px] font-normal sm:text-[11.5px]"
                   style={{
                     color: isActive
                       ? "var(--accent-brand-text)"

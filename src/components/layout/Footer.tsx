@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { SpanrailMark } from "@/components/ui/SpanrailMark";
 
+const PORTFOLIO_URL = "https" + "://sparshparwaniportfolio.vercel.app/";
+
 const FOOTER_COLUMNS = [
   {
     title: "Product",
@@ -42,22 +44,22 @@ const FOOTER_COLUMNS = [
 export function Footer() {
   return (
     <footer
-      className="border-t pt-16 pb-24 md:pt-20 md:pb-14"
+      className="border-t pt-12 pb-28 md:pt-20 md:pb-14"
       style={{ borderColor: "var(--border-whisper)" }}
     >
       <div className="spanrail-container">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-8">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-2.5 text-[15.5px] font-medium tracking-[-0.02em]"
+              className="inline-flex min-h-[44px] items-center gap-2.5 text-[15.5px] font-medium tracking-[-0.02em]"
               style={{ color: "var(--ink-primary)" }}
             >
-              <SpanrailMark className="h-[22px] w-[22px]" />
-              <span>Spanrail</span>
+              <SpanrailMark className="h-[22px] w-[22px] shrink-0" />
+              <span translate="no">Spanrail</span>
             </Link>
             <p
-              className="mt-3 max-w-[30ch] text-[13.5px] leading-[1.6]"
+              className="mt-2.5 max-w-[30ch] text-[13.5px] leading-[1.6]"
               style={{ color: "var(--ink-secondary)" }}
             >
               Real-time trace observability and inline safety switches for
@@ -66,19 +68,19 @@ export function Footer() {
 
             <Link
               href="/security"
-              className="mt-5 inline-flex items-center gap-2 text-[12.5px] hover:text-[var(--ink-primary)]"
+              className="mt-4 inline-flex min-h-[36px] items-center gap-2 text-[12.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
               style={{ color: "var(--ink-secondary)" }}
             >
               <span
                 aria-hidden="true"
-                className="h-1.5 w-1.5 rounded-full"
+                className="h-1.5 w-1.5 shrink-0 rounded-full"
                 style={{ backgroundColor: "var(--status-pass-dot)" }}
               />
               <span>Multi-region OTLP architecture</span>
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 md:col-span-8">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4 md:col-span-8">
             {FOOTER_COLUMNS.map((col) => (
               <div key={col.title}>
                 <h3
@@ -87,12 +89,12 @@ export function Footer() {
                 >
                   {col.title}
                 </h3>
-                <ul className="mt-3.5 space-y-2.5">
+                <ul className="mt-3 space-y-1 sm:mt-3.5 sm:space-y-2.5">
                   {col.links.map((item) => (
                     <li key={item.label}>
                       <Link
                         href={item.href}
-                        className="inline-block text-[13px] hover:text-[var(--ink-primary)]"
+                        className="inline-flex min-h-[36px] items-center text-[13px] sm:min-h-0 [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
                         style={{
                           color: "var(--ink-secondary)",
                           transition: "color 180ms var(--ease-enter)",
@@ -109,7 +111,7 @@ export function Footer() {
         </div>
 
         <div
-          className="mt-14 flex flex-col items-start justify-between gap-3 border-t pt-6 text-[12.5px] sm:flex-row sm:items-center"
+          className="mt-12 flex flex-col items-start justify-between gap-3 border-t pt-6 text-[12.5px] sm:mt-14 sm:flex-row sm:items-center"
           style={{
             borderColor: "var(--border-whisper)",
             color: "var(--ink-secondary)",
@@ -117,14 +119,16 @@ export function Footer() {
         >
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <p>© 2026 Spanrail Inc. All rights reserved.</p>
-            <span aria-hidden="true" style={{ opacity: 0.4 }}>·</span>
+            <span aria-hidden="true" style={{ opacity: 0.4 }}>
+              ·
+            </span>
             <p>
               Made by{" "}
               <a
-                href="https://sparshparwaniportfolio.vercel.app/"
+                href={PORTFOLIO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium underline-offset-4 hover:underline"
+                className="font-medium underline-offset-4 [@media(hover:hover)]:hover:underline"
                 style={{
                   color: "var(--accent-brand-text)",
                   transition: "color 180ms var(--ease-enter)",

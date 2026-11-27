@@ -6,6 +6,7 @@ import {
   useId,
   useMemo,
   useRef,
+  useState,
   useSyncExternalStore,
   type CSSProperties,
 } from "react";
@@ -39,7 +40,14 @@ export interface StatsBandProps {
   className?: string;
 }
 
-const WORLD = { columns: 42, rows: 16, west: -165, east: 175, north: 70, south: -52 };
+const WORLD = {
+  columns: 42,
+  rows: 16,
+  west: -165,
+  east: 175,
+  north: 70,
+  south: -52,
+};
 
 const WORLD_ROWS = [
   "000011111110000000111000001111111111100000",
@@ -160,7 +168,6 @@ function CountUp({
     return () => controls.stop();
   }, [run, reduced, stat.value, delay, duration, format, final]);
 
-  // Single clean DOM text node (SSR renders exact final value; CSS data-sizer prevents CLS)
   return (
     <span className={styles.number}>
       {stat.prefix ? <span className={styles.prefix}>{stat.prefix}</span> : null}
@@ -371,8 +378,9 @@ export const StatsBand = forwardRef<HTMLElement, StatsBandProps>(
   ) {
     const id = useId();
     const list = useRef<HTMLDListElement>(null);
-    const inView = useInView(list, { once: true, amount: 0.2 });
+    const inView = useInView(list, { once: true, amount: "some" });
     const reduced = useReducedMotionSafe();
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     return (
       <section
@@ -404,42 +412,70 @@ export const StatsBand = forwardRef<HTMLElement, StatsBandProps>(
               } as CSSProperties
             }
           >
-            {stats.map((stat, index) => (
-              <div
-                key={`${stat.label}-${index}`}
-                className={styles.stat}
-                style={{ "--i": index } as CSSProperties}
-                tabIndex={stat.context ? 0 : undefined}
-                data-context={stat.context && stat.detail ? "" : undefined}
-              >
-                <dt className={styles.label}>{stat.label}</dt>
-                <dd className={styles.figure}>
-                  <CountUp
-                    stat={stat}
-                    run={inView}
-                    delay={index * STAGGER}
-                    duration={duration}
-                    reduced={reduced}
-                    locale={locale}
-                  />
-                </dd>
-                {(stat.detail || stat.context) && (
-                  <dd className={styles.caption}>
-                    {stat.detail && (
-                      <span className={styles.detail}>{stat.detail}</span>
-                    )}
-                    {stat.context && (
-                      <span className={styles.context}>{stat.context}</span>
-                    )}
+            {stats.map((stat, index) => {
+              const hasContext = Boolean(stat.context && stat.detail);
+              const isActive = activeIndex === index;
+
+              return (
+                <div
+                  key={`${stat.label}-${index}`}
+                  className={styles.stat}
+                  style={{ "--i": index } as CSSProperties}
+                  role={hasContext ? "button" : undefined}
+                  tabIndex={hasContext ? 0 : undefined}
+                  aria-pressed={hasContext ? isActive : undefined}
+                  data-context={hasContext ? "" : undefined}
+                  data-active={isActive ? "" : undefined}
+                  onClick={
+                    hasContext
+                      ? () =>
+                          setActiveIndex((prev) =>
+                            prev === index ? null : index
+                          )
+                      : undefined
+                  }
+                  onKeyDown={
+                    hasContext
+                      ? (e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            setActiveIndex((prev) =>
+                              prev === index ? null : index
+                            );
+                          }
+                        }
+                      : undefined
+                  }
+                >
+                  <dt className={styles.label}>{stat.label}</dt>
+                  <dd className={styles.figure}>
+                    <CountUp
+                      stat={stat}
+                      run={inView}
+                      delay={index * STAGGER}
+                      duration={duration}
+                      reduced={reduced}
+                      locale={locale}
+                    />
                   </dd>
-                )}
-                {stat.visual && (
-                  <dd className={styles.visual} aria-hidden="true">
-                    <Visual visual={stat.visual} />
-                  </dd>
-                )}
-              </div>
-            ))}
+                  {(stat.detail || stat.context) && (
+                    <dd className={styles.caption}>
+                      {stat.detail && (
+                        <span className={styles.detail}>{stat.detail}</span>
+                      )}
+                      {stat.context && (
+                        <span className={styles.context}>{stat.context}</span>
+                      )}
+                    </dd>
+                  )}
+                  {stat.visual && (
+                    <dd className={styles.visual} aria-hidden="true">
+                      <Visual visual={stat.visual} />
+                    </dd>
+                  )}
+                </div>
+              );
+            })}
           </dl>
         </div>
       </section>

@@ -14,28 +14,26 @@ interface BrainGeometryData {
 }
 
 function createCircleSpriteTexture(): THREE.CanvasTexture {
-  const size = 64;
+  const size = 128;
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext("2d");
   if (ctx) {
-    const grad = ctx.createRadialGradient(
-      size / 2,
-      size / 2,
-      2,
-      size / 2,
-      size / 2,
-      size / 2
-    );
+    const half = size / 2;
+    const grad = ctx.createRadialGradient(half, half, 1, half, half, half);
     grad.addColorStop(0, "rgba(255,255,255,1)");
-    grad.addColorStop(0.35, "rgba(255,255,255,0.85)");
-    grad.addColorStop(0.75, "rgba(255,255,255,0.22)");
+    grad.addColorStop(0.28, "rgba(255,255,255,0.98)");
+    grad.addColorStop(0.5, "rgba(255,255,255,0.72)");
+    grad.addColorStop(0.76, "rgba(255,255,255,0.14)");
     grad.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, size, size);
   }
   const tex = new THREE.CanvasTexture(canvas);
+  tex.generateMipmaps = true;
+  tex.minFilter = THREE.LinearMipmapLinearFilter;
+  tex.magFilter = THREE.LinearFilter;
   tex.needsUpdate = true;
   return tex;
 }
@@ -167,7 +165,9 @@ function NeuralBrainMesh({
   interactionRef: React.MutableRefObject<InteractionRef>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
-  const nodeCount = isPhone ? 320 : 460;
+  const nodeCount = isPhone ? 360 : 460;
+  const baseLineOpacity = isPhone ? 0.34 : 0.28;
+  const baseNodeSize = isPhone ? 0.092 : 0.098;
 
   const data = useMemo(() => buildNeuralBrainData(nodeCount), [nodeCount]);
   const spriteTex = useMemo(() => createCircleSpriteTexture(), []);
@@ -206,35 +206,35 @@ function NeuralBrainMesh({
   const nodeMat = useMemo(
     () =>
       new THREE.PointsMaterial({
-        size: isPhone ? 0.088 : 0.098,
+        size: baseNodeSize,
         map: spriteTex,
         transparent: true,
-        opacity: 0.92,
+        opacity: 0.94,
         depthWrite: false,
         sizeAttenuation: true,
         color: new THREE.Color("#f2994a"),
       }),
-    [isPhone, spriteTex]
+    [baseNodeSize, spriteTex]
   );
 
   const lineMat = useMemo(
     () =>
       new THREE.LineBasicMaterial({
         transparent: true,
-        opacity: 0.28,
+        opacity: baseLineOpacity,
         depthWrite: false,
         color: new THREE.Color("#2ea8d1"),
       }),
-    []
+    [baseLineOpacity]
   );
 
   const signalMat = useMemo(
     () =>
       new THREE.PointsMaterial({
-        size: isPhone ? 0.14 : 0.16,
+        size: isPhone ? 0.145 : 0.16,
         map: spriteTex,
         transparent: true,
-        opacity: 0.96,
+        opacity: 0.98,
         depthWrite: false,
         sizeAttenuation: true,
         color: new THREE.Color("#ffd099"),
@@ -333,8 +333,8 @@ function NeuralBrainMesh({
     nodeMat.color.lerp(palette.targetNode, Math.min(1, dt * 6));
     lineMat.color.lerp(palette.targetLine, Math.min(1, dt * 6));
     signalMat.color.lerp(palette.targetSignal, Math.min(1, dt * 6));
-    lineMat.opacity = 0.28 + a.toggleKick * 0.18;
-    nodeMat.size = (isPhone ? 0.088 : 0.098) * (1 + a.toggleKick * 0.25);
+    lineMat.opacity = baseLineOpacity + a.toggleKick * 0.18;
+    nodeMat.size = baseNodeSize * (1 + a.toggleKick * 0.25);
 
     // 1. Deform cortex particle positions
     const posAttr = nodeGeo.getAttribute("position") as THREE.BufferAttribute;
@@ -422,6 +422,7 @@ export default function NeuralBrain() {
   const [tabHidden, setTabHidden] = useState(false);
   const [deferredReady, setDeferredReady] = useState(false);
   const [contextLost, setContextLost] = useState(false);
+  const [lowPower, setLowPower] = useState(false);
 
   const interactionRef = useRef<InteractionRef>({
     dragging: false,
@@ -437,6 +438,15 @@ export default function NeuralBrain() {
   });
 
   useEffect(() => {
+    const nav = navigator as Navigator & {
+      connection?: { saveData?: boolean };
+    };
+    const isConstrained =
+      (typeof nav.hardwareConcurrency === "number" &&
+        nav.hardwareConcurrency <= 2) ||
+      Boolean(nav.connection?.saveData);
+    setLowPower(isConstrained);
+
     let timer: number | undefined;
     let idleId: number | undefined;
     const win = window as Window & {
@@ -444,7 +454,9 @@ export default function NeuralBrain() {
       cancelIdleCallback?: (id: number) => void;
     };
     if (win.requestIdleCallback) {
-      idleId = win.requestIdleCallback(() => setDeferredReady(true), { timeout: 220 });
+      idleId = win.requestIdleCallback(() => setDeferredReady(true), {
+        timeout: 220,
+      });
     } else {
       timer = window.setTimeout(() => setDeferredReady(true), 180);
     }
@@ -456,6 +468,7 @@ export default function NeuralBrain() {
       document.removeEventListener("visibilitychange", onVis);
     };
   }, []);
+
   useEffect(() => {
     const el = containerRef.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
@@ -513,6 +526,8 @@ export default function NeuralBrain() {
     return <div className="h-full w-full" aria-hidden="true" />;
   }
 
+  const maxDpr = lowPower ? 1 : isPhone ? 1.25 : 1.5;
+
   return (
     <div
       ref={containerRef}
@@ -521,11 +536,12 @@ export default function NeuralBrain() {
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
+      onPointerCancel={onPointerLeave}
       onPointerLeave={onPointerLeave}
       className="h-full w-full cursor-grab touch-pan-y select-none active:cursor-grabbing"
     >
       <Canvas
-        dpr={[1, isPhone ? 1.25 : 1.5]}
+        dpr={[1, maxDpr]}
         frameloop={inView && !tabHidden && !prefersReducedMotion ? "always" : "demand"}
         camera={{ position: [0, 0.1, 4.15], fov: 38 }}
         gl={{

@@ -48,6 +48,7 @@ export function PricingCalculator() {
 
   const { prefersReducedMotion } = useBreakpoint();
   const [copiedUrl, setCopiedUrl] = useState(false);
+  const copyTimerRef = useRef<number | null>(null);
   const hasInteractedRef = useRef(false);
 
   const breakdown = useMemo(
@@ -65,6 +66,14 @@ export function PricingCalculator() {
   // Initialize directly to real SSR total ($119/mo) so SSR HTML is 100% consistent
   const [displayTotal, setDisplayTotal] = useState(breakdown.monthlyTotalUsd);
   const prevTotalRef = useRef(breakdown.monthlyTotalUsd);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current !== null) {
+        window.clearTimeout(copyTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const parsed = parsePricingFromSearch(window.location.search);
@@ -125,7 +134,10 @@ export function PricingCalculator() {
       setCopiedUrl(true);
       playSuccessConfirm();
       toast.success("Estimate link copied to clipboard");
-      window.setTimeout(() => setCopiedUrl(false), 1800);
+      if (copyTimerRef.current !== null) {
+        window.clearTimeout(copyTimerRef.current);
+      }
+      copyTimerRef.current = window.setTimeout(() => setCopiedUrl(false), 1800);
     } catch {
       toast.error("Unable to copy estimate link.");
     }
@@ -139,13 +151,13 @@ export function PricingCalculator() {
     >
       <div className="spanrail-container">
         <ScrollReveal>
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between md:gap-6">
             <div className="max-w-[560px]">
               <h2 id="pricing-heading" className="display-h2">
                 Simple usage pricing. Zero surprise overages.
               </h2>
               <p
-                className="mt-3 max-w-[48ch] text-[16px] leading-[1.65] md:text-[17px]"
+                className="mt-3 max-w-[48ch] text-[15.5px] leading-[1.65] md:text-[17px]"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 Metered strictly on traces and automated evals. Adjust volume
@@ -153,7 +165,7 @@ export function PricingCalculator() {
               </p>
             </div>
 
-            <div className="shrink-0">
+            <div className="w-full shrink-0 sm:w-auto sm:min-w-[244px]">
               <SegmentedControl<BillingCycle>
                 options={[
                   { value: "monthly", label: "Monthly" },
@@ -161,42 +173,45 @@ export function PricingCalculator() {
                 ]}
                 value={billingCycle}
                 onChange={(next) => {
-                  hasInteractedRef.current = true; setBillingCycle(next);
+                  hasInteractedRef.current = true;
+                  setBillingCycle(next);
                   playSwitchClick(next === "annual");
                 }}
                 ariaLabel="Select billing cycle"
                 layoutId="pricing-billing-cycle"
+                fullWidth
                 size="md"
               />
             </div>
           </div>
 
+          {/* Mobile Sticky Live Estimate Pill */}
           <div
-            className="sticky top-[62px] z-20 mt-8 mb-5 flex items-center justify-between rounded-2xl border px-4 py-3 md:hidden"
+            className="sticky top-[62px] z-20 mt-6 mb-4 flex items-center justify-between gap-3 rounded-2xl border px-3.5 py-2.5 md:hidden"
             style={{
               backgroundColor: "var(--bg-nav-glass)",
               borderColor: "var(--border-whisper)",
               boxShadow: "var(--shadow-card)",
             }}
           >
-            <div>
+            <div className="min-w-0">
               <span
-                className="block text-[11.5px] font-medium"
+                className="block truncate text-[11.5px] font-medium"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 {breakdown.tracesLabel} traces · {breakdown.retentionDays}d ·{" "}
                 {breakdown.seats} seats
               </span>
               <span
-                className="text-[12px]"
+                className="block truncate text-[12px]"
                 style={{ color: "var(--status-pass-text)" }}
               >
-                Est. {formatUsd(breakdown.monthlySavingsVsLegacyUsd)}/mo vs list APM
+                Save {formatUsd(breakdown.monthlySavingsVsLegacyUsd)}/mo vs list APM
               </span>
             </div>
-            <div className="tabular-telemetry text-right">
+            <div className="tabular-telemetry shrink-0 text-right">
               <span
-                className="text-[22px] font-medium"
+                className="text-[21px] font-medium"
                 style={{ color: "var(--ink-primary)" }}
               >
                 {formatUsd(displayTotal)}
@@ -210,15 +225,17 @@ export function PricingCalculator() {
             </div>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 items-stretch gap-6 md:mt-10 md:grid-cols-12 lg:gap-8">
+          <div className="mt-5 grid grid-cols-1 items-stretch gap-5 md:mt-10 md:grid-cols-12 md:gap-6 lg:gap-8">
+            {/* Controls Column */}
             <div
-              className="surface-fade flex flex-col justify-between space-y-8 rounded-3xl border p-6 md:col-span-7 md:p-8"
+              className="surface-fade flex flex-col justify-between space-y-7 rounded-2xl border p-4 sm:rounded-3xl sm:p-6 md:col-span-7 md:space-y-8 md:p-8"
               style={{
                 backgroundColor: "var(--bg-surface)",
                 borderColor: "var(--border-whisper)",
                 boxShadow: "var(--shadow-card)",
               }}
             >
+              {/* Traces Slider */}
               <div>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <span
@@ -236,7 +253,7 @@ export function PricingCalculator() {
                   </span>
                 </div>
                 <p
-                  className="mt-1 text-[13px]"
+                  className="mt-1 text-[13px] leading-[1.5]"
                   style={{ color: "var(--ink-secondary)" }}
                 >
                   First {(INCLUDED_TRACES / 1000).toFixed(0)}k traces included.
@@ -253,7 +270,8 @@ export function PricingCalculator() {
                     ariaValueText={`${breakdown.tracesLabel} traces per month`}
                     onValueChange={(next) => {
                       if (next !== traceTierIndex) {
-                        hasInteractedRef.current = true; setTraceTierIndex(next);
+                        hasInteractedRef.current = true;
+                        setTraceTierIndex(next);
                         playSliderTick();
                       }
                     }}
@@ -267,13 +285,14 @@ export function PricingCalculator() {
                         key={tier.label}
                         type="button"
                         onClick={() => {
-                          hasInteractedRef.current = true; setTraceTierIndex(idx);
+                          hasInteractedRef.current = true;
+                          setTraceTierIndex(idx);
                           playSliderTick();
                         }}
-                        className={`cursor-pointer rounded px-1 py-0.5 hover:text-[var(--ink-primary)] ${
+                        className={`min-h-[32px] cursor-pointer rounded px-1.5 py-1 [@media(hover:hover)]:hover:text-[var(--ink-primary)] ${
                           idx % 2 === 1 && idx !== TRACE_TIERS.length - 1
-                            ? "hidden sm:inline"
-                            : "inline"
+                            ? "hidden sm:inline-flex sm:items-center"
+                            : "inline-flex items-center"
                         }`}
                         style={{
                           color:
@@ -292,6 +311,7 @@ export function PricingCalculator() {
 
               <hr style={{ borderColor: "var(--border-whisper)" }} />
 
+              {/* Evals Slider */}
               <div>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <span
@@ -309,7 +329,7 @@ export function PricingCalculator() {
                   </span>
                 </div>
                 <p
-                  className="mt-1 text-[13px]"
+                  className="mt-1 text-[13px] leading-[1.5]"
                   style={{ color: "var(--ink-secondary)" }}
                 >
                   First {(INCLUDED_EVALS / 1000).toFixed(0)}k evals included.
@@ -326,7 +346,8 @@ export function PricingCalculator() {
                     ariaValueText={`${breakdown.evalsLabel} evaluation runs per month`}
                     onValueChange={(next) => {
                       if (next !== evalTierIndex) {
-                        hasInteractedRef.current = true; setEvalTierIndex(next);
+                        hasInteractedRef.current = true;
+                        setEvalTierIndex(next);
                         playSliderTick();
                       }
                     }}
@@ -340,10 +361,11 @@ export function PricingCalculator() {
                         key={tier.label}
                         type="button"
                         onClick={() => {
-                          hasInteractedRef.current = true; setEvalTierIndex(idx);
+                          hasInteractedRef.current = true;
+                          setEvalTierIndex(idx);
                           playSliderTick();
                         }}
-                        className="cursor-pointer rounded px-1 py-0.5 hover:text-[var(--ink-primary)]"
+                        className="inline-flex min-h-[32px] cursor-pointer items-center rounded px-1.5 py-1 [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
                         style={{
                           color:
                             idx === evalTierIndex
@@ -361,8 +383,9 @@ export function PricingCalculator() {
 
               <hr style={{ borderColor: "var(--border-whisper)" }} />
 
+              {/* Retention Selector (Stacked 3-column mobile segmented tiles -> inline pill on >=640px) */}
               <div>
-                <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+                <div className="mb-3 flex flex-wrap items-baseline justify-between gap-1.5">
                   <span
                     className="text-[15px] font-medium"
                     style={{ color: "var(--ink-primary)" }}
@@ -370,7 +393,7 @@ export function PricingCalculator() {
                     Trace retention
                   </span>
                   <span
-                    className="text-[13px]"
+                    className="text-[12.5px] sm:text-[13px]"
                     style={{ color: "var(--ink-secondary)" }}
                   >
                     Applied to trace storage subtotal
@@ -385,19 +408,22 @@ export function PricingCalculator() {
                   }))}
                   value={`${retentionDays}`}
                   onChange={(next) => {
-                    hasInteractedRef.current = true; setRetentionDays(Number(next) as RetentionDays);
+                    hasInteractedRef.current = true;
+                    setRetentionDays(Number(next) as RetentionDays);
                     playSwitchClick(true);
                   }}
                   ariaLabel="Select trace retention period"
                   layoutId="pricing-retention-selector"
                   fullWidth
                   size="md"
+                  stackSublabelOnMobile
                 />
               </div>
 
               <hr style={{ borderColor: "var(--border-whisper)" }} />
 
-              <div className="flex flex-wrap items-center justify-between gap-4">
+              {/* Team Seats Stepper (Full-width locked 44px-1fr-44px mobile bar -> inline desktop row) */}
+              <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div>
                   <span
                     className="block text-[15px] font-medium"
@@ -414,18 +440,25 @@ export function PricingCalculator() {
                   </span>
                 </div>
 
-                <div className="inline-flex items-center gap-3">
+                <div
+                  className="grid w-full grid-cols-[44px_1fr_44px] items-center rounded-2xl border p-1.5 sm:inline-flex sm:w-auto sm:gap-3 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0"
+                  style={{
+                    backgroundColor: "var(--bg-surface-subtle)",
+                    borderColor: "var(--border-whisper)",
+                  }}
+                >
                   <button
                     type="button"
                     disabled={seats <= MIN_SEATS}
                     onClick={() => {
-                      hasInteractedRef.current = true; setSeats(seats - 1);
+                      hasInteractedRef.current = true;
+                      setSeats(seats - 1);
                       playSwitchClick(false);
                     }}
                     aria-label="Decrease team seats"
-                    className="btn-tactile inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border hover:border-[var(--border-hover)] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="btn-tactile inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border sm:rounded-full [@media(hover:hover)]:hover:border-[var(--border-hover)] disabled:cursor-not-allowed disabled:opacity-40"
                     style={{
-                      backgroundColor: "var(--bg-surface-subtle)",
+                      backgroundColor: "var(--bg-surface)",
                       borderColor: "var(--border-whisper)",
                       color: "var(--ink-primary)",
                     }}
@@ -435,23 +468,30 @@ export function PricingCalculator() {
 
                   <span
                     aria-live="polite"
-                    className="tabular-telemetry min-w-[36px] text-[center text-[16px] font-medium"
+                    className="tabular-telemetry min-w-[36px] text-center text-[16px] font-medium"
                     style={{ color: "var(--ink-primary)" }}
                   >
                     {seats}
+                    <span
+                      className="ml-1.5 text-[12.5px] font-normal sm:hidden"
+                      style={{ color: "var(--ink-secondary)" }}
+                    >
+                      {seats === 1 ? "seat" : "seats"}
+                    </span>
                   </span>
 
                   <button
                     type="button"
                     disabled={seats >= MAX_SEATS}
                     onClick={() => {
-                      hasInteractedRef.current = true; setSeats(seats + 1);
+                      hasInteractedRef.current = true;
+                      setSeats(seats + 1);
                       playSwitchClick(true);
                     }}
                     aria-label="Increase team seats"
-                    className="btn-tactile inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border hover:border-[var(--border-hover)] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="btn-tactile inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border sm:rounded-full [@media(hover:hover)]:hover:border-[var(--border-hover)] disabled:cursor-not-allowed disabled:opacity-40"
                     style={{
-                      backgroundColor: "var(--bg-surface-subtle)",
+                      backgroundColor: "var(--bg-surface)",
                       borderColor: "var(--border-whisper)",
                       color: "var(--ink-primary)",
                     }}
@@ -462,9 +502,10 @@ export function PricingCalculator() {
               </div>
             </div>
 
+            {/* Summary Column */}
             <div className="flex flex-col md:col-span-5">
               <div
-                className="surface-fade flex flex-1 flex-col justify-between rounded-3xl border p-6 md:p-8"
+                className="surface-fade flex flex-1 flex-col justify-between rounded-2xl border p-5 sm:rounded-3xl sm:p-6 md:p-8"
                 style={{
                   backgroundColor: "var(--bg-surface)",
                   borderColor: "var(--border-whisper)",
@@ -480,7 +521,7 @@ export function PricingCalculator() {
                       Estimated monthly total
                     </span>
                     <span
-                      className="rounded-full px-2.5 py-0.5 text-[12px] font-medium"
+                      className="shrink-0 rounded-full px-2.5 py-0.5 text-[12px] font-medium"
                       style={{
                         backgroundColor: "var(--accent-spark-soft)",
                         color: "var(--accent-spark-text)",
@@ -492,7 +533,7 @@ export function PricingCalculator() {
 
                   <div className="mt-3 flex items-baseline gap-1.5">
                     <span
-                      className="tabular-telemetry text-[2.85rem] leading-[none font-medium tracking-[-0.035em] md:text-[3.25rem]"
+                      className="tabular-telemetry text-[2.75rem] leading-none font-medium tracking-[-0.035em] md:text-[3.25rem]"
                       style={{ color: "var(--ink-primary)" }}
                     >
                       {formatUsd(displayTotal)}
@@ -515,7 +556,7 @@ export function PricingCalculator() {
                   </p>
 
                   <dl
-                    className="mt-6 space-y-3 border-[t pt-5 text-[13.5px]"
+                    className="mt-6 space-y-3 border-t pt-5 text-[13.5px]"
                     style={{ borderColor: "var(--border-whisper)" }}
                   >
                     <div className="flex items-baseline justify-between gap-3">
@@ -619,10 +660,10 @@ export function PricingCalculator() {
                     </span>
                   </div>
 
-                  <div className="mt-5 flex flex-col gap-3">
+                  <div className="mt-5 flex flex-col gap-2.5">
                     <a
                       href="#demo"
-                      className="btn-tactile flex min-h-[48px] w-full items-center justify-center rounded-full px-5 text-[14.5px] font-medium hover:bg-[var(--btn-primary-bg-hover)]"
+                      className="btn-tactile flex min-h-[48px] w-full items-center justify-center rounded-full px-5 text-center text-[14.5px] font-medium [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
                       style={{
                         backgroundColor: "var(--btn-primary-bg)",
                         color: "var(--btn-primary-ink)",
@@ -634,25 +675,28 @@ export function PricingCalculator() {
                     <button
                       type="button"
                       onClick={() => void handleCopyEstimateLink()}
-                      className="btn-tactile inline-flex min-h-[40px] w-full cursor-pointer items-center justify-center gap-1.5 rounded-full text-[13px] font-medium hover:text-[var(--ink-primary)]"
+                      className="btn-tactile inline-grid min-h-[44px] w-full cursor-pointer items-center justify-items-center rounded-full text-[13px] font-medium [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
                       style={{ color: "var(--ink-secondary)" }}
                     >
-                      {copiedUrl ? (
-                        <>
-                          <Check
-                            className="h-3.5 w-3.5"
-                            style={{ color: "var(--status-pass-text)" }}
-                          />
-                          <span style={{ color: "var(--status-pass-text)" }}>
-                            Estimate link copied
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <Link2 className="h-3.5 w-3.5" />
-                          <span>Copy estimate link</span>
-                        </>
-                      )}
+                      <span
+                        aria-hidden={copiedUrl}
+                        className={`col-start-1 row-start-1 inline-flex items-center gap-1.5 transition-opacity duration-150 ${
+                          copiedUrl ? "opacity-0" : "opacity-100"
+                        }`}
+                      >
+                        <Link2 className="h-3.5 w-3.5 shrink-0" />
+                        <span>Copy estimate link</span>
+                      </span>
+                      <span
+                        aria-hidden={!copiedUrl}
+                        className={`col-start-1 row-start-1 inline-flex items-center gap-1.5 transition-opacity duration-150 ${
+                          copiedUrl ? "opacity-100" : "opacity-0"
+                        }`}
+                        style={{ color: "var(--status-pass-text)" }}
+                      >
+                        <Check className="h-3.5 w-3.5 shrink-0" />
+                        <span>Estimate link copied</span>
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -660,8 +704,9 @@ export function PricingCalculator() {
             </div>
           </div>
 
+          {/* Enterprise / VPC Bar */}
           <div
-            className="surface-fade mt-6 flex flex-col items-start justify-between gap-6 rounded-3xl border px-6 py-6 md:flex-row md:items-center md:px-8 md:py-7"
+            className="surface-fade mt-5 flex flex-col items-start justify-between gap-5 rounded-2xl border px-5 py-5 sm:mt-6 sm:rounded-3xl sm:px-6 sm:py-6 md:flex-row md:items-center md:gap-6 md:px-8 md:py-7"
             style={{
               backgroundColor: "var(--bg-surface)",
               borderColor: "var(--border-whisper)",
@@ -676,7 +721,7 @@ export function PricingCalculator() {
                 50M+ traces or VPC deployment?
               </h3>
               <p
-                className="mt-1.5 text-[14.5px] leading-[1.6]"
+                className="mt-1.5 text-[14px] leading-[1.6] sm:text-[14.5px]"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 Dedicated cluster, HIPAA BAA, custom retention windows, and a
@@ -686,7 +731,7 @@ export function PricingCalculator() {
 
             <Link
               href="/security"
-              className="btn-tactile group inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-full border px-5 text-[14px] font-medium hover:border-[var(--border-hover)]"
+              className="btn-tactile group inline-flex min-h-[46px] w-full shrink-0 items-center justify-center gap-2 rounded-full border px-5 text-[14px] font-medium sm:w-auto [@media(hover:hover)]:hover:border-[var(--border-hover)]"
               style={{
                 backgroundColor: "var(--bg-surface-solid)",
                 borderColor: "var(--border-whisper)",
@@ -696,7 +741,7 @@ export function PricingCalculator() {
               <span>Security &amp; VPC specs</span>
               <ArrowRight
                 aria-hidden="true"
-                className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                className="h-4 w-4 shrink-0 transition-transform duration-200 [@media(hover:hover)]:group-hover:translate-x-0.5"
                 strokeWidth={1.85}
                 style={{ color: "var(--accent-spark)" }}
               />

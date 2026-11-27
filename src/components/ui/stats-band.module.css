@@ -29,18 +29,11 @@
   color: var(--sb-muted);
 }
 
+/* Mobile-native 2x3 telemetry matrix -> 3x2 on desktop */
 .stats {
   display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  border-top: 1px solid var(--sb-hair);
-  border-bottom: 1px solid var(--sb-hair);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   background: var(--bg-surface);
-}
-
-@media (min-width: 640px) {
-  .stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (min-width: 1024px) {
@@ -53,24 +46,31 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 1.75rem 1.5rem 1.5rem;
+  padding: 1.15rem 1rem 1rem;
+  border-right: 1px solid var(--sb-hair);
   border-bottom: 1px solid var(--sb-hair);
+  cursor: pointer;
   transition: background-color 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stat:nth-child(2n) {
+  border-right: none;
+}
+
+.stat:nth-last-child(-n + 2) {
+  border-bottom: none;
 }
 
 @media (min-width: 640px) {
   .stat {
-    border-right: 1px solid var(--sb-hair);
-  }
-  .stat:nth-child(2n) {
-    border-right: none;
-  }
-  .stat:nth-last-child(-n + 2) {
-    border-bottom: none;
+    padding: 1.5rem 1.35rem 1.35rem;
   }
 }
 
 @media (min-width: 1024px) {
+  .stat {
+    padding: 1.75rem 1.5rem 1.5rem;
+  }
   .stat:nth-child(2n) {
     border-right: 1px solid var(--sb-hair);
   }
@@ -89,20 +89,33 @@
   outline-offset: -2px;
 }
 
-.stat:hover,
+.stat[data-active],
 .stat:focus-visible {
   background: var(--bg-surface-subtle);
 }
 
+@media (hover: hover) {
+  .stat:hover {
+    background: var(--bg-surface-subtle);
+  }
+}
+
 .label {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
   font-weight: 500;
   color: var(--sb-muted);
   letter-spacing: -0.005em;
 }
 
+@media (min-width: 640px) {
+  .label {
+    font-size: 0.8125rem;
+  }
+}
+
 .figure {
-  margin-top: 0.55rem;
+  margin-top: 0.45rem;
 }
 
 .number {
@@ -110,7 +123,7 @@
   align-items: baseline;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: clamp(2.1rem, 3.2vw, 2.75rem);
+  font-size: clamp(1.55rem, 6vw, 2.75rem);
   font-weight: 500;
   line-height: 1.05;
   letter-spacing: -0.035em;
@@ -118,7 +131,7 @@
 }
 
 .prefix {
-  margin-right: 0.12em;
+  margin-right: 0.1em;
   color: var(--sb-accent);
 }
 
@@ -143,10 +156,18 @@
 
 .caption {
   display: grid;
-  margin-top: 0.5rem;
-  font-size: 0.8125rem;
-  line-height: 1.45;
+  margin-top: 0.45rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
   color: var(--sb-muted);
+}
+
+@media (min-width: 640px) {
+  .caption {
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
 }
 
 .detail,
@@ -164,30 +185,55 @@
   transform: translateY(4px);
 }
 
-.stat[data-context]:hover .detail,
+.stat[data-context][data-active] .detail,
 .stat[data-context]:focus-visible .detail {
   opacity: 0;
   transform: translateY(-4px);
 }
 
-.stat[data-context]:hover .context,
+.stat[data-context][data-active] .context,
 .stat[data-context]:focus-visible .context {
   opacity: 1;
   transform: translateY(0);
 }
 
+@media (hover: hover) {
+  .stat[data-context]:hover .detail {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  .stat[data-context]:hover .context {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .visual {
-  margin-top: 1.35rem;
-  height: 46px;
+  margin-top: auto;
+  padding-top: 1rem;
+  height: 52px;
   display: flex;
   align-items: flex-end;
+}
+
+@media (min-width: 640px) {
+  .visual {
+    padding-top: 1.35rem;
+    height: 64px;
+  }
 }
 
 /* Trend Line + Area Chart */
 .trend {
   position: relative;
   width: 100%;
-  height: 42px;
+  height: 36px;
+}
+
+@media (min-width: 640px) {
+  .trend {
+    height: 42px;
+  }
 }
 
 .draw {
@@ -208,10 +254,17 @@
   opacity: 0.14;
 }
 
-.stat:hover .area,
+.stat[data-active] .area,
 .stat:focus-visible .area {
   fill: var(--sb-accent);
   opacity: 0.2;
+}
+
+@media (hover: hover) {
+  .stat:hover .area {
+    fill: var(--sb-accent);
+    opacity: 0.2;
+  }
 }
 
 .line {
@@ -231,15 +284,21 @@
   stroke-dashoffset: 0;
 }
 
-.stat:hover .line,
+.stat[data-active] .line,
 .stat:focus-visible .line {
   stroke: var(--sb-accent);
 }
 
+@media (hover: hover) {
+  .stat:hover .line {
+    stroke: var(--sb-accent);
+  }
+}
+
 .endDot {
   position: absolute;
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 9999px;
   background: var(--sb-accent);
   transform: translate(-50%, -50%) scale(0);
@@ -255,13 +314,26 @@
 .bars {
   display: flex;
   align-items: flex-end;
-  gap: 3px;
+  gap: 2px;
   width: 100%;
-  height: 40px;
+  height: 34px;
+}
+
+@media (min-width: 640px) {
+  .bars {
+    gap: 3px;
+    height: 40px;
+  }
 }
 
 .bars[data-dense] {
-  gap: 2px;
+  gap: 1.5px;
+}
+
+@media (min-width: 640px) {
+  .bars[data-dense] {
+    gap: 2px;
+  }
 }
 
 .bar {
@@ -280,9 +352,15 @@
   background: var(--sb-brand);
 }
 
-.stat:hover .bar[data-ink],
+.stat[data-active] .bar[data-ink],
 .stat:focus-visible .bar[data-ink] {
   background: var(--sb-accent);
+}
+
+@media (hover: hover) {
+  .stat:hover .bar[data-ink] {
+    background: var(--sb-accent);
+  }
 }
 
 .band[data-in-view] .bar {
@@ -292,7 +370,13 @@
 /* Dotted World Map */
 .map {
   width: 100%;
-  height: 46px;
+  height: 38px;
+}
+
+@media (min-width: 640px) {
+  .map {
+    height: 46px;
+  }
 }
 
 .land {
@@ -317,9 +401,15 @@
   opacity: 1;
 }
 
-.stat:hover .lit,
+.stat[data-active] .lit,
 .stat:focus-visible .lit {
   fill: var(--sb-accent);
+}
+
+@media (hover: hover) {
+  .stat:hover .lit {
+    fill: var(--sb-accent);
+  }
 }
 
 .srOnly {

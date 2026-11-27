@@ -18,7 +18,6 @@ const NAV_LINKS = [
   { href: "/docs", label: "Docs" },
 ] as const;
 
-
 export function TopNav() {
   const isSoundEnabled = useSpanrailStore((s) => s.isSoundEnabled);
   const toggleSound = useSpanrailStore((s) => s.toggleSound);
@@ -73,7 +72,7 @@ export function TopNav() {
 
   return (
     <header
-      className="fixed inset-x-0 top-0 z-40"
+      className="fixed inset-x-0 top-0 z-40 pt-[env(safe-area-inset-top)]"
       style={{
         backgroundColor:
           scrolled || mobileMenuOpen ? "var(--bg-nav-glass)" : "transparent",
@@ -92,19 +91,19 @@ export function TopNav() {
           style={{ color: "var(--ink-primary)" }}
           aria-label="Spanrail home"
         >
-          <SpanrailMark className="h-[24px] w-[24px]" />
-          <span>Spanrail</span>
+          <SpanrailMark className="h-[24px] w-[24px] shrink-0" />
+          <span translate="no">Spanrail</span>
         </Link>
 
         <nav
           aria-label="Primary navigation"
-          className="hidden items-center justify-center gap-1 justify-self-center md:flex"
+          className="hidden items-center justify-center gap-0.5 justify-self-center md:flex lg:gap-1"
         >
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="inline-flex min-h-[44px] items-center rounded-full px-4 text-[14px] font-medium hover:text-[var(--ink-primary)]"
+              className="inline-flex min-h-[44px] items-center rounded-full px-3 text-[13.5px] font-medium lg:px-4 lg:text-[14px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
               style={{
                 color: "var(--ink-secondary)",
                 transition: "color 180ms var(--ease-enter)",
@@ -115,7 +114,7 @@ export function TopNav() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-1.5 justify-self-end md:gap-2">
+        <div className="flex items-center gap-1 justify-self-end md:gap-2">
           <button
             type="button"
             onClick={handleToggleSound}
@@ -126,7 +125,7 @@ export function TopNav() {
                 : "Enable tactile sound cues"
             }
             title={isSoundEnabled ? "Sound on (M)" : "Sound muted (M)"}
-            className="btn-tactile inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-transparent hover:border-[var(--border-whisper)] hover:bg-[var(--bg-surface-subtle)] md:h-9 md:w-9"
+            className="btn-tactile inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-transparent md:h-9 md:w-9 [@media(hover:hover)]:hover:border-[var(--border-whisper)] [@media(hover:hover)]:hover:bg-[var(--bg-surface-subtle)]"
             style={{
               color: isSoundEnabled
                 ? "var(--accent-brand)"
@@ -134,15 +133,15 @@ export function TopNav() {
             }}
           >
             {isSoundEnabled ? (
-              <Volume2 className="h-[17px] w-[17px]" strokeWidth={1.8} />
+              <Volume2 className="h-[17px] w-[17px] shrink-0" strokeWidth={1.8} />
             ) : (
-              <VolumeX className="h-[17px] w-[17px]" strokeWidth={1.8} />
+              <VolumeX className="h-[17px] w-[17px] shrink-0" strokeWidth={1.8} />
             )}
           </button>
 
           <Link
             href="/#demo"
-            className="btn-tactile ml-1 hidden min-h-[38px] items-center justify-center rounded-full px-4 text-[13.5px] font-medium hover:bg-[var(--btn-primary-bg-hover)] md:inline-flex"
+            className="btn-tactile ml-1 hidden min-h-[38px] items-center justify-center rounded-full px-4 text-[13.5px] font-medium whitespace-nowrap md:inline-flex [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
             style={{
               backgroundColor: "var(--btn-primary-bg)",
               color: "var(--btn-primary-ink)",
@@ -157,13 +156,13 @@ export function TopNav() {
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-nav-drawer"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            className="btn-tactile inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-transparent hover:bg-[var(--bg-surface-subtle)] md:hidden"
+            className="btn-tactile inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-transparent md:hidden [@media(hover:hover)]:hover:bg-[var(--bg-surface-subtle)]"
             style={{ color: "var(--ink-primary)" }}
           >
             {mobileMenuOpen ? (
-              <X className="h-5 w-5" strokeWidth={1.75} />
+              <X className="h-5 w-5 shrink-0" strokeWidth={1.75} />
             ) : (
-              <Menu className="h-5 w-5" strokeWidth={1.75} />
+              <Menu className="h-5 w-5 shrink-0" strokeWidth={1.75} />
             )}
           </button>
         </div>
@@ -171,63 +170,79 @@ export function TopNav() {
 
       <AnimatePresence>
         {mobileMenuOpen && (
-          <m.nav
-            id="mobile-nav-drawer"
-            aria-label="Mobile navigation"
-            initial={
-              prefersReducedMotion
-                ? { opacity: 0 }
-                : { opacity: 0, height: 0 }
-            }
-            animate={
-              prefersReducedMotion
-                ? { opacity: 1 }
-                : { opacity: 1, height: "auto" }
-            }
-            exit={
-              prefersReducedMotion
-                ? { opacity: 0 }
-                : { opacity: 0, height: 0 }
-            }
-            transition={
-              prefersReducedMotion
-                ? REDUCED_TRANSITION
-                : { duration: 0.24, ease: [0.22, 1, 0.36, 1] }
-            }
-            className="overflow-hidden border-t md:hidden"
-            style={{
-              borderColor: "var(--border-whisper)",
-              backgroundColor: "var(--bg-surface-solid)",
-            }}
-          >
-            <div className="spanrail-container flex flex-col gap-1 py-4">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="inline-flex min-h-[48px] items-center rounded-xl px-3 text-[15px] font-medium hover:bg-[var(--bg-surface-subtle)]"
-                  style={{ color: "var(--ink-primary)" }}
-                >
-                  {link.label}
-                </Link>
-              ))}
+          <>
+            <m.button
+              type="button"
+              aria-label="Close navigation menu"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-x-0 top-14 bottom-0 z-30 bg-black/55 md:hidden"
+            />
+            <m.nav
+              id="mobile-nav-drawer"
+              aria-label="Mobile navigation"
+              initial={
+                prefersReducedMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0, y: -8 }
+              }
+              animate={
+                prefersReducedMotion
+                  ? { opacity: 1 }
+                  : { opacity: 1, y: 0 }
+              }
+              exit={
+                prefersReducedMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0, y: -6 }
+              }
+              transition={
+                prefersReducedMotion
+                  ? REDUCED_TRANSITION
+                  : { duration: 0.2, ease: [0.22, 1, 0.36, 1] }
+              }
+              className="relative z-40 overscroll-contain border-t md:hidden"
+              style={{
+                borderColor: "var(--border-whisper)",
+                backgroundColor: "var(--bg-surface-solid)",
+                boxShadow: "var(--shadow-stage)",
+              }}
+            >
+              <div className="spanrail-container flex flex-col gap-1 py-4">
+                {NAV_LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="inline-flex min-h-[48px] items-center rounded-xl px-3.5 text-[15.5px] font-medium active:bg-[var(--bg-surface-subtle)]"
+                    style={{ color: "var(--ink-primary)" }}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
 
-              <div className="pt-2">
-                <Link
-                  href="/#demo"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="btn-tactile flex min-h-[48px] w-full items-center justify-center rounded-full text-[15px] font-medium"
-                  style={{
-                    backgroundColor: "var(--btn-primary-bg)",
-                    color: "var(--btn-primary-ink)",
-                  }}
+                <div
+                  className="mt-2 border-t pt-3"
+                  style={{ borderColor: "var(--border-whisper)" }}
                 >
-                  Book a demo
-                </Link>
+                  <Link
+                    href="/#demo"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="btn-tactile flex min-h-[48px] w-full items-center justify-center rounded-full text-[15px] font-medium"
+                    style={{
+                      backgroundColor: "var(--btn-primary-bg)",
+                      color: "var(--btn-primary-ink)",
+                    }}
+                  >
+                    Book a demo
+                  </Link>
+                </div>
               </div>
-            </div>
-          </m.nav>
+            </m.nav>
+          </>
         )}
       </AnimatePresence>
     </header>

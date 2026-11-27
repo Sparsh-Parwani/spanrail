@@ -4,8 +4,6 @@ import type { CSSProperties } from "react";
 import { StatsBand, type Stat } from "@/components/ui/stats-band";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
-
-
 interface CustomerLogo {
   name: string;
   markPosition: "left" | "right";
@@ -257,7 +255,7 @@ const SPANRAIL_STATS: Stat[] = [
 function CustomerLockup({ customer }: { customer: CustomerLogo }) {
   return (
     <span
-      className="inline-flex h-11 items-center gap-3 px-2 leading-none opacity-80 hover:opacity-100"
+      className="inline-flex h-10 origin-center scale-[0.86] items-center gap-3 px-2 leading-none opacity-80 sm:h-11 sm:scale-100 [@media(hover:hover)]:hover:opacity-100"
       style={{
         color: "var(--ink-primary)",
         transition: "opacity 200ms var(--ease-enter)",
@@ -269,6 +267,7 @@ function CustomerLockup({ customer }: { customer: CustomerLogo }) {
         </span>
       )}
       <span
+        translate="no"
         className="inline-flex h-7 items-center whitespace-nowrap leading-none"
         style={customer.fontStyle}
       >
@@ -287,26 +286,25 @@ export function TrustStrip() {
   return (
     <section
       aria-label="Production teams and platform telemetry"
-      className="py-10 md:py-14"
+      className="py-8 md:py-14"
     >
       <ScrollReveal>
         <div
-          className="surface-fade border-y py-9 md:py-11"
+          className="surface-fade border-y py-7 md:py-11"
           style={{
             borderColor: "var(--border-whisper)",
             backgroundColor: "var(--bg-nav-glass)",
           }}
         >
-          <div className="spanrail-container mb-7 text-center">
+          <div className="spanrail-container mb-5 text-center md:mb-7">
             <p
-              className="text-[16px] font-medium tracking-[-0.015em] md:text-[18.5px]"
+              className="text-[15px] font-medium tracking-[-0.015em] [text-wrap:balance] md:text-[18.5px]"
               style={{ color: "var(--ink-primary)" }}
             >
               Built for engineering teams running production LLM agents
             </p>
           </div>
 
-          {/* Semantic SSR customer list for accessibility & crawlers */}
           <ul className="sr-only">
             {CUSTOMERS.map((c) => (
               <li key={c.name}>{c.name}</li>
@@ -332,10 +330,10 @@ export function TrustStrip() {
         </div>
       </ScrollReveal>
 
-      <div className="spanrail-container mt-14 md:mt-16">
+      <div className="spanrail-container mt-10 md:mt-16">
         <ScrollReveal delay={0.05}>
           <div
-            className="overflow-hidden rounded-3xl border"
+            className="overflow-hidden rounded-2xl border sm:rounded-3xl"
             style={{
               borderColor: "var(--border-whisper)",
               boxShadow: "var(--shadow-card)",
@@ -344,10 +342,10 @@ export function TrustStrip() {
             <StatsBand stats={SPANRAIL_STATS} duration={1.4} />
           </div>
           <p
-            className="mt-3 text-[right text-[11.5px]"
+            className="mt-3 text-left text-[11.5px] sm:text-right"
             style={{ color: "var(--ink-muted)" }}
           >
-            Modeled OTLP benchmark metrics across multi-step agent workloads · Hover any metric for context.
+            Modeled OTLP benchmark metrics across multi-step agent workloads — tap or hover any metric for context.
           </p>
         </ScrollReveal>
       </div>

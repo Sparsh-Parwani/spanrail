@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { ArrowDown, Check, ChevronDown, Copy } from "lucide-react";
 import { toast } from "sonner";
@@ -40,7 +40,8 @@ function renderHighlightedJson(payload: Record<string, unknown>) {
   const lines = formatted.split("\n");
 
   return lines.map((line, index) => {
-    const isExposed = line.includes("[EXPOSED]") || line.includes("ALERT_EXPOSED");
+    const isExposed =
+      line.includes("[EXPOSED]") || line.includes("ALERT_EXPOSED");
     const isRedacted =
       line.includes("[REDACTED_PII]") || line.includes("MASKED_INLINE");
 
@@ -91,7 +92,16 @@ export function HeroSection() {
 
   const { isPhone, prefersReducedMotion } = useBreakpoint();
   const [copiedSpanId, setCopiedSpanId] = useState<string | null>(null);
+  const copyTimerRef = useRef<number | null>(null);
   const firstSwitchRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current !== null) {
+        window.clearTimeout(copyTimerRef.current);
+      }
+    };
+  }, []);
 
   const evaluated = useMemo(
     () => evaluateTraceScenario(scenarioId, guardrails),
@@ -156,7 +166,10 @@ export function HeroSection() {
       setCopiedSpanId(span.id);
       playSuccessConfirm();
       toast.success(`Copied ${span.name} payload`);
-      window.setTimeout(() => {
+      if (copyTimerRef.current !== null) {
+        window.clearTimeout(copyTimerRef.current);
+      }
+      copyTimerRef.current = window.setTimeout(() => {
         setCopiedSpanId((prev) => (prev === span.id ? null : prev));
       }, 1800);
     } catch {
@@ -182,15 +195,15 @@ export function HeroSection() {
     >
       <div className="spanrail-container">
         {/* Instant Frame-0 LCP Paint (zero opacity:0 wait on async LazyMotion chunk) */}
-        <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
+        <div className="grid grid-cols-1 items-center gap-4 sm:gap-6 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <div
-              className="tabular-telemetry inline-flex items-center gap-2 text-[12px] tracking-[0.02em]"
+              className="tabular-telemetry inline-flex items-center gap-2 text-[11.5px] tracking-[0.02em] sm:text-[12px]"
               style={{ color: "var(--ink-secondary)" }}
             >
               <span
                 aria-hidden="true"
-                className="h-1.5 w-1.5 rounded-full"
+                className="h-1.5 w-1.5 shrink-0 rounded-full"
                 style={{
                   backgroundColor:
                     evaluated.status === "Healthy"
@@ -199,12 +212,12 @@ export function HeroSection() {
                   transition: "background-color 280ms var(--ease-enter)",
                 }}
               />
-              <span>Live agent telemetry · OpenTelemetry native</span>
+              <span>Live agent telemetry — OpenTelemetry native</span>
             </div>
 
             <h1
               id="hero-headline"
-              className="mt-4 max-w-[16ch] text-[clamp(2.25rem,4.4vw,3.55rem)] leading-[1.06] font-medium tracking-[-0.034em]"
+              className="mt-3.5 max-w-[16ch] text-[clamp(2.1rem,4.4vw,3.55rem)] leading-[1.06] font-medium tracking-[-0.034em] [text-wrap:balance] sm:mt-4"
               style={{ color: "var(--ink-primary)" }}
             >
               See every agent step. Stop slow runs and surprise bills
@@ -212,17 +225,18 @@ export function HeroSection() {
             </h1>
 
             <p
-              className="mt-4 max-w-[50ch] text-[16px] leading-[1.65]"
+              className="mt-3.5 max-w-[50ch] text-[15.5px] leading-[1.6] sm:mt-4 sm:text-[16px] sm:leading-[1.65]"
               style={{ color: "var(--ink-secondary)" }}
             >
               Real-time trace inspection, automatic PII and loop guardrails, and
               exact per-run token costs for production AI agents.
             </p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            {/* Balanced 2-column thumb CTA bar on Phone -> inline pills on >=640px */}
+            <div className="mt-5 grid grid-cols-2 gap-2.5 sm:mt-6 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
               <a
                 href="#demo"
-                className="btn-tactile inline-flex min-h-[46px] items-center justify-center rounded-full px-6 text-[14.5px] font-medium hover:bg-[var(--btn-primary-bg-hover)]"
+                className="btn-tactile inline-flex min-h-[46px] items-center justify-center rounded-full px-4 text-center text-[14px] font-medium sm:px-6 sm:text-[14.5px] [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
                 style={{
                   backgroundColor: "var(--btn-primary-bg)",
                   color: "var(--btn-primary-ink)",
@@ -234,17 +248,18 @@ export function HeroSection() {
               <button
                 type="button"
                 onClick={handleJumpToSandbox}
-                className="btn-tactile group inline-flex min-h-[46px] cursor-pointer items-center justify-center gap-1.5 rounded-full border px-5 text-[14.5px] font-medium hover:border-[var(--border-hover)]"
+                className="btn-tactile group inline-flex min-h-[46px] cursor-pointer items-center justify-center gap-1.5 rounded-full border px-4 text-center text-[14px] font-medium sm:px-5 sm:text-[14.5px] [@media(hover:hover)]:hover:border-[var(--border-hover)]"
                 style={{
                   backgroundColor: "var(--bg-surface)",
                   borderColor: "var(--border-whisper)",
                   color: "var(--ink-primary)",
                 }}
               >
-                <span>Try the live preview</span>
+                <span className="sm:hidden">Live preview</span>
+                <span className="hidden sm:inline">Try the live preview</span>
                 <ArrowDown
                   aria-hidden="true"
-                  className="h-4 w-4 transition-transform duration-200 group-hover:translate-y-0.5"
+                  className="h-4 w-4 shrink-0 transition-transform duration-200 [@media(hover:hover)]:group-hover:translate-y-0.5"
                   strokeWidth={1.75}
                   style={{ color: "var(--accent-spark)" }}
                 />
@@ -252,7 +267,7 @@ export function HeroSection() {
             </div>
           </div>
 
-          <div className="h-[290px] w-full sm:h-[340px] lg:col-span-5 lg:h-[380px]">
+          <div className="h-[235px] w-full sm:h-[310px] lg:col-span-5 lg:h-[380px]">
             <NeuralBrain />
           </div>
         </div>
@@ -260,7 +275,7 @@ export function HeroSection() {
         {/* Full-Width Interactive Live Trace Sandbox (visible immediately on Frame 0) */}
         <div
           id="sandbox"
-          className="surface-fade mt-6 scroll-mt-24 overflow-hidden rounded-3xl border md:mt-8"
+          className="surface-fade mt-4 scroll-mt-20 overflow-hidden rounded-2xl border sm:mt-6 sm:rounded-3xl md:mt-8 md:scroll-mt-24"
           style={{
             backgroundColor: "var(--bg-surface)",
             borderColor: "var(--border-whisper)",
@@ -271,93 +286,99 @@ export function HeroSection() {
             {`${evaluated.label} trace ${evaluated.traceId}: total latency ${formatLatencyMs(evaluated.totalLatencyMs)}, run cost ${formatCostUsd(evaluated.totalCostUsd)}, status ${evaluated.status}, ${evaluated.activeGuardrailCount} of 3 guardrails active.`}
           </div>
 
+          {/* Sandbox Header: Full-width scenario switch + 3-cell mobile telemetry bar */}
           <div
-            className="flex flex-col gap-4 border-b px-5 py-4 md:flex-row md:items-center md:justify-between md:px-8 md:py-5"
+            className="flex flex-col gap-3.5 border-b px-4 py-4 md:flex-row md:items-center md:justify-between md:px-8 md:py-5"
             style={{ borderColor: "var(--border-whisper)" }}
           >
-            <div className="flex items-center justify-between gap-3 md:justify-start">
+            <div className="w-full md:w-auto">
               <SegmentedControl
                 options={scenarioOptions}
                 value={scenarioId}
                 onChange={handleScenarioChange}
                 ariaLabel="Select simulated agent trace scenario"
                 layoutId="hero-scenario-selector"
+                fullWidth
               />
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 md:justify-end md:gap-5">
-              <div className="flex items-center gap-4 sm:gap-5">
-                <div className="flex flex-col">
-                  <span
-                    className="text-[11.5px] font-medium"
-                    style={{ color: "var(--ink-secondary)" }}
-                  >
-                    Latency
-                  </span>
-                  <span
-                    className="tabular-telemetry min-w-[74px] text-[15px] font-medium"
-                    style={{
-                      color:
-                        evaluated.activeGuardrailCount === 3
-                          ? "var(--status-pass-text)"
-                          : "var(--ink-primary)",
-                      transition: "color 240ms var(--ease-enter)",
-                    }}
-                  >
-                    {formatLatencyMs(evaluated.totalLatencyMs)}
-                  </span>
-                </div>
-
+            <div
+              className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 rounded-2xl border px-3.5 py-2.5 md:flex md:items-center md:gap-5 md:rounded-none md:border-0 md:bg-transparent md:p-0"
+              style={{
+                backgroundColor: "var(--bg-surface-subtle)",
+                borderColor: "var(--border-whisper)",
+              }}
+            >
+              <div className="flex flex-col">
                 <span
-                  aria-hidden="true"
-                  className="h-7 w-px"
-                  style={{ backgroundColor: "var(--border-whisper)" }}
-                />
-
-                <div className="flex flex-col">
-                  <span
-                    className="text-[11.5px] font-medium"
-                    style={{ color: "var(--ink-secondary)" }}
-                  >
-                    Run cost
-                  </span>
-                  <span
-                    className="tabular-telemetry min-w-[58px] text-[15px] font-medium"
-                    style={{
-                      color:
-                        evaluated.activeGuardrailCount === 3
-                          ? "var(--status-pass-text)"
-                          : "var(--ink-primary)",
-                      transition: "color 240ms var(--ease-enter)",
-                    }}
-                  >
-                    {formatCostUsd(evaluated.totalCostUsd)}
-                  </span>
-                </div>
+                  className="text-[11px] font-medium md:text-[11.5px]"
+                  style={{ color: "var(--ink-secondary)" }}
+                >
+                  Latency
+                </span>
+                <span
+                  className="tabular-telemetry text-[14.5px] font-medium md:min-w-[74px] md:text-[15px]"
+                  style={{
+                    color:
+                      evaluated.activeGuardrailCount === 3
+                        ? "var(--status-pass-text)"
+                        : "var(--ink-primary)",
+                    transition: "color 240ms var(--ease-enter)",
+                  }}
+                >
+                  {formatLatencyMs(evaluated.totalLatencyMs)}
+                </span>
               </div>
 
-              <QuietStatusPill tone={evaluated.statusTone}>
-                {evaluated.status}
-              </QuietStatusPill>
+              <div
+                className="flex flex-col border-l pl-3 md:border-l md:pl-5"
+                style={{ borderColor: "var(--border-whisper)" }}
+              >
+                <span
+                  className="text-[11px] font-medium md:text-[11.5px]"
+                  style={{ color: "var(--ink-secondary)" }}
+                >
+                  Run cost
+                </span>
+                <span
+                  className="tabular-telemetry text-[14.5px] font-medium md:min-w-[58px] md:text-[15px]"
+                  style={{
+                    color:
+                      evaluated.activeGuardrailCount === 3
+                        ? "var(--status-pass-text)"
+                        : "var(--ink-primary)",
+                    transition: "color 240ms var(--ease-enter)",
+                  }}
+                >
+                  {formatCostUsd(evaluated.totalCostUsd)}
+                </span>
+              </div>
+
+              <div className="justify-self-end">
+                <QuietStatusPill tone={evaluated.statusTone}>
+                  {evaluated.status}
+                </QuietStatusPill>
+              </div>
             </div>
           </div>
 
+          {/* Inline Guardrails Strip */}
           <div
             ref={firstSwitchRef}
-            className="border-b px-5 py-4 md:px-8 md:py-5"
+            className="border-b px-4 py-4 md:px-8 md:py-5"
             style={{
               borderColor: "var(--border-whisper)",
               backgroundColor: "var(--bg-surface-subtle)",
             }}
           >
-            <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <span
                 className="text-[12.5px] font-medium"
                 style={{ color: "var(--ink-secondary)" }}
               >
                 Inline guardrails{" "}
                 <span className="tabular-telemetry ml-1">
-                  ({evaluated.activeGuardrailCount}/3 active)
+                  ({evaluated.activeGuardrailCount}/3)
                 </span>
               </span>
               <span
@@ -371,12 +392,12 @@ export function HeroSection() {
                 }}
               >
                 {evaluated.status === "Healthy"
-                  ? `Trace stabilized · ${latencyDropPct}% faster`
+                  ? `Stabilized — ${latencyDropPct}% faster`
                   : "Flip switches to stabilize trace"}
               </span>
             </div>
 
-            <div className="grid grid-cols-1 gap-2.5 md:grid-cols-3 md:gap-3">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-3">
               {GUARDRAIL_CONTROLS.map((ctrl) => {
                 const isOn = guardrails[ctrl.key];
                 const switchId = `hero-switch-${ctrl.key}`;
@@ -385,7 +406,7 @@ export function HeroSection() {
                 return (
                   <div
                     key={ctrl.key}
-                    className="surface-fade flex min-h-[54px] items-center justify-between gap-3 rounded-2xl border px-4 py-3"
+                    className="surface-fade flex min-h-[54px] items-center justify-between gap-3 rounded-xl border px-3.5 py-2.5 sm:rounded-2xl sm:px-4 sm:py-3"
                     style={{
                       backgroundColor: "var(--bg-surface-solid)",
                       borderColor: isOn
@@ -424,7 +445,21 @@ export function HeroSection() {
             </div>
           </div>
 
+          {/* Trace Waterfall Ledger */}
           <div>
+            {/* Mobile Trace Table Cue */}
+            <div
+              className="flex items-center justify-between border-b px-4 py-2 text-[11px] font-medium md:hidden"
+              style={{
+                borderColor: "var(--border-whisper)",
+                color: "var(--ink-secondary)",
+              }}
+            >
+              <span>Tap any step to inspect JSON</span>
+              <span className="tabular-telemetry">Time · Cost</span>
+            </div>
+
+            {/* Desktop Trace Table Header */}
             <div
               className="hidden items-center justify-between border-b px-8 py-2.5 text-[11.5px] font-medium md:flex"
               style={{
@@ -444,6 +479,7 @@ export function HeroSection() {
               {waterfallItems.map(({ span, startPct, widthPct }, spanIdx) => {
                 const isExpanded = expandedSpanId === span.id;
                 const panelId = `span-json-${span.id}`;
+                const isCopied = copiedSpanId === span.id;
 
                 return (
                   <li key={span.id}>
@@ -455,7 +491,7 @@ export function HeroSection() {
                       }}
                       aria-expanded={isExpanded}
                       aria-controls={panelId}
-                      className="group flex min-h-[56px] w-full cursor-pointer items-center justify-between gap-3 px-5 py-3.5 text-left hover:bg-[var(--bg-surface-subtle)]/55 md:px-8"
+                      className="group w-full cursor-pointer px-4 py-3.5 text-left md:flex md:min-h-[56px] md:items-center md:justify-between md:gap-3 md:px-8 [@media(hover:hover)]:hover:bg-[var(--bg-surface-subtle)]/55"
                       style={{
                         backgroundColor: isExpanded
                           ? "var(--bg-surface-subtle)"
@@ -463,78 +499,75 @@ export function HeroSection() {
                         transition: "background-color 180ms var(--ease-enter)",
                       }}
                     >
+                      {/* Phone-Native 3-Line Span Row (< 768px) */}
                       <div
-                        className={`flex min-w-0 flex-1 items-center gap-3 ${
-                          span.depth === 1 ? "pl-3 md:pl-5" : ""
-                        }`}
+                        className={`md:hidden ${span.depth === 1 ? "pl-3" : ""}`}
                       >
-                        <span
-                          aria-hidden="true"
-                          className="h-1.5 w-1.5 shrink-0 rounded-full"
-                          style={{
-                            backgroundColor: getSpanDotColor(span.tone),
-                            transition: "background-color 240ms var(--ease-enter)",
-                          }}
-                        />
-
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex min-w-0 items-center gap-2">
                             <span
-                              className="tabular-telemetry truncate text-[13px] font-medium md:text-[13.5px]"
+                              aria-hidden="true"
+                              className="h-1.5 w-1.5 shrink-0 rounded-full"
+                              style={{
+                                backgroundColor: getSpanDotColor(span.tone),
+                                transition:
+                                  "background-color 240ms var(--ease-enter)",
+                              }}
+                            />
+                            <span
+                              translate="no"
+                              className="tabular-telemetry truncate text-[13px] font-medium"
                               style={{ color: "var(--ink-primary)" }}
                             >
                               {span.name}
                             </span>
-                            <span
-                              className="truncate text-[12px]"
-                              style={{
-                                color:
-                                  span.tone === "warn"
-                                    ? "var(--status-warn-text)"
-                                    : span.tone === "pass"
-                                      ? "var(--status-pass-text)"
-                                      : "var(--ink-secondary)",
-                                transition: "color 240ms var(--ease-enter)",
-                              }}
-                            >
-                              {span.note}
-                            </span>
                           </div>
 
-                          {/* Phone GPU-only x + scaleX waterfall bar */}
-                          <div
-                            className="relative mt-2 h-1.5 w-full max-w-[180px] overflow-hidden rounded-[2px] md:hidden"
-                            style={{ backgroundColor: "var(--bg-surface-subtle)" }}
-                          >
-                            <m.div
-                              initial={
-                                prefersReducedMotion
-                                  ? false
-                                  : { x: `${startPct}%`, scaleX: 0 }
-                              }
-                              animate={{
-                                x: `${startPct}%`,
-                                scaleX: widthPct / 100,
-                              }}
-                              transition={
-                                prefersReducedMotion
-                                  ? REDUCED_TRANSITION
-                                  : { ...TACTILE_SPRING, delay: 0.05 + spanIdx * 0.03 }
-                              }
-                              className="absolute inset-0 w-full rounded-[2px] will-change-transform"
+                          <div className="flex shrink-0 items-center gap-2">
+                            <span
+                              className="tabular-telemetry text-[12.5px] font-medium"
+                              style={{ color: "var(--ink-primary)" }}
+                            >
+                              {formatLatencyMs(span.latencyMs)}
+                            </span>
+                            <span
+                              className="tabular-telemetry text-[11.5px]"
+                              style={{ color: "var(--ink-secondary)" }}
+                            >
+                              {formatCostUsd(span.costUsd)}
+                            </span>
+                            <ChevronDown
+                              aria-hidden="true"
+                              className="h-4 w-4 shrink-0"
+                              strokeWidth={1.75}
                               style={{
-                                transformOrigin: "left center",
-                                backgroundColor: getSpanBarColor(span.tone),
+                                color: "var(--ink-secondary)",
+                                transform: isExpanded
+                                  ? "rotate(180deg)"
+                                  : "rotate(0deg)",
+                                transition: "transform 220ms var(--ease-enter)",
                               }}
                             />
                           </div>
                         </div>
-                      </div>
 
-                      <div className="flex shrink-0 items-center gap-3 md:gap-6">
-                        {/* Desktop GPU-only x + scaleX waterfall bar */}
+                        <p
+                          className="mt-1 pl-3.5 text-[12px] leading-snug"
+                          style={{
+                            color:
+                              span.tone === "warn"
+                                ? "var(--status-warn-text)"
+                                : span.tone === "pass"
+                                  ? "var(--status-pass-text)"
+                                  : "var(--ink-secondary)",
+                          }}
+                        >
+                          {span.note}
+                        </p>
+
+                        {/* Full-width Phone GPU x + scaleX Waterfall Bar */}
                         <div
-                          className="relative hidden h-1.5 w-[168px] overflow-hidden rounded-[2px] md:block"
+                          className="relative mt-2 ml-3.5 h-1.5 overflow-hidden rounded-[2px]"
                           style={{
                             backgroundColor: isExpanded
                               ? "var(--bg-surface-solid)"
@@ -554,7 +587,89 @@ export function HeroSection() {
                             transition={
                               prefersReducedMotion
                                 ? REDUCED_TRANSITION
-                                : { ...TACTILE_SPRING, delay: 0.05 + spanIdx * 0.03 }
+                                : {
+                                    ...TACTILE_SPRING,
+                                    delay: 0.05 + spanIdx * 0.03,
+                                  }
+                            }
+                            className="absolute inset-0 w-full rounded-[2px] will-change-transform"
+                            style={{
+                              transformOrigin: "left center",
+                              backgroundColor: getSpanBarColor(span.tone),
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Desktop Span Row (>= 768px) */}
+                      <div
+                        className={`hidden min-w-0 flex-1 items-center gap-3 md:flex ${
+                          span.depth === 1 ? "pl-5" : ""
+                        }`}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="h-1.5 w-1.5 shrink-0 rounded-full"
+                          style={{
+                            backgroundColor: getSpanDotColor(span.tone),
+                            transition:
+                              "background-color 240ms var(--ease-enter)",
+                          }}
+                        />
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
+                            <span
+                              translate="no"
+                              className="tabular-telemetry truncate text-[13.5px] font-medium"
+                              style={{ color: "var(--ink-primary)" }}
+                            >
+                              {span.name}
+                            </span>
+                            <span
+                              className="truncate text-[12px]"
+                              style={{
+                                color:
+                                  span.tone === "warn"
+                                    ? "var(--status-warn-text)"
+                                    : span.tone === "pass"
+                                      ? "var(--status-pass-text)"
+                                      : "var(--ink-secondary)",
+                                transition: "color 240ms var(--ease-enter)",
+                              }}
+                            >
+                              {span.note}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="hidden shrink-0 items-center gap-6 md:flex">
+                        <div
+                          className="relative h-1.5 w-[168px] overflow-hidden rounded-[2px]"
+                          style={{
+                            backgroundColor: isExpanded
+                              ? "var(--bg-surface-solid)"
+                              : "var(--bg-surface-subtle)",
+                          }}
+                        >
+                          <m.div
+                            initial={
+                              prefersReducedMotion
+                                ? false
+                                : { x: `${startPct}%`, scaleX: 0 }
+                            }
+                            animate={{
+                              x: `${startPct}%`,
+                              scaleX: widthPct / 100,
+                            }}
+                            transition={
+                              prefersReducedMotion
+                                ? REDUCED_TRANSITION
+                                : {
+                                    ...TACTILE_SPRING,
+                                    delay: 0.05 + spanIdx * 0.03,
+                                  }
                             }
                             className="absolute inset-0 w-full rounded-[2px] will-change-transform"
                             style={{
@@ -565,14 +680,14 @@ export function HeroSection() {
                         </div>
 
                         <span
-                          className="tabular-telemetry w-[58px] text-right text-[13px] font-medium md:w-[62px]"
+                          className="tabular-telemetry w-[62px] text-right text-[13px] font-medium"
                           style={{ color: "var(--ink-primary)" }}
                         >
                           {formatLatencyMs(span.latencyMs)}
                         </span>
 
                         <span
-                          className="tabular-telemetry hidden w-[56px] text-right text-[12.5px] sm:inline"
+                          className="tabular-telemetry w-[56px] text-right text-[12.5px]"
                           style={{ color: "var(--ink-secondary)" }}
                         >
                           {formatCostUsd(span.costUsd)}
@@ -621,7 +736,7 @@ export function HeroSection() {
                           }
                           className="overflow-hidden"
                         >
-                          <div className="px-5 pt-1 pb-5 md:px-8 md:pb-6">
+                          <div className="px-4 pt-1 pb-4 md:px-8 md:pb-6">
                             <div
                               className="overflow-hidden rounded-2xl border"
                               style={{
@@ -630,17 +745,19 @@ export function HeroSection() {
                               }}
                             >
                               <div
-                                className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-2.5"
+                                className="flex items-center justify-between gap-2 border-b px-3.5 py-2 sm:px-4 sm:py-2.5"
                                 style={{ borderColor: "var(--border-whisper)" }}
                               >
                                 <div
-                                  className="tabular-telemetry flex items-center gap-3 text-[12px]"
+                                  className="tabular-telemetry flex min-w-0 items-center gap-2 text-[11.5px] sm:gap-3 sm:text-[12px]"
                                   style={{ color: "var(--ink-secondary)" }}
                                 >
-                                  <span>{evaluated.traceId}</span>
+                                  <span translate="no" className="truncate">
+                                    {evaluated.traceId}
+                                  </span>
                                   <span aria-hidden="true">·</span>
-                                  <span>
-                                    {span.tokens.toLocaleString("en-US")} tokens
+                                  <span className="shrink-0">
+                                    {span.tokens.toLocaleString("en-US")} tok
                                   </span>
                                   <span
                                     aria-hidden="true"
@@ -648,7 +765,7 @@ export function HeroSection() {
                                   >
                                     ·
                                   </span>
-                                  <span className="hidden sm:inline">
+                                  <span className="hidden shrink-0 sm:inline">
                                     {formatCostUsd(span.costUsd)}
                                   </span>
                                 </div>
@@ -656,34 +773,46 @@ export function HeroSection() {
                                 <button
                                   type="button"
                                   onClick={() => void handleCopySpanJson(span)}
-                                  className="btn-tactile inline-flex min-h-[32px] cursor-pointer items-center gap-1.5 rounded-full border px-3 text-[12px] font-medium hover:border-[var(--border-hover)]"
+                                  className="btn-tactile inline-grid min-h-[36px] shrink-0 cursor-pointer items-center justify-items-center rounded-full border px-3 text-[12px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)]"
                                   style={{
                                     backgroundColor: "var(--bg-surface-solid)",
-                                    borderColor: "var(--border-whisper)",
-                                    color: "var(--ink-primary)",
+                                    borderColor: isCopied
+                                      ? "var(--status-pass-dot)"
+                                      : "var(--border-whisper)",
+                                    color: isCopied
+                                      ? "var(--status-pass-text)"
+                                      : "var(--ink-primary)",
                                   }}
                                 >
-                                  {copiedSpanId === span.id ? (
-                                    <>
-                                      <Check
-                                        className="h-3.5 w-3.5"
-                                        style={{
-                                          color: "var(--status-pass-text)",
-                                        }}
-                                      />
-                                      <span>Copied</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Copy className="h-3.5 w-3.5" />
-                                      <span>Copy JSON</span>
-                                    </>
-                                  )}
+                                  <span
+                                    aria-hidden={isCopied}
+                                    className={`col-start-1 row-start-1 inline-flex items-center gap-1.5 transition-opacity duration-150 ${
+                                      isCopied ? "opacity-0" : "opacity-100"
+                                    }`}
+                                  >
+                                    <Copy className="h-3.5 w-3.5 shrink-0" />
+                                    <span>Copy JSON</span>
+                                  </span>
+                                  <span
+                                    aria-hidden={!isCopied}
+                                    className={`col-start-1 row-start-1 inline-flex items-center gap-1.5 transition-opacity duration-150 ${
+                                      isCopied ? "opacity-100" : "opacity-0"
+                                    }`}
+                                  >
+                                    <Check
+                                      className="h-3.5 w-3.5 shrink-0"
+                                      style={{
+                                        color: "var(--status-pass-text)",
+                                      }}
+                                    />
+                                    <span>Copied</span>
+                                  </span>
                                 </button>
                               </div>
 
                               <pre
-                                className="tabular-telemetry overflow-x-auto p-4 text-[12px] leading-[1.65] md:text-[12.5px]"
+                                translate="no"
+                                className="tabular-telemetry overflow-x-auto p-3.5 text-[11.5px] leading-[1.65] sm:p-4 sm:text-[12.5px]"
                                 style={{ color: "var(--ink-primary)" }}
                               >
                                 <code>{renderHighlightedJson(span.payload)}</code>

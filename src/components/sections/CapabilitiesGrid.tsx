@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { Check, Copy } from "lucide-react";
 import { toast } from "sonner";
@@ -24,12 +24,16 @@ const CAPABILITY_INDEX: readonly {
   id: CapabilityId;
   code: string;
   title: string;
+  mobileTitle: string;
+  mobileMeta: string;
   summary: string;
 }[] = [
   {
     id: "router",
     code: "01",
     title: "Inline Guardrail Router",
+    mobileTitle: "Guardrail router",
+    mobileMeta: "1.4ms edge",
     summary:
       "Enforce prompt safety, hard per-run spend ceilings, and latency fallbacks directly in the request path.",
   },
@@ -37,6 +41,8 @@ const CAPABILITY_INDEX: readonly {
     id: "sdk",
     code: "02",
     title: "Two-Line Drop-In SDK",
+    mobileTitle: "Drop-in SDK",
+    mobileMeta: "OTLP native",
     summary:
       "Standard OpenTelemetry exporters with zero proprietary lock-in and automatic model span parsing.",
   },
@@ -44,6 +50,8 @@ const CAPABILITY_INDEX: readonly {
     id: "prompts",
     code: "03",
     title: "Prompt Version Comparison",
+    mobileTitle: "Prompt diff",
+    mobileMeta: "Replay evals",
     summary:
       "Score candidate prompt edits on real traces before shipping them to live traffic.",
   },
@@ -51,6 +59,8 @@ const CAPABILITY_INDEX: readonly {
     id: "spend",
     code: "04",
     title: "Multi-Provider Token Spend",
+    mobileTitle: "Token spend",
+    mobileMeta: "6 providers",
     summary:
       "Attribute token costs per tenant, prompt, and model provider across hosted APIs and private clusters.",
   },
@@ -64,13 +74,15 @@ type PolicyRuleId = "injection" | "budget" | "fallback";
 const POLICY_RULES: readonly {
   id: PolicyRuleId;
   label: string;
+  shortLabel: string;
   readoutLatency: string;
   readoutAction: string;
   dotColor: string;
 }[] = [
   {
     id: "injection",
-    label: "Block Injection",
+    label: "Block injection",
+    shortLabel: "Injection",
     readoutLatency: "1.4ms total pipeline",
     readoutAction: "Prompt injection halted before model call",
     dotColor: "var(--status-warn-dot)",
@@ -78,13 +90,15 @@ const POLICY_RULES: readonly {
   {
     id: "budget",
     label: "Cap $0.05/run",
+    shortLabel: "Cap $0.05",
     readoutLatency: "1.1ms policy check",
     readoutAction: "Token budget enforced inline per trace",
     dotColor: "var(--accent-brand)",
   },
   {
     id: "fallback",
-    label: "Fallback Fast",
+    label: "Fallback fast",
+    shortLabel: "Fallback",
     readoutLatency: "1.4ms route switch",
     readoutAction: "Rerouted to gpt-4.1-mini on 429 spike",
     dotColor: "var(--status-pass-dot)",
@@ -99,15 +113,15 @@ function GuardrailRouterStage() {
   return (
     <div className="flex h-full flex-col justify-between">
       <div>
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h3
-            className="text-[20px] font-medium tracking-[-0.02em]"
+            className="text-[18px] font-medium tracking-[-0.02em] sm:text-[20px]"
             style={{ color: "var(--ink-primary)" }}
           >
             Inline Guardrail Router
           </h3>
           <span
-            className="tabular-telemetry text-[12.5px] font-medium"
+            className="tabular-telemetry text-[12px] font-medium sm:text-[12.5px]"
             style={{ color: "var(--accent-brand-text)" }}
           >
             {current.readoutLatency}
@@ -115,21 +129,21 @@ function GuardrailRouterStage() {
         </div>
 
         <p
-          className="mt-2 max-w-[52ch] text-[14.5px] leading-[1.6]"
+          className="mt-2 max-w-[52ch] text-[14px] leading-[1.6] sm:text-[14.5px]"
           style={{ color: "var(--ink-secondary)" }}
         >
           Switch policies below to inspect real-time request-path routing and
           edge evaluation latency.
         </p>
 
-        <div className="mt-7">
+        <div className="mt-5 sm:mt-7">
           <Pipeline activeRule={activeRule} />
         </div>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-6 sm:mt-8">
         <div
-          className="flex flex-wrap gap-2"
+          className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap sm:gap-2"
           role="group"
           aria-label="Simulate inline policy rule"
         >
@@ -144,7 +158,7 @@ function GuardrailRouterStage() {
                   setActiveRule(rule.id);
                   playSwitchClick(true);
                 }}
-                className="btn-tactile min-h-[40px] cursor-pointer rounded-full border px-4 text-[13px] font-medium"
+                className="btn-tactile flex min-h-[44px] cursor-pointer items-center justify-center rounded-xl border px-2 text-center text-[12.5px] font-medium sm:min-h-[40px] sm:rounded-full sm:px-4 sm:text-[13px]"
                 style={{
                   backgroundColor: isSelected
                     ? "var(--accent-brand-soft)"
@@ -157,14 +171,15 @@ function GuardrailRouterStage() {
                     : "var(--ink-secondary)",
                 }}
               >
-                {rule.label}
+                <span className="sm:hidden">{rule.shortLabel}</span>
+                <span className="hidden sm:inline">{rule.label}</span>
               </button>
             );
           })}
         </div>
 
         <div
-          className="mt-5 flex items-center gap-2.5 border-t pt-4 text-[13.5px]"
+          className="mt-5 flex items-center gap-2.5 border-t pt-4 text-[13px] sm:text-[13.5px]"
           style={{
             borderColor: "var(--border-whisper)",
             color: "var(--ink-secondary)",
@@ -187,9 +202,15 @@ function GuardrailRouterStage() {
    ============================================================================ */
 type SdkTabId = "typescript" | "python" | "curl";
 
-const SDK_SNIPPETS: Record<SdkTabId, { label: string; code: string }> = {
+const INGEST_ENDPOINT = "https" + "://ingest.spanrail.dev/v1/traces";
+
+const SDK_SNIPPETS: Record<
+  SdkTabId,
+  { label: string; filename: string; code: string }
+> = {
   typescript: {
     label: "TypeScript",
+    filename: "spanrail.otel.ts",
     code: `import { initSpanrail } from "@spanrail/otel";
 
 initSpanrail({
@@ -199,6 +220,7 @@ initSpanrail({
   },
   python: {
     label: "Python",
+    filename: "spanrail_otel.py",
     code: `from spanrail_otel import init_spanrail
 
 init_spanrail(
@@ -208,7 +230,8 @@ init_spanrail(
   },
   curl: {
     label: "cURL",
-    code: `curl -X POST https://ingest.spanrail.dev/v1/traces \\
+    filename: "export-trace.sh",
+    code: `curl -X POST ${INGEST_ENDPOINT} \\
   -H "Authorization: Bearer $SPANRAIL_API_KEY" \\
   -H "Content-Type: application/x-protobuf" \\
   --data-binary @agent-trace.otlp`,
@@ -218,6 +241,15 @@ init_spanrail(
 function DropInSdkStage() {
   const [tab, setTab] = useState<SdkTabId>("typescript");
   const [copied, setCopied] = useState(false);
+  const copyTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current !== null) {
+        window.clearTimeout(copyTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleCopy = async () => {
     try {
@@ -225,7 +257,10 @@ function DropInSdkStage() {
       setCopied(true);
       playSuccessConfirm();
       toast.success(`${SDK_SNIPPETS[tab].label} snippet copied`);
-      window.setTimeout(() => setCopied(false), 1800);
+      if (copyTimerRef.current !== null) {
+        window.clearTimeout(copyTimerRef.current);
+      }
+      copyTimerRef.current = window.setTimeout(() => setCopied(false), 1800);
     } catch {
       toast.error("Unable to access clipboard in this browser.");
     }
@@ -235,13 +270,13 @@ function DropInSdkStage() {
     <div className="flex h-full flex-col justify-between">
       <div>
         <h3
-          className="text-[20px] font-medium tracking-[-0.02em]"
+          className="text-[18px] font-medium tracking-[-0.02em] sm:text-[20px]"
           style={{ color: "var(--ink-primary)" }}
         >
           Two-Line Drop-In SDK
         </h3>
         <p
-          className="mt-2 max-w-[52ch] text-[14.5px] leading-[1.6]"
+          className="mt-2 max-w-[52ch] text-[14px] leading-[1.6] sm:text-[14.5px]"
           style={{ color: "var(--ink-secondary)" }}
         >
           Standard OpenTelemetry exporters with automatic span capture across
@@ -252,70 +287,107 @@ function DropInSdkStage() {
           value={tab}
           onValueChange={(next) => {
             setTab(next as SdkTabId);
+            setCopied(false);
             playSwitchClick(true);
           }}
           layoutId="capabilities-sdk-tabs"
-          className="mt-6"
+          className="mt-5 sm:mt-6"
         >
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <SoftTabsList ariaLabel="Select SDK language">
-              <SoftTabsTrigger value="typescript">TypeScript</SoftTabsTrigger>
-              <SoftTabsTrigger value="python">Python</SoftTabsTrigger>
-              <SoftTabsTrigger value="curl">cURL</SoftTabsTrigger>
-            </SoftTabsList>
-
-            <button
-              type="button"
-              onClick={() => void handleCopy()}
-              className="btn-tactile inline-flex min-h-[38px] cursor-pointer items-center gap-1.5 rounded-full border px-3.5 text-[12.5px] font-medium hover:border-[var(--border-hover)]"
-              style={{
-                backgroundColor: "var(--bg-surface-subtle)",
-                borderColor: "var(--border-whisper)",
-                color: "var(--ink-primary)",
-              }}
-            >
-              {copied ? (
-                <>
-                  <Check
-                    className="h-3.5 w-3.5"
-                    style={{ color: "var(--status-pass-text)" }}
-                  />
-                  <span>Copied</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="h-3.5 w-3.5" />
-                  <span>Copy</span>
-                </>
-              )}
-            </button>
-          </div>
+          <SoftTabsList
+            ariaLabel="Select SDK language"
+            className="grid w-full grid-cols-3 sm:inline-flex sm:w-auto"
+          >
+            <SoftTabsTrigger value="typescript">TypeScript</SoftTabsTrigger>
+            <SoftTabsTrigger value="python">Python</SoftTabsTrigger>
+            <SoftTabsTrigger value="curl">cURL</SoftTabsTrigger>
+          </SoftTabsList>
 
           {(["typescript", "python", "curl"] as const).map((lang) => (
-            <SoftTabsContent key={lang} value={lang} className="mt-4">
-              <pre
-                className="tabular-telemetry min-h-[164px] overflow-x-auto rounded-2xl border p-5 text-[13px] leading-[1.75]"
+            <SoftTabsContent key={lang} value={lang} className="mt-3.5 sm:mt-4">
+              <div
+                className="overflow-hidden rounded-2xl border"
                 style={{
                   backgroundColor: "var(--code-bg)",
                   borderColor: "var(--border-whisper)",
-                  color: "var(--ink-primary)",
                 }}
               >
-                <code>{SDK_SNIPPETS[lang].code}</code>
-              </pre>
+                {/* Anchored code header with fixed-width zero-CLS Copy button */}
+                <div
+                  className="flex items-center justify-between gap-2 border-b px-3.5 py-2 sm:px-4"
+                  style={{ borderColor: "var(--border-whisper)" }}
+                >
+                  <span
+                    translate="no"
+                    className="tabular-telemetry truncate text-[12px]"
+                    style={{ color: "var(--ink-secondary)" }}
+                  >
+                    {SDK_SNIPPETS[lang].filename}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => void handleCopy()}
+                    aria-label={
+                      copied
+                        ? `${SDK_SNIPPETS[lang].label} snippet copied`
+                        : `Copy ${SDK_SNIPPETS[lang].label} snippet`
+                    }
+                    className="btn-tactile inline-grid min-h-[36px] shrink-0 cursor-pointer items-center justify-items-center rounded-full border px-3 text-[12px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)]"
+                    style={{
+                      backgroundColor: "var(--bg-surface-subtle)",
+                      borderColor: copied
+                        ? "var(--status-pass-dot)"
+                        : "var(--border-whisper)",
+                      color: copied
+                        ? "var(--status-pass-text)"
+                        : "var(--ink-primary)",
+                    }}
+                  >
+                    <span
+                      aria-hidden={copied}
+                      className={`col-start-1 row-start-1 inline-flex items-center gap-1.5 transition-opacity duration-150 ${
+                        copied ? "opacity-0" : "opacity-100"
+                      }`}
+                    >
+                      <Copy className="h-3.5 w-3.5 shrink-0" />
+                      <span>Copy</span>
+                    </span>
+                    <span
+                      aria-hidden={!copied}
+                      className={`col-start-1 row-start-1 inline-flex items-center gap-1.5 transition-opacity duration-150 ${
+                        copied ? "opacity-100" : "opacity-0"
+                      }`}
+                    >
+                      <Check
+                        className="h-3.5 w-3.5 shrink-0"
+                        style={{ color: "var(--status-pass-text)" }}
+                      />
+                      <span>Copied</span>
+                    </span>
+                  </button>
+                </div>
+
+                <pre
+                  translate="no"
+                  className="tabular-telemetry min-h-[152px] overflow-x-auto p-4 text-[12px] leading-[1.7] sm:min-h-[164px] sm:p-5 sm:text-[13px] sm:leading-[1.75]"
+                  style={{ color: "var(--ink-primary)" }}
+                >
+                  <code>{SDK_SNIPPETS[lang].code}</code>
+                </pre>
+              </div>
             </SoftTabsContent>
           ))}
         </SoftTabs>
       </div>
 
       <p
-        className="mt-6 border-t pt-4 text-[13px]"
+        className="mt-5 border-t pt-4 text-[12.5px] sm:mt-6 sm:text-[13px]"
         style={{
           borderColor: "var(--border-whisper)",
           color: "var(--ink-secondary)",
         }}
       >
-        Zero proprietary wrappers · Export straight to OTLP/HTTP + Protobuf.
+        Zero proprietary wrappers — export straight to OTLP/HTTP + Protobuf.
       </p>
     </div>
   );
@@ -339,13 +411,13 @@ const PROMPT_VERSIONS: Record<
     accuracy: { display: "89.2%", pct: 89.2 },
     latency: { display: "1.92s", pct: 84 },
     cost: { display: "$42.10", pct: 86 },
-    summary: "Baseline production prompt · 1,000 replayed traces",
+    summary: "Baseline production prompt — 1,000 replayed traces",
   },
   v15: {
     accuracy: { display: "96.4%", pct: 96.4, delta: "+7.2%" },
     latency: { display: "0.81s", pct: 35, delta: "-58%" },
     cost: { display: "$16.80", pct: 34, delta: "-60%" },
-    summary: "Candidate structured prompt · ready to promote",
+    summary: "Candidate structured prompt — ready to promote",
   },
 };
 
@@ -384,43 +456,46 @@ function PromptComparisonStage() {
   return (
     <div className="flex h-full flex-col justify-between">
       <div>
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <h3
-            className="text-[20px] font-medium tracking-[-0.02em]"
+            className="text-[18px] font-medium tracking-[-0.02em] sm:text-[20px]"
             style={{ color: "var(--ink-primary)" }}
           >
             Prompt Version Comparison
           </h3>
 
-          <SegmentedControl
-            options={[
-              { value: "v14", label: "Prompt v14" },
-              { value: "v15", label: "Prompt v15" },
-            ]}
-            value={version}
-            onChange={(next) => {
-              setVersion(next);
-              playSwitchClick(next === "v15");
-            }}
-            ariaLabel="Compare prompt versions"
-            layoutId="capabilities-prompt-diff"
-          />
+          <div className="w-full sm:w-auto">
+            <SegmentedControl
+              options={[
+                { value: "v14", label: "Prompt v14" },
+                { value: "v15", label: "Prompt v15" },
+              ]}
+              value={version}
+              onChange={(next) => {
+                setVersion(next);
+                playSwitchClick(next === "v15");
+              }}
+              ariaLabel="Compare prompt versions"
+              layoutId="capabilities-prompt-diff"
+              fullWidth
+            />
+          </div>
         </div>
 
         <p
-          className="mt-2 max-w-[52ch] text-[14.5px] leading-[1.6]"
+          className="mt-2.5 max-w-[52ch] text-[14px] leading-[1.6] sm:mt-2 sm:text-[14.5px]"
           style={{ color: "var(--ink-secondary)" }}
         >
           Replay historical production traces against candidate prompts and
           measure accuracy, tail latency, and dollar impact side by side.
         </p>
 
-        <div className="mt-7 space-y-6">
+        <div className="mt-6 space-y-5 sm:mt-7 sm:space-y-6">
           {rows.map((row) => (
             <div key={row.label}>
               <div className="mb-2 flex items-baseline justify-between gap-3">
                 <span
-                  className="text-[14px] font-medium"
+                  className="text-[13.5px] font-medium sm:text-[14px]"
                   style={{ color: "var(--ink-secondary)" }}
                 >
                   {row.label}
@@ -428,14 +503,14 @@ function PromptComparisonStage() {
                 <div className="tabular-telemetry flex items-baseline gap-2.5">
                   {row.delta && (
                     <span
-                      className="text-[12.5px] font-medium"
+                      className="text-[12px] font-medium sm:text-[12.5px]"
                       style={{ color: "var(--status-pass-text)" }}
                     >
                       {row.delta}
                     </span>
                   )}
                   <span
-                    className="min-w-[66px] text-right text-[18px] font-medium"
+                    className="min-w-[64px] text-right text-[17px] font-medium sm:min-w-[66px] sm:text-[18px]"
                     style={{ color: "var(--ink-primary)" }}
                   >
                     {row.value}
@@ -449,11 +524,11 @@ function PromptComparisonStage() {
               >
                 <m.div
                   initial={false}
-                  animate={{ width: `${row.pct}%` }}
+                  animate={{ scaleX: row.pct / 100 }}
                   transition={
                     prefersReducedMotion ? REDUCED_TRANSITION : TACTILE_SPRING
                   }
-                  className="h-full rounded-full"
+                  className="h-full w-full origin-left rounded-full"
                   style={{ backgroundColor: row.barColor }}
                 />
               </div>
@@ -463,7 +538,7 @@ function PromptComparisonStage() {
       </div>
 
       <p
-        className="mt-7 border-t pt-4 text-[13px]"
+        className="mt-6 border-t pt-4 text-[12.5px] sm:mt-7 sm:text-[13px]"
         style={{
           borderColor: "var(--border-whisper)",
           color: "var(--ink-secondary)",
@@ -476,7 +551,7 @@ function PromptComparisonStage() {
 }
 
 /* ============================================================================
-   STAGE 4 — MULTI-PROVIDER TOKEN SPEND (6 Providers in a 2x3 Layout)
+   STAGE 4 — MULTI-PROVIDER TOKEN SPEND (6 Providers)
    ============================================================================ */
 interface ProviderSlice {
   id: string;
@@ -547,23 +622,23 @@ function ProviderSpendStage() {
     <div className="flex h-full flex-col justify-between">
       <div>
         <h3
-          className="text-[20px] font-medium tracking-[-0.02em]"
+          className="text-[18px] font-medium tracking-[-0.02em] sm:text-[20px]"
           style={{ color: "var(--ink-primary)" }}
         >
           Multi-Provider Token Spend
         </h3>
         <p
-          className="mt-2 max-w-[52ch] text-[14.5px] leading-[1.6]"
+          className="mt-2 max-w-[52ch] text-[14px] leading-[1.6] sm:text-[14.5px]"
           style={{ color: "var(--ink-secondary)" }}
         >
           Attribute token costs per tenant, prompt, and model provider across
           hosted APIs and private inference clusters.
         </p>
 
-        {/* Horizontal Stacked Spend Bar (pure visual; interactive controls sit cleanly in the 2x3 grid below) */}
+        {/* Horizontal Stacked Spend Bar */}
         <div
           aria-hidden="true"
-          className="mt-7 flex h-3.5 w-full gap-[3px] overflow-hidden rounded-full"
+          className="mt-6 flex h-3 w-full gap-[3px] overflow-hidden rounded-full sm:mt-7 sm:h-3.5"
         >
           {PROVIDER_SLICES.map((slice) => {
             const isSelected = slice.id === selectedId;
@@ -582,8 +657,8 @@ function ProviderSpendStage() {
           })}
         </div>
 
-        {/* 6 Providers arranged in a clean 2x3 selector grid */}
-        <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+        {/* 6 Providers: spacious 2-line tiles on phone, compact inline pills on >=640px */}
+        <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-6 sm:grid-cols-3 sm:gap-2.5">
           {PROVIDER_SLICES.map((slice) => {
             const isSelected = slice.id === selectedId;
             return (
@@ -595,7 +670,7 @@ function ProviderSpendStage() {
                   setSelectedId(slice.id);
                   playSwitchClick(true);
                 }}
-                className="btn-tactile flex min-h-[48px] cursor-pointer items-center justify-between rounded-xl border px-3.5 py-2.5 text-left"
+                className="btn-tactile flex min-h-[56px] cursor-pointer flex-col justify-between rounded-xl border px-3 py-2.5 text-left sm:min-h-[48px] sm:flex-row sm:items-center sm:px-3.5"
                 style={{
                   backgroundColor: isSelected
                     ? "var(--bg-surface-subtle)"
@@ -605,21 +680,37 @@ function ProviderSpendStage() {
                     : "var(--border-whisper)",
                 }}
               >
-                <span className="inline-flex min-w-0 items-center gap-2">
+                <span className="flex w-full items-center justify-between gap-2 sm:w-auto sm:min-w-0 sm:justify-start">
+                  <span className="inline-flex min-w-0 items-center gap-2">
+                    <span
+                      aria-hidden="true"
+                      className="h-2 w-2 shrink-0 rounded-full"
+                      style={{ backgroundColor: slice.color }}
+                    />
+                    <span
+                      className="hidden truncate text-[13px] font-medium sm:inline"
+                      style={{ color: "var(--ink-primary)" }}
+                    >
+                      {slice.name}
+                    </span>
+                  </span>
                   <span
-                    aria-hidden="true"
-                    className="h-2 w-2 shrink-0 rounded-full"
-                    style={{ backgroundColor: slice.color }}
-                  />
-                  <span
-                    className="truncate text-[13px] font-medium"
-                    style={{ color: "var(--ink-primary)" }}
+                    className="tabular-telemetry text-[12px] sm:hidden"
+                    style={{ color: "var(--ink-secondary)" }}
                   >
-                    {slice.name}
+                    {slice.sharePct}%
                   </span>
                 </span>
+
                 <span
-                  className="tabular-telemetry text-[12.5px]"
+                  className="mt-1 block truncate text-[13px] font-medium sm:hidden"
+                  style={{ color: "var(--ink-primary)" }}
+                >
+                  {slice.name}
+                </span>
+
+                <span
+                  className="tabular-telemetry hidden shrink-0 text-[12.5px] sm:inline"
                   style={{ color: "var(--ink-secondary)" }}
                 >
                   {slice.sharePct}%
@@ -632,7 +723,7 @@ function ProviderSpendStage() {
 
       {/* Selected Provider Detail Ledger */}
       <div
-        className="mt-7 flex flex-wrap items-baseline justify-between gap-2 border-t pt-4"
+        className="mt-6 flex flex-col gap-1.5 border-t pt-4 sm:mt-7 sm:flex-row sm:items-baseline sm:justify-between sm:gap-2"
         style={{ borderColor: "var(--border-whisper)" }}
       >
         <span
@@ -642,9 +733,9 @@ function ProviderSpendStage() {
           <strong className="font-medium" style={{ color: "var(--ink-primary)" }}>
             {active.name}
           </strong>{" "}
-          · {active.avgTokens}
+          — {active.avgTokens}
         </span>
-        <div className="tabular-telemetry text-right">
+        <div className="tabular-telemetry sm:text-right">
           <span
             className="text-[18px] font-medium"
             style={{ color: "var(--ink-primary)" }}
@@ -664,7 +755,9 @@ function ProviderSpendStage() {
 }
 
 /* ============================================================================
-   EDITORIAL INTERACTIVE FEATURE SHOWCASE (Zero Bento Grid!)
+   EDITORIAL INTERACTIVE FEATURE SHOWCASE
+   - Phone & Tablet (< 1024px): 2x2 full-visibility selector grid (zero scroll)
+   - Desktop (>= 1024px): Vertical hairline index + spacious stage
    ============================================================================ */
 export function CapabilitiesGrid() {
   const [activeTab, setActiveTab] = useState<CapabilityId>("router");
@@ -676,95 +769,57 @@ export function CapabilitiesGrid() {
       aria-labelledby="capabilities-heading"
       className="scroll-mt-20 py-14 md:py-20"
     >
-      <div className="spanrail-container"><ScrollReveal>
-        <div className="max-w-[580px]">
-          <h2 id="capabilities-heading" className="display-h2">
-            Built for teams shipping real agents.
-          </h2>
-          <p
-            className="mt-3 text-[16px] leading-[1.65] md:text-[17px]"
-            style={{ color: "var(--ink-secondary)" }}
-          >
-            One quiet telemetry layer for inline safety switches, prompt
-            regressions, and exact token accounting.
-          </p>
-        </div>
+      <div className="spanrail-container">
+        <ScrollReveal>
+          <div className="max-w-[580px]">
+            <h2 id="capabilities-heading" className="display-h2">
+              Built for teams shipping real agents.
+            </h2>
+            <p
+              className="mt-3 text-[15.5px] leading-[1.65] md:text-[17px]"
+              style={{ color: "var(--ink-secondary)" }}
+            >
+              One quiet telemetry layer for inline safety switches, prompt
+              regressions, and exact token accounting.
+            </p>
+          </div>
 
-        {/* Phone Horizontal Switcher */}
-        <div className="mt-7 flex gap-2 overflow-x-auto pb-1 lg:hidden">
-          {CAPABILITY_INDEX.map((item) => {
-            const isSelected = item.id === activeTab;
-            return (
-              <button
-                key={item.id}
-                type="button"
-                aria-pressed={isSelected}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  playSwitchClick(true);
-                }}
-                className="btn-tactile shrink-0 cursor-pointer rounded-full border px-4 py-2 text-[13px] font-medium"
-                style={{
-                  backgroundColor: isSelected
-                    ? "var(--bg-surface)"
-                    : "var(--bg-surface-subtle)",
-                  borderColor: isSelected
-                    ? "var(--accent-brand)"
-                    : "var(--border-whisper)",
-                  color: isSelected
-                    ? "var(--ink-primary)"
-                    : "var(--ink-secondary)",
-                }}
-              >
-                {item.title}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Desktop Editorial Index (Left 5 cols) + Spacious Interactive Stage (Right 7 cols) */}
-        <div className="mt-6 grid grid-cols-1 items-stretch gap-8 lg:mt-10 lg:grid-cols-12 lg:gap-10">
-          {/* Left Vertical Hairline Index (Zero boxed cards!) */}
+          {/* Phone & Tablet 2x2 Selector Grid — All 4 capabilities visible with zero scrolling */}
           <div
             role="tablist"
             aria-label="Core Spanrail capabilities"
-            className="hidden flex-col divide-y divide-[var(--border-whisper)] border-y lg:col-span-5 lg:flex"
-            style={{ borderColor: "var(--border-whisper)" }}
+            className="mt-6 grid grid-cols-2 gap-2.5 lg:hidden"
           >
             {CAPABILITY_INDEX.map((item) => {
               const isSelected = item.id === activeTab;
               return (
                 <button
                   key={item.id}
+                  id={`cap-mob-tab-${item.id}`}
                   type="button"
                   role="tab"
                   aria-selected={isSelected}
+                  aria-controls="capabilities-stage-panel"
                   onClick={() => {
                     setActiveTab(item.id);
                     playSwitchClick(true);
                   }}
-                  className="relative flex flex-1 cursor-pointer flex-col justify-center py-5 pr-4 pl-5 text-left"
+                  className="btn-tactile flex min-h-[68px] cursor-pointer flex-col justify-between rounded-2xl border px-3.5 py-3 text-left sm:min-h-[76px] sm:px-4"
                   style={{
-                    opacity: isSelected ? 1 : 0.62,
-                    transition: "opacity 200ms var(--ease-enter)",
+                    backgroundColor: isSelected
+                      ? "var(--bg-surface)"
+                      : "var(--bg-surface-subtle)",
+                    borderColor: isSelected
+                      ? "var(--accent-brand)"
+                      : "var(--border-whisper)",
+                    boxShadow: isSelected
+                      ? "0 0 0 1px var(--accent-brand-soft)"
+                      : "none",
                   }}
                 >
-                  {/* Crisp Ocean Blue Left Active Rail */}
-                  {isSelected && (
-                    <m.span
-                      layoutId="capabilities-active-rail"
-                      aria-hidden="true"
-                      transition={
-                        prefersReducedMotion ? REDUCED_TRANSITION : TACTILE_SPRING
-                      }
-                      className="absolute inset-y-3 left-0 w-[2.5px] rounded-full"
-                      style={{ backgroundColor: "var(--accent-brand)" }}
-                    />
-                  )}
-
-                  <div className="flex items-baseline gap-2.5">
+                  <div className="flex w-full items-center justify-between gap-2">
                     <span
-                      className="tabular-telemetry text-[12px] font-medium"
+                      className="tabular-telemetry text-[11px] font-medium"
                       style={{
                         color: isSelected
                           ? "var(--accent-brand-text)"
@@ -774,61 +829,147 @@ export function CapabilitiesGrid() {
                       {item.code}
                     </span>
                     <span
-                      className="text-[16px] font-medium tracking-[-0.015em]"
-                      style={{ color: "var(--ink-primary)" }}
+                      className="tabular-telemetry text-[11px]"
+                      style={{
+                        color: isSelected
+                          ? "var(--accent-brand-text)"
+                          : "var(--ink-secondary)",
+                      }}
                     >
-                      {item.title}
+                      {item.mobileMeta}
                     </span>
                   </div>
-                  <p
-                    className="mt-1.5 pl-6 text-[13.5px] leading-[1.55]"
-                    style={{ color: "var(--ink-secondary)" }}
+
+                  <span
+                    className="mt-1.5 text-[13.5px] font-medium leading-[1.25] sm:text-[15px]"
+                    style={{
+                      color: isSelected
+                        ? "var(--ink-primary)"
+                        : "var(--ink-secondary)",
+                    }}
                   >
-                    {item.summary}
-                  </p>
+                    <span className="sm:hidden">{item.mobileTitle}</span>
+                    <span className="hidden sm:inline">{item.title}</span>
+                  </span>
                 </button>
               );
             })}
           </div>
 
-          {/* Right Spacious Interactive Showcase Stage */}
-          <div
-            role="tabpanel"
-            className="surface-fade min-h-[390px] rounded-3xl border p-6 sm:p-8 md:p-9 lg:col-span-7"
-            style={{
-              backgroundColor: "var(--bg-surface)",
-              borderColor: "var(--border-whisper)",
-              boxShadow: "var(--shadow-stage)",
-            }}
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <m.div
-                key={activeTab}
-                initial={
-                  prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 8 }
-                }
-                animate={
-                  prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }
-                }
-                exit={
-                  prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }
-                }
-                transition={
-                  prefersReducedMotion
-                    ? REDUCED_TRANSITION
-                    : { duration: 0.2, ease: [0.22, 1, 0.36, 1] }
-                }
-                className="h-full"
-              >
-                {activeTab === "router" && <GuardrailRouterStage />}
-                {activeTab === "sdk" && <DropInSdkStage />}
-                {activeTab === "prompts" && <PromptComparisonStage />}
-                {activeTab === "spend" && <ProviderSpendStage />}
-              </m.div>
-            </AnimatePresence>
+          {/* Desktop Editorial Index (Left 5 cols) + Interactive Stage (Right 7 cols) */}
+          <div className="mt-4 grid grid-cols-1 items-stretch gap-8 lg:mt-10 lg:grid-cols-12 lg:gap-10">
+            {/* Left Vertical Hairline Index */}
+            <div
+              role="tablist"
+              aria-label="Core Spanrail capabilities"
+              className="hidden flex-col divide-y divide-[var(--border-whisper)] border-y lg:col-span-5 lg:flex"
+              style={{ borderColor: "var(--border-whisper)" }}
+            >
+              {CAPABILITY_INDEX.map((item) => {
+                const isSelected = item.id === activeTab;
+                return (
+                  <button
+                    key={item.id}
+                    id={`cap-desk-tab-${item.id}`}
+                    type="button"
+                    role="tab"
+                    aria-selected={isSelected}
+                    aria-controls="capabilities-stage-panel"
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      playSwitchClick(true);
+                    }}
+                    className="relative flex flex-1 cursor-pointer flex-col justify-center py-5 pr-4 pl-5 text-left"
+                    style={{
+                      opacity: isSelected ? 1 : 0.62,
+                      transition: "opacity 200ms var(--ease-enter)",
+                    }}
+                  >
+                    {isSelected && (
+                      <m.span
+                        layoutId="capabilities-active-rail"
+                        aria-hidden="true"
+                        transition={
+                          prefersReducedMotion
+                            ? REDUCED_TRANSITION
+                            : TACTILE_SPRING
+                        }
+                        className="absolute inset-y-3 left-0 w-[2.5px] rounded-full"
+                        style={{ backgroundColor: "var(--accent-brand)" }}
+                      />
+                    )}
+
+                    <div className="flex items-baseline gap-2.5">
+                      <span
+                        className="tabular-telemetry text-[12px] font-medium"
+                        style={{
+                          color: isSelected
+                            ? "var(--accent-brand-text)"
+                            : "var(--ink-muted)",
+                        }}
+                      >
+                        {item.code}
+                      </span>
+                      <span
+                        className="text-[16px] font-medium tracking-[-0.015em]"
+                        style={{ color: "var(--ink-primary)" }}
+                      >
+                        {item.title}
+                      </span>
+                    </div>
+                    <p
+                      className="mt-1.5 pl-6 text-[13.5px] leading-[1.55]"
+                      style={{ color: "var(--ink-secondary)" }}
+                    >
+                      {item.summary}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Right Interactive Showcase Stage */}
+            <div
+              id="capabilities-stage-panel"
+              role="tabpanel"
+              className="surface-fade min-h-[380px] rounded-2xl border p-4 sm:min-h-[410px] sm:rounded-3xl sm:p-7 md:p-9 lg:col-span-7"
+              style={{
+                backgroundColor: "var(--bg-surface)",
+                borderColor: "var(--border-whisper)",
+                boxShadow: "var(--shadow-stage)",
+              }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <m.div
+                  key={activeTab}
+                  initial={
+                    prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 8 }
+                  }
+                  animate={
+                    prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }
+                  }
+                  exit={
+                    prefersReducedMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, y: -6 }
+                  }
+                  transition={
+                    prefersReducedMotion
+                      ? REDUCED_TRANSITION
+                      : { duration: 0.2, ease: [0.22, 1, 0.36, 1] }
+                  }
+                  className="h-full"
+                >
+                  {activeTab === "router" && <GuardrailRouterStage />}
+                  {activeTab === "sdk" && <DropInSdkStage />}
+                  {activeTab === "prompts" && <PromptComparisonStage />}
+                  {activeTab === "spend" && <ProviderSpendStage />}
+                </m.div>
+              </AnimatePresence>
+            </div>
           </div>
-        </div>
-      </ScrollReveal></div>
+        </ScrollReveal>
+      </div>
     </section>
   );
 }
