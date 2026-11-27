@@ -197,7 +197,7 @@ function Trend({ values }: { values: number[] }) {
     .join(" ");
   const [endX, endY] = points[points.length - 1];
   return (
-    <div className={styles.trend}>
+    <span className={styles.trend}>
       <svg
         className={styles.draw}
         viewBox="0 0 100 40"
@@ -214,13 +214,13 @@ function Trend({ values }: { values: number[] }) {
         className={styles.endDot}
         style={{ left: `${endX}%`, top: `${(endY / 40) * 100}%` }}
       />
-    </div>
+    </span>
   );
 }
 
 function Uptime({ days }: { days: number[] }) {
   return (
-    <div className={styles.bars} data-dense="">
+    <span className={styles.bars} data-dense="">
       {days.map((uptime, index) => (
         <span
           key={index}
@@ -234,7 +234,7 @@ function Uptime({ days }: { days: number[] }) {
           }
         />
       ))}
-    </div>
+    </span>
   );
 }
 
@@ -250,7 +250,7 @@ function Distribution({
   const peak = Math.max(...bins) || 1;
   const width = max / bins.length;
   return (
-    <div className={styles.bars}>
+    <span className={styles.bars}>
       {bins.map((count, index) => (
         <span
           key={index}
@@ -264,7 +264,7 @@ function Distribution({
           }
         />
       ))}
-    </div>
+    </span>
   );
 }
 
@@ -315,7 +315,7 @@ function WorldMap({ points }: { points: [number, number][] }) {
     [points]
   );
   return (
-    <div className={styles.map}>
+    <span className={styles.map}>
       <svg
         className={styles.draw}
         viewBox={`0 0 ${WORLD.columns} ${WORLD.rows}`}
@@ -341,7 +341,7 @@ function WorldMap({ points }: { points: [number, number][] }) {
           />
         ))}
       </svg>
-    </div>
+    </span>
   );
 }
 
@@ -377,7 +377,7 @@ export const StatsBand = forwardRef<HTMLElement, StatsBandProps>(
     ref
   ) {
     const id = useId();
-    const list = useRef<HTMLDListElement>(null);
+    const list = useRef<HTMLUListElement>(null);
     const inView = useInView(list, { once: true, amount: "some" });
     const reduced = useReducedMotionSafe();
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -403,7 +403,7 @@ export const StatsBand = forwardRef<HTMLElement, StatsBandProps>(
               )}
             </header>
           )}
-          <dl
+          <ul
             ref={list}
             className={styles.stats}
             style={
@@ -415,40 +415,10 @@ export const StatsBand = forwardRef<HTMLElement, StatsBandProps>(
             {stats.map((stat, index) => {
               const hasContext = Boolean(stat.context && stat.detail);
               const isActive = activeIndex === index;
-
-              return (
-                <div
-                  key={`${stat.label}-${index}`}
-                  className={styles.stat}
-                  style={{ "--i": index } as CSSProperties}
-                  role={hasContext ? "button" : undefined}
-                  tabIndex={hasContext ? 0 : undefined}
-                  aria-pressed={hasContext ? isActive : undefined}
-                  data-context={hasContext ? "" : undefined}
-                  data-active={isActive ? "" : undefined}
-                  onClick={
-                    hasContext
-                      ? () =>
-                          setActiveIndex((prev) =>
-                            prev === index ? null : index
-                          )
-                      : undefined
-                  }
-                  onKeyDown={
-                    hasContext
-                      ? (e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            setActiveIndex((prev) =>
-                              prev === index ? null : index
-                            );
-                          }
-                        }
-                      : undefined
-                  }
-                >
-                  <dt className={styles.label}>{stat.label}</dt>
-                  <dd className={styles.figure}>
+              const inner = (
+                <>
+                  <span className={styles.label}>{stat.label}</span>
+                  <span className={styles.figure}>
                     <CountUp
                       stat={stat}
                       run={inView}
@@ -457,26 +427,55 @@ export const StatsBand = forwardRef<HTMLElement, StatsBandProps>(
                       reduced={reduced}
                       locale={locale}
                     />
-                  </dd>
+                  </span>
                   {(stat.detail || stat.context) && (
-                    <dd className={styles.caption}>
+                    <span className={styles.caption}>
                       {stat.detail && (
                         <span className={styles.detail}>{stat.detail}</span>
                       )}
                       {stat.context && (
                         <span className={styles.context}>{stat.context}</span>
                       )}
-                    </dd>
+                    </span>
                   )}
                   {stat.visual && (
-                    <dd className={styles.visual} aria-hidden="true">
+                    <span className={styles.visual} aria-hidden="true">
                       <Visual visual={stat.visual} />
-                    </dd>
+                    </span>
                   )}
-                </div>
+                </>
+              );
+
+              return (
+                <li key={`${stat.label}-${index}`} className={styles.item}>
+                  {hasContext ? (
+                    <button
+                      type="button"
+                      className={styles.stat}
+                      style={{ "--i": index } as CSSProperties}
+                      aria-pressed={isActive}
+                      data-context=""
+                      data-active={isActive ? "" : undefined}
+                      onClick={() =>
+                        setActiveIndex((prev) =>
+                          prev === index ? null : index
+                        )
+                      }
+                    >
+                      {inner}
+                    </button>
+                  ) : (
+                    <div
+                      className={styles.stat}
+                      style={{ "--i": index } as CSSProperties}
+                    >
+                      {inner}
+                    </div>
+                  )}
+                </li>
               );
             })}
-          </dl>
+          </ul>
         </div>
       </section>
     );

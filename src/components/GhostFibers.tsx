@@ -697,12 +697,14 @@ export default function GhostFibers({
     canvas.addEventListener("webglcontextlost", onContextLost, false);
     canvas.addEventListener("webglcontextrestored", onContextRestored, false);
 
+    // Require hardware-accelerated GPU (skip CPU SwiftShader/software rasterizers to avoid main-thread stalls)
     const gl = canvas.getContext("webgl2", {
       alpha: true,
       premultipliedAlpha: true,
       antialias: false,
       depth: false,
       stencil: false,
+      failIfMajorPerformanceCaveat: true,
     });
     if (!gl || gl.isContextLost()) {
       return () => {
