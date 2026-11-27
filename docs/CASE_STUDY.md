@@ -23,8 +23,9 @@ Technical buyers evaluating AI observability and inline guardrail tooling inspec
 | Concern | Engineering Decision | Why |
 |---|---|---|
 | **144Hz / 240Hz Scroll Pacing** | Native VSync rAF + `MAX_RENDER_DIM = 1280` + `BLOOM_LEVELS = 2` | Capping scroll-linked WebGL at 60fps creates visible 2-3-2-3 judder on 120Hz/144Hz panels; cutting pixel fill-rate keeps HDR `RGBA16F` bloom smooth at native refresh rates. |
+| **Software WebGL Protection** | `failIfMajorPerformanceCaveat: true` on `GhostFibers.tsx` WebGL2 context | Keeps full HDR shader bloom active on every real hardware GPU while preventing 32+ second CPU main-thread stalls on SwiftShader/software-rendered browsers and headless VMs. |
 | **Garbage Collection Hygiene** | 10 pre-allocated module-level `Float32Array` scratch buffers (`GhostFibers.tsx`) | Eliminates GC frame spikes inside `requestAnimationFrame` (`0` heap allocations per frame). |
-| **Mobile GPU Context Budget** | `GhostFibers` skipped `< 768px`, `<= 2` CPU cores, or `saveData`; `NeuralBrain` capped at `dpr <= 1.25` (`1.0` on constrained devices) | Prevents mobile WebGL context eviction and thermal throttling while keeping scroll smooth. |
+| **Mobile GPU Context Budget** | `GhostFibers` skipped `< 768px`, `<= 2` CPU cores, or `saveData`; `NeuralBrain` capped at `dpr <= 1.25` (`1.0` on constrained devices) | Prevents mobile WebGL context eviction and thermal throttling while keeping touch scrolling fluid. |
 | **High-DPI OLED Sharpness** | `128×128` mipmapped (`LinearMipmapLinearFilter`) crisp-core radial point sprite texture (`NeuralBrain.tsx`) | Kept points crisp on ~3× AMOLED panels (OnePlus 12R) without exceeding the `1.25` mobile DPR budget. |
 | **Mesh Integrity & Lifecycle** | Live synaptic `LineSegments` welded to deformed cortex vertices every frame; `requestIdleCallback` post-LCP mount; `frameloop="always" | "demand"` coupled to `IntersectionObserver` + `visibilitychange` + `prefers-reduced-motion`; `contextEpoch` rebuild on `webglcontextrestored`; manual `.dispose()` on unmount; `onPointerCancel` touch cleanup | Prevents blank reduced-motion boxes, floating disconnected synapses, dead GPU handles, and stuck mobile drag states. |
 
@@ -36,15 +37,15 @@ Technical buyers evaluating AI observability and inline guardrail tooling inspec
 
 ---
 
-## 3. Real-Device QA & Debugging Log (Desktop + OnePlus 12R + Tablet `820×1180`)
+## 3. Real-Device QA & Lighthouse Debugging Log
 
-Testing on real hardware (**Intel Iris Xe 1080p**, **OnePlus 12R ~3× AMOLED**, and **820×1180 tablet**) surfaced concrete defects that static `1440px` desktop previews hid:
+Testing on real hardware (**Intel Iris Xe 1080p**, **OnePlus 12R ~3× AMOLED**, **820×1180 tablet**) and **Google PageSpeed Insights (Lighthouse 13.6)** surfaced concrete engineering wins:
 
 1. **Copy Button Layout Shift (CLS) on Phone:**
-   - *Symptom:* Tapping `Copy` inside `CapabilitiesGrid` expanded the label to `Copied`, wrapping the button onto a new line below the SDK tabs and shoving the entire page downward.
-   - *Fix:* Moved `Copy` into an anchored code-pane header (`CodeBlock` / `DropInSdkStage` / `HeroSection` / `PricingCalculator`) and overlaid both labels in the same CSS Grid cell (`col-start-1 row-start-1`), locking button width to **0px delta / 0 CLS**.
-2. **Shrunken-Desktop Components on Mobile & Tablet:**
-   - *Capabilities Switcher:* Replaced horizontal scrolling pills (hiding 2 of 4 items on Phone and `820px` Tablet) with a full-visibility **2×2 grid** (`< 1024px`).
+   - *Symptom:* Tapping `Copy` inside `CapabilitiesGrid` expanded the label to `Copied`, wrapping the button onto a new line below the SDK tabs and shifting the page downward.
+   - *Fix:* Moved `Copy` into an anchored code-pane header (`CodeBlock`, `DropInSdkStage`, `HeroSection`, `PricingCalculator`) and overlaid both labels in the same CSS Grid cell (`col-start-1 row-start-1`), locking button width to **0px delta / 0 CLS**.
+2. **Shrunken-Desktop Components Rebuilt Native per Breakpoint:**
+   - *Capabilities Switcher:* Replaced horizontal scrolling pills (hiding 2 of 4 items on Phone & `820px` Tablet) with a full-visibility **2×2 grid** (`< 1024px`).
    - *Inline Guardrail Pipeline (`pipeline.tsx`):* Replaced cramped 4-column chips (`< 65px` each) with a **vertical animated timeline** on `< 640px`.
    - *Production Comparison (`paired-bars.tsx`):* Replaced the `min-w-[600px]` horizontal scrolling table with **vertical stacked metric cards** on `< 768px` and sized tablet columns (`136px / minmax(220px,1fr) / 108px`) so `820px` fits without horizontal scroll.
    - *Pricing Retention (`PricingCalculator.tsx` / `Primitives.tsx`):* `365 days +35%` overflowed horizontal `SegmentedControl`; added `stackSublabelOnMobile` (`grid auto-cols-fr grid-flow-col`) fitting cleanly down to `320px`.
@@ -56,8 +57,11 @@ Testing on real hardware (**Intel Iris Xe 1080p**, **OnePlus 12R ~3× AMOLED**, 
 4. **Mobile & Tablet Typographic Hierarchy Audit:**
    - *Symptom:* `16–17px` section subtitles rendered larger than `14.5–15px` primary card/metric titles on phone and tablet.
    - *Fix:* Established a strict `< 1024px` hierarchy staircase (`13.5–14px` section leads, `12.5–13px` card descriptions, `11.5–12px` helper captions in `--ink-muted`) verified mathematically against WCAG 2.2 AA (`>= 4.65:1` even on subtle `#14232b` surfaces).
-5. **Silent Unclosed Tailwind Bracket Scan:**
-   - *Symptom:* `tsc --noEmit` and `next build` passed cleanly while 7 corrupted Tailwind tokens (`border-[t`, `text-[center`, `leading-[none`, `text-[left`, `text-[right`) silently failed to style alignment/borders.
+5. **Lighthouse Accessibility Tree & Software-WebGL Audit:**
+   - *Symptom:* Putting `role="button"` on a `<div>` inside `<dl>` in `StatsBand` triggered both `<dl>` semantic warnings and Lighthouse's `agent-accessibility-tree` audit; running `GhostFibers` on software SwiftShader WebGL caused a 32s desktop TBT stall.
+   - *Fix:* Refactored `StatsBand` to semantic `<ul>` → `<li>` → `<button type="button">` with phrasing `<span>` children (passing `agent-accessibility-tree` and all list semantics) and added `failIfMajorPerformanceCaveat: true` to `GhostFibers.tsx`.
+6. **Silent Unclosed Tailwind Bracket Scan:**
+   - *Symptom:* `tsc --noEmit` and `next build` passed while 7 corrupted Tailwind tokens (`border-[t`, `text-[center`, `leading-[none`, `text-[left`, `text-[right`) silently broke styling.
    - *Fix:* Ran a repo-wide regex scan (`[a-z]+-\[[a-z0-9]+(?=\s)`), fixed all 7 instances across 4 files, and confirmed zero remaining matches.
 
 ---
