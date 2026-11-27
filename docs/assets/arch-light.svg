@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="1200" height="520" role="img" aria-label="Spanrail system and dual-layer rendering architecture">
+  <defs>
+    <marker id="arrowL" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="#0e7490"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="520" rx="20" fill="#f3f7f9"/>
+  <rect x="0.5" y="0.5" width="1199" height="519" rx="19.5" fill="none" stroke="#091318" stroke-opacity="0.1"/>
+
+  <text x="48" y="34" fill="#475a66" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">SPANRAIL · DUAL-LAYER RENDERING &amp; APPLICATION ARCHITECTURE</text>
+
+  <g transform="translate(48, 56)">
+    <rect width="344" height="108" rx="14" fill="#ffffff" stroke="#091318" stroke-opacity="0.12"/>
+    <text x="18" y="28" fill="#0e7490" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600">NEXT.JS 15.5 APP ROUTER (RSC)</text>
+    <text x="18" y="52" fill="#091318" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="600">Server Component Shell</text>
+    <text x="18" y="74" fill="#475a66" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">/, /docs, /security, /privacy, /terms, Footer</text>
+    <text x="18" y="92" fill="#5b6f7b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">Frame-0 opacity: 1 LCP · 191 B static legal routes</text>
+  </g>
+
+  <g transform="translate(428, 56)">
+    <rect width="344" height="108" rx="14" fill="#ffffff" stroke="#091318" stroke-opacity="0.12"/>
+    <text x="18" y="28" fill="#c96a1b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600">CLIENT STATE &amp; BREAKPOINTS</text>
+    <text x="18" y="52" fill="#091318" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="600">Zustand + MatchMedia Store</text>
+    <text x="18" y="74" fill="#475a66" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">Guardrails, pricing tiers, audio cue state</text>
+    <text x="18" y="92" fill="#5b6f7b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">Single useSyncExternalStore · UTM-safe URL sync</text>
+  </g>
+
+  <g transform="translate(808, 56)">
+    <rect width="344" height="108" rx="14" fill="#ffffff" stroke="#091318" stroke-opacity="0.12"/>
+    <text x="18" y="28" fill="#15803d" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600">SERVER API &amp; ARTIFACTS</text>
+    <text x="18" y="52" fill="#091318" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="600">/api/demo-booking + OG</text>
+    <text x="18" y="74" fill="#475a66" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">Zod validation + SHA-256 ref ID + OTel generator</text>
+    <text x="18" y="92" fill="#5b6f7b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">spanrail.otel.ts export · Satori opengraph-image</text>
+  </g>
+
+  <line x1="220" y1="164" x2="220" y2="206" stroke="#0e7490" stroke-width="1.5" marker-end="url(#arrowL)"/>
+  <line x1="600" y1="164" x2="430" y2="206" stroke="#0e7490" stroke-width="1.5" stroke-opacity="0.7" marker-end="url(#arrowL)"/>
+  <line x1="600" y1="164" x2="770" y2="206" stroke="#0e7490" stroke-width="1.5" stroke-opacity="0.7" marker-end="url(#arrowL)"/>
+  <line x1="980" y1="164" x2="980" y2="206" stroke="#0e7490" stroke-width="1.5" marker-end="url(#arrowL)"/>
+
+  <g transform="translate(48, 212)">
+    <rect width="534" height="148" rx="14" fill="#ffffff" stroke="#0e7490" stroke-opacity="0.45"/>
+    <text x="18" y="26" fill="#0e7490" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600">LAYER 1 · SPATIAL WEBGL CANVAS (DEFERRED POST-LCP)</text>
+
+    <rect x="18" y="42" width="242" height="88" rx="10" fill="#eef4f7" stroke="#091318" stroke-opacity="0.09"/>
+    <text x="30" y="64" fill="#091318" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13.5" font-weight="600">GhostFibers.tsx</text>
+    <text x="30" y="83" fill="#475a66" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">WebGL2 RGBA16F · BLOOM=2</text>
+    <text x="30" y="100" fill="#475a66" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">0 alloc/frame · native VSync</text>
+    <text x="30" y="117" fill="#5b6f7b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">Skipped &lt;768px / &lt;=2 cores</text>
+
+    <rect x="274" y="42" width="242" height="88" rx="10" fill="#eef4f7" stroke="#091318" stroke-opacity="0.09"/>
+    <text x="286" y="64" fill="#091318" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13.5" font-weight="600">NeuralBrain.tsx</text>
+    <text x="286" y="83" fill="#475a66" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">R3F v9 · welded LineSegments</text>
+    <text x="286" y="100" fill="#475a66" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">128px mipmap · dpr &lt;= 1.25 mob</text>
+    <text x="286" y="117" fill="#5b6f7b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">demand/always · .dispose()</text>
+  </g>
+
+  <g transform="translate(618, 212)">
+    <rect width="534" height="148" rx="14" fill="#ffffff" stroke="#c96a1b" stroke-opacity="0.45"/>
+    <text x="18" y="26" fill="#c96a1b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600">LAYER 2 · INTERACTIVE PRODUCT SURFACE (NEXT/DYNAMIC)</text>
+
+    <rect x="18" y="42" width="242" height="39" rx="9" fill="#eef4f7" stroke="#091318" stroke-opacity="0.09"/>
+    <text x="30" y="66" fill="#091318" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12.5" font-weight="500">Live Trace Sandbox (x + scaleX)</text>
+
+    <rect x="274" y="42" width="242" height="39" rx="9" fill="#eef4f7" stroke="#091318" stroke-opacity="0.09"/>
+    <text x="286" y="66" fill="#091318" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12.5" font-weight="500">Capabilities + 1.4ms Pipeline</text>
+
+    <rect x="18" y="91" width="242" height="39" rx="9" fill="#eef4f7" stroke="#091318" stroke-opacity="0.09"/>
+    <text x="30" y="115" fill="#091318" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12.5" font-weight="500">PairedBars + 2x3 StatsBand</text>
+
+    <rect x="274" y="91" width="242" height="39" rx="9" fill="#eef4f7" stroke="#091318" stroke-opacity="0.09"/>
+    <text x="286" y="115" fill="#091318" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12.5" font-weight="500">Pricing ($119 SSR) + 2-Step Demo</text>
+  </g>
+
+  <line x1="315" y1="360" x2="315" y2="402" stroke="#0e7490" stroke-width="1.5" marker-end="url(#arrowL)"/>
+  <line x1="885" y1="360" x2="885" y2="402" stroke="#0e7490" stroke-width="1.5" marker-end="url(#arrowL)"/>
+
+  <g transform="translate(48, 408)">
+    <rect width="1104" height="72" rx="14" fill="#ffffff" stroke="#091318" stroke-opacity="0.12"/>
+
+    <text x="24" y="30" fill="#15803d" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5" font-weight="600">WCAG 2.2 AA VERIFIED</text>
+    <text x="24" y="50" fill="#475a66" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">4.65:1 muted to 18.01:1 primary</text>
+
+    <line x1="276" y1="14" x2="276" y2="58" stroke="#091318" stroke-opacity="0.09"/>
+    <text x="300" y="30" fill="#0e7490" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5" font-weight="600">ZERO-CLS INTERACTIONS</text>
+    <text x="300" y="50" fill="#475a66" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">CSS Grid 1/1 swaps + data-sizer</text>
+
+    <line x1="552" y1="14" x2="552" y2="58" stroke="#091318" stroke-opacity="0.09"/>
+    <text x="576" y="30" fill="#c96a1b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5" font-weight="600">MOBILE &amp; TABLET NATIVE</text>
+    <text x="576" y="50" fill="#475a66" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">Stacked cards, 2x2 tabs, OnePlus 12R QA</text>
+
+    <line x1="846" y1="14" x2="846" y2="58" stroke="#091318" stroke-opacity="0.09"/>
+    <text x="870" y="30" fill="#091318" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5" font-weight="600">CI RELEASE GATE</text>
+    <text x="870" y="50" fill="#475a66" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">tsc --noEmit + next build (11/11)</text>
+  </g>
+</svg>
