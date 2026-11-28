@@ -196,10 +196,7 @@ export function HeroSection() {
       <div className="spanrail-container">
         <div className="grid grid-cols-1 items-center gap-4 sm:gap-6 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <div
-              className="tabular-telemetry inline-flex items-center gap-2 text-[11px] tracking-[0.02em] lg:text-[12px]"
-              style={{ color: "var(--ink-muted)" }}
-            >
+            <div className="tabular-telemetry inline-flex items-center gap-2 text-[11px] tracking-[0.02em] text-[var(--ink-muted)] lg:text-[12px]">
               <span
                 aria-hidden="true"
                 className="h-1.5 w-1.5 shrink-0 rounded-full"
@@ -216,17 +213,13 @@ export function HeroSection() {
 
             <h1
               id="hero-headline"
-              className="mt-3.5 max-w-[16ch] text-[clamp(2.1rem,4.4vw,3.55rem)] leading-[1.06] font-medium tracking-[-0.034em] [text-wrap:balance] sm:mt-4"
-              style={{ color: "var(--ink-primary)" }}
+              className="mt-3.5 max-w-[16ch] text-[clamp(2.1rem,4.4vw,3.55rem)] leading-[1.06] font-medium tracking-[-0.034em] text-[var(--ink-primary)] [text-wrap:balance] sm:mt-4"
             >
               See every agent step. Stop slow runs and surprise bills
-              <span style={{ color: "var(--accent-spark)" }}>.</span>
+              <span className="text-[var(--accent-spark)]">.</span>
             </h1>
 
-            <p
-              className="mt-3 max-w-[46ch] text-[14px] leading-[1.6] md:text-[14.5px] lg:mt-4 lg:max-w-[50ch] lg:text-[16px] lg:leading-[1.65]"
-              style={{ color: "var(--ink-secondary)" }}
-            >
+            <p className="mt-3 max-w-[46ch] text-[14px] leading-[1.6] text-[var(--ink-secondary)] md:text-[14.5px] lg:mt-4 lg:max-w-[50ch] lg:text-[16px] lg:leading-[1.65]">
               Real-time trace inspection, automatic PII and loop guardrails, and
               exact per-run token costs for production AI agents.
             </p>
@@ -234,11 +227,7 @@ export function HeroSection() {
             <div className="mt-5 grid grid-cols-2 gap-2.5 sm:mt-6 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
               <a
                 href="#demo"
-                className="btn-tactile inline-flex min-h-[46px] items-center justify-center rounded-full px-4 text-center text-[14px] font-medium sm:px-6 sm:text-[14.5px] [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
-                style={{
-                  backgroundColor: "var(--btn-primary-bg)",
-                  color: "var(--btn-primary-ink)",
-                }}
+                className="btn-tactile inline-flex min-h-[46px] items-center justify-center rounded-full bg-[var(--btn-primary-bg)] px-4 text-center text-[14px] font-medium text-[var(--btn-primary-ink)] sm:px-6 sm:text-[14.5px] [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
               >
                 Book a demo
               </a>
@@ -246,20 +235,14 @@ export function HeroSection() {
               <button
                 type="button"
                 onClick={handleJumpToSandbox}
-                className="btn-tactile group inline-flex min-h-[46px] cursor-pointer items-center justify-center gap-1.5 rounded-full border px-4 text-center text-[14px] font-medium sm:px-5 sm:text-[14.5px] [@media(hover:hover)]:hover:border-[var(--border-hover)]"
-                style={{
-                  backgroundColor: "var(--bg-surface)",
-                  borderColor: "var(--border-whisper)",
-                  color: "var(--ink-primary)",
-                }}
+                className="btn-tactile group inline-flex min-h-[46px] cursor-pointer items-center justify-center gap-1.5 rounded-full border border-[var(--border-whisper)] bg-[var(--bg-surface)] px-4 text-center text-[14px] font-medium text-[var(--ink-primary)] sm:px-5 sm:text-[14.5px] [@media(hover:hover)]:hover:border-[var(--border-hover)]"
               >
                 <span className="sm:hidden">Live preview</span>
                 <span className="hidden sm:inline">Try the live preview</span>
                 <ArrowDown
                   aria-hidden="true"
-                  className="h-4 w-4 shrink-0 transition-transform duration-200 [@media(hover:hover)]:group-hover:translate-y-0.5"
+                  className="h-4 w-4 shrink-0 text-[var(--accent-spark)] transition-transform duration-200 [@media(hover:hover)]:group-hover:translate-y-0.5"
                   strokeWidth={1.75}
-                  style={{ color: "var(--accent-spark)" }}
                 />
               </button>
             </div>
@@ -273,22 +256,14 @@ export function HeroSection() {
         {/* Full-Width Interactive Live Trace Sandbox */}
         <div
           id="sandbox"
-          className="surface-fade mt-4 scroll-mt-20 overflow-hidden rounded-2xl border sm:mt-6 sm:rounded-3xl md:mt-8 md:scroll-mt-24"
-          style={{
-            backgroundColor: "var(--bg-surface)",
-            borderColor: "var(--border-whisper)",
-            boxShadow: "var(--shadow-stage)",
-          }}
+          className="surface-fade mt-4 scroll-mt-20 overflow-hidden rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] sm:mt-6 sm:rounded-3xl md:mt-8 md:scroll-mt-24"
+          style={{ boxShadow: "var(--shadow-stage)" }}
         >
           <div className="sr-only" aria-live="polite" aria-atomic="true">
             {`${evaluated.label} trace ${evaluated.traceId}: total latency ${formatLatencyMs(evaluated.totalLatencyMs)}, run cost ${formatCostUsd(evaluated.totalCostUsd)}, status ${evaluated.status}, ${evaluated.activeGuardrailCount} of 3 guardrails active.`}
           </div>
 
-          {/* Sandbox Header: Mobile HUD pill -> transparent inline row on >=768px */}
-          <div
-            className="flex flex-col gap-3.5 border-b px-4 py-4 md:flex-row md:items-center md:justify-between md:px-8 md:py-5"
-            style={{ borderColor: "var(--border-whisper)" }}
-          >
+          <div className="flex flex-col gap-3.5 border-b border-[var(--border-whisper)] px-4 py-4 md:flex-row md:items-center md:justify-between md:px-8 md:py-5">
             <div className="w-full md:w-auto">
               <SegmentedControl
                 options={scenarioOptions}
@@ -302,10 +277,7 @@ export function HeroSection() {
 
             <div className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface-subtle)] px-3.5 py-2.5 md:flex md:items-center md:gap-5 md:rounded-none md:border-0 md:bg-transparent md:p-0">
               <div className="flex flex-col">
-                <span
-                  className="text-[11px] font-medium lg:text-[11.5px]"
-                  style={{ color: "var(--ink-muted)" }}
-                >
+                <span className="text-[11px] font-medium text-[var(--ink-muted)] lg:text-[11.5px]">
                   Latency
                 </span>
                 <span
@@ -322,14 +294,8 @@ export function HeroSection() {
                 </span>
               </div>
 
-              <div
-                className="flex flex-col border-l pl-3 md:border-l md:pl-5"
-                style={{ borderColor: "var(--border-whisper)" }}
-              >
-                <span
-                  className="text-[11px] font-medium lg:text-[11.5px]"
-                  style={{ color: "var(--ink-muted)" }}
-                >
+              <div className="flex flex-col border-l border-[var(--border-whisper)] pl-3 md:border-l md:pl-5">
+                <span className="text-[11px] font-medium text-[var(--ink-muted)] lg:text-[11.5px]">
                   Run cost
                 </span>
                 <span
@@ -354,20 +320,12 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Inline Guardrails Strip */}
           <div
             ref={firstSwitchRef}
-            className="border-b px-4 py-4 md:px-8 md:py-5"
-            style={{
-              borderColor: "var(--border-whisper)",
-              backgroundColor: "var(--bg-surface-subtle)",
-            }}
+            className="border-b border-[var(--border-whisper)] bg-[var(--bg-surface-subtle)] px-4 py-4 md:px-8 md:py-5"
           >
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <span
-                className="text-[12px] font-medium lg:text-[12.5px]"
-                style={{ color: "var(--ink-secondary)" }}
-              >
+              <span className="text-[12px] font-medium text-[var(--ink-secondary)] lg:text-[12.5px]">
                 Inline guardrails{" "}
                 <span className="tabular-telemetry ml-1">
                   ({evaluated.activeGuardrailCount}/3)
@@ -398,28 +356,22 @@ export function HeroSection() {
                 return (
                   <div
                     key={ctrl.key}
-                    className="surface-fade flex min-h-[54px] items-center justify-between gap-3 rounded-xl border px-3.5 py-2.5 sm:rounded-2xl sm:px-4 sm:py-3"
-                    style={{
-                      backgroundColor: "var(--bg-surface-solid)",
-                      borderColor: isOn
-                        ? "var(--accent-brand)"
-                        : "var(--border-whisper)",
-                    }}
+                    className={`surface-fade flex min-h-[54px] items-center justify-between gap-3 rounded-xl border bg-[var(--bg-surface-solid)] px-3.5 py-2.5 sm:rounded-2xl sm:px-4 sm:py-3 ${
+                      isOn
+                        ? "border-[var(--accent-brand)]"
+                        : "border-[var(--border-whisper)]"
+                    }`}
                   >
                     <label
                       htmlFor={switchId}
                       className="flex min-w-0 flex-1 cursor-pointer flex-col"
                     >
-                      <span
-                        className="text-[13.5px] font-medium leading-snug"
-                        style={{ color: "var(--ink-primary)" }}
-                      >
+                      <span className="text-[13.5px] font-medium leading-snug text-[var(--ink-primary)]">
                         {ctrl.label}
                       </span>
                       <span
                         id={captionId}
-                        className="text-[11.5px] leading-snug lg:text-[12px]"
-                        style={{ color: "var(--ink-muted)" }}
+                        className="text-[11.5px] leading-snug text-[var(--ink-muted)] lg:text-[12px]"
                       >
                         {ctrl.caption}
                       </span>
@@ -437,27 +389,19 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Trace Waterfall Ledger */}
           <div>
-            <div
-              className="flex items-center justify-between border-b px-4 py-2 text-[11px] font-medium md:hidden"
-              style={{
-                borderColor: "var(--border-whisper)",
-                color: "var(--ink-muted)",
-              }}
-            >
+            <div className="flex items-center justify-between border-b border-[var(--border-whisper)] px-4 py-2 text-[11px] font-medium text-[var(--ink-muted)] md:hidden">
               <span>Tap any step to inspect JSON</span>
               <span className="tabular-telemetry">Time · Cost</span>
             </div>
 
-            <div
-              className="hidden items-center justify-between border-b px-8 py-2.5 text-[11.5px] font-medium md:flex"
-              style={{
-                borderColor: "var(--border-whisper)",
-                color: "var(--ink-secondary)",
-              }}
-            >
-              <span>Trace step (click any row to inspect JSON)</span>
+            <div className="hidden items-center justify-between border-b border-[var(--border-whisper)] px-8 py-2.5 text-[11.5px] font-medium text-[var(--ink-secondary)] md:flex">
+              <div className="flex items-center gap-3">
+                <span>Trace step (click any row to inspect JSON)</span>
+                <span className="tabular-telemetry hidden text-[11px] font-normal text-[var(--ink-muted)] lg:inline">
+                  Alt+1/2 scenario · Alt+M audio
+                </span>
+              </div>
               <div className="flex items-center gap-6 pr-7">
                 <span className="w-[168px]">Waterfall timeline</span>
                 <span className="w-[62px] text-right">Time</span>
@@ -481,13 +425,11 @@ export function HeroSection() {
                       }}
                       aria-expanded={isExpanded}
                       aria-controls={panelId}
-                      className="group w-full cursor-pointer px-4 py-3.5 text-left md:flex md:min-h-[56px] md:items-center md:justify-between md:gap-3 md:px-8 [@media(hover:hover)]:hover:bg-[var(--bg-surface-subtle)]/55"
-                      style={{
-                        backgroundColor: isExpanded
-                          ? "var(--bg-surface-subtle)"
-                          : "transparent",
-                        transition: "background-color 180ms var(--ease-enter)",
-                      }}
+                      className={`group w-full cursor-pointer px-4 py-3.5 text-left transition-colors duration-200 md:flex md:min-h-[56px] md:items-center md:justify-between md:gap-3 md:px-8 ${
+                        isExpanded
+                          ? "bg-[var(--bg-surface-subtle)]"
+                          : "bg-transparent [@media(hover:hover)]:hover:bg-[var(--bg-surface-subtle)]/55"
+                      }`}
                     >
                       {/* Phone-Native 3-Line Span Row (< 768px) */}
                       <div
@@ -506,32 +448,24 @@ export function HeroSection() {
                             />
                             <span
                               translate="no"
-                              className="tabular-telemetry truncate text-[13px] font-medium"
-                              style={{ color: "var(--ink-primary)" }}
+                              className="tabular-telemetry truncate text-[13px] font-medium text-[var(--ink-primary)]"
                             >
                               {span.name}
                             </span>
                           </div>
 
                           <div className="flex shrink-0 items-center gap-2">
-                            <span
-                              className="tabular-telemetry text-[12.5px] font-medium"
-                              style={{ color: "var(--ink-primary)" }}
-                            >
+                            <span className="tabular-telemetry text-[12.5px] font-medium text-[var(--ink-primary)]">
                               {formatLatencyMs(span.latencyMs)}
                             </span>
-                            <span
-                              className="tabular-telemetry text-[11px]"
-                              style={{ color: "var(--ink-muted)" }}
-                            >
+                            <span className="tabular-telemetry text-[11px] text-[var(--ink-muted)]">
                               {formatCostUsd(span.costUsd)}
                             </span>
                             <ChevronDown
                               aria-hidden="true"
-                              className="h-4 w-4 shrink-0"
+                              className="h-4 w-4 shrink-0 text-[var(--ink-secondary)]"
                               strokeWidth={1.75}
                               style={{
-                                color: "var(--ink-secondary)",
                                 transform: isExpanded
                                   ? "rotate(180deg)"
                                   : "rotate(0deg)",
@@ -610,8 +544,7 @@ export function HeroSection() {
                           <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
                             <span
                               translate="no"
-                              className="tabular-telemetry truncate text-[13.5px] font-medium"
-                              style={{ color: "var(--ink-primary)" }}
+                              className="tabular-telemetry truncate text-[13.5px] font-medium text-[var(--ink-primary)]"
                             >
                               {span.name}
                             </span>
@@ -668,26 +601,19 @@ export function HeroSection() {
                           />
                         </div>
 
-                        <span
-                          className="tabular-telemetry w-[62px] text-right text-[13px] font-medium"
-                          style={{ color: "var(--ink-primary)" }}
-                        >
+                        <span className="tabular-telemetry w-[62px] text-right text-[13px] font-medium text-[var(--ink-primary)]">
                           {formatLatencyMs(span.latencyMs)}
                         </span>
 
-                        <span
-                          className="tabular-telemetry w-[56px] text-right text-[12px] lg:text-[12.5px]"
-                          style={{ color: "var(--ink-secondary)" }}
-                        >
+                        <span className="tabular-telemetry w-[56px] text-right text-[12px] text-[var(--ink-secondary)] lg:text-[12.5px]">
                           {formatCostUsd(span.costUsd)}
                         </span>
 
                         <ChevronDown
                           aria-hidden="true"
-                          className="h-4 w-4 shrink-0"
+                          className="h-4 w-4 shrink-0 text-[var(--ink-secondary)]"
                           strokeWidth={1.75}
                           style={{
-                            color: "var(--ink-secondary)",
                             transform: isExpanded
                               ? "rotate(180deg)"
                               : "rotate(0deg)",
@@ -726,21 +652,9 @@ export function HeroSection() {
                           className="overflow-hidden"
                         >
                           <div className="px-4 pt-1 pb-4 md:px-8 md:pb-6">
-                            <div
-                              className="overflow-hidden rounded-2xl border"
-                              style={{
-                                backgroundColor: "var(--code-bg)",
-                                borderColor: "var(--border-whisper)",
-                              }}
-                            >
-                              <div
-                                className="flex items-center justify-between gap-2 border-b px-3.5 py-2 sm:px-4 sm:py-2.5"
-                                style={{ borderColor: "var(--border-whisper)" }}
-                              >
-                                <div
-                                  className="tabular-telemetry flex min-w-0 items-center gap-2 text-[11px] sm:gap-3 lg:text-[12px]"
-                                  style={{ color: "var(--ink-muted)" }}
-                                >
+                            <div className="overflow-hidden rounded-2xl border border-[var(--border-whisper)] bg-[var(--code-bg)]">
+                              <div className="flex items-center justify-between gap-2 border-b border-[var(--border-whisper)] px-3.5 py-2 sm:px-4 sm:py-2.5">
+                                <div className="tabular-telemetry flex min-w-0 items-center gap-2 text-[11px] text-[var(--ink-muted)] sm:gap-3 lg:text-[12px]">
                                   <span translate="no" className="truncate">
                                     {evaluated.traceId}
                                   </span>
@@ -762,16 +676,11 @@ export function HeroSection() {
                                 <button
                                   type="button"
                                   onClick={() => void handleCopySpanJson(span)}
-                                  className="btn-tactile inline-grid min-h-[36px] shrink-0 cursor-pointer items-center justify-items-center rounded-full border px-3 text-[12px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)]"
-                                  style={{
-                                    backgroundColor: "var(--bg-surface-solid)",
-                                    borderColor: isCopied
-                                      ? "var(--status-pass-dot)"
-                                      : "var(--border-whisper)",
-                                    color: isCopied
-                                      ? "var(--status-pass-text)"
-                                      : "var(--ink-primary)",
-                                  }}
+                                  className={`btn-tactile inline-grid min-h-[36px] shrink-0 cursor-pointer items-center justify-items-center rounded-full border bg-[var(--bg-surface-solid)] px-3 text-[12px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)] ${
+                                    isCopied
+                                      ? "border-[var(--status-pass-dot)] text-[var(--status-pass-text)]"
+                                      : "border-[var(--border-whisper)] text-[var(--ink-primary)]"
+                                  }`}
                                 >
                                   <span
                                     aria-hidden={isCopied}
@@ -788,12 +697,7 @@ export function HeroSection() {
                                       isCopied ? "opacity-100" : "opacity-0"
                                     }`}
                                   >
-                                    <Check
-                                      className="h-3.5 w-3.5 shrink-0"
-                                      style={{
-                                        color: "var(--status-pass-text)",
-                                      }}
-                                    />
+                                    <Check className="h-3.5 w-3.5 shrink-0 text-[var(--status-pass-text)]" />
                                     <span>Copied</span>
                                   </span>
                                 </button>
@@ -801,8 +705,7 @@ export function HeroSection() {
 
                               <pre
                                 translate="no"
-                                className="tabular-telemetry overflow-x-auto p-3.5 text-[11.5px] leading-[1.65] sm:p-4 sm:text-[12.5px]"
-                                style={{ color: "var(--ink-primary)" }}
+                                className="tabular-telemetry overflow-x-auto p-3.5 text-[11.5px] leading-[1.65] text-[var(--ink-primary)] sm:p-4 sm:text-[12.5px]"
                               >
                                 <code>{renderHighlightedJson(span.payload)}</code>
                               </pre>

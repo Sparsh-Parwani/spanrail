@@ -87,8 +87,7 @@ export function TopNav() {
       <div className="spanrail-container flex h-14 items-center justify-between md:grid md:h-16 md:grid-cols-[1fr_auto_1fr]">
         <Link
           href="/"
-          className="inline-flex min-h-[44px] items-center gap-2.5 justify-self-start rounded-lg text-[15.5px] font-medium tracking-[-0.02em]"
-          style={{ color: "var(--ink-primary)" }}
+          className="inline-flex min-h-[44px] items-center gap-2.5 justify-self-start rounded-lg text-[15.5px] font-medium tracking-[-0.02em] text-[var(--ink-primary)]"
           aria-label="Spanrail home"
         >
           <SpanrailMark className="h-[24px] w-[24px] shrink-0" />
@@ -103,11 +102,7 @@ export function TopNav() {
             <Link
               key={link.href}
               href={link.href}
-              className="inline-flex min-h-[44px] items-center rounded-full px-3 text-[13.5px] font-medium lg:px-4 lg:text-[14px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
-              style={{
-                color: "var(--ink-secondary)",
-                transition: "color 180ms var(--ease-enter)",
-              }}
+              className="inline-flex min-h-[44px] items-center rounded-full px-3 text-[13.5px] font-medium text-[var(--ink-secondary)] transition-colors duration-200 lg:px-4 lg:text-[14px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
             >
               {link.label}
             </Link>
@@ -124,13 +119,12 @@ export function TopNav() {
                 ? "Mute tactile sound cues"
                 : "Enable tactile sound cues"
             }
-            title={isSoundEnabled ? "Sound on (M)" : "Sound muted (M)"}
-            className="btn-tactile inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-transparent md:h-9 md:w-9 [@media(hover:hover)]:hover:border-[var(--border-whisper)] [@media(hover:hover)]:hover:bg-[var(--bg-surface-subtle)]"
-            style={{
-              color: isSoundEnabled
-                ? "var(--accent-brand)"
-                : "var(--ink-secondary)",
-            }}
+            title={isSoundEnabled ? "Sound on (Alt+M)" : "Sound muted (Alt+M)"}
+            className={`btn-tactile inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-transparent md:h-9 md:w-9 [@media(hover:hover)]:hover:border-[var(--border-whisper)] [@media(hover:hover)]:hover:bg-[var(--bg-surface-subtle)] ${
+              isSoundEnabled
+                ? "text-[var(--accent-brand)]"
+                : "text-[var(--ink-secondary)] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
+            }`}
           >
             {isSoundEnabled ? (
               <Volume2 className="h-[17px] w-[17px] shrink-0" strokeWidth={1.8} />
@@ -141,11 +135,7 @@ export function TopNav() {
 
           <Link
             href="/#demo"
-            className="btn-tactile ml-1 hidden min-h-[38px] items-center justify-center rounded-full px-4 text-[13.5px] font-medium whitespace-nowrap md:inline-flex [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
-            style={{
-              backgroundColor: "var(--btn-primary-bg)",
-              color: "var(--btn-primary-ink)",
-            }}
+            className="btn-tactile ml-1 hidden min-h-[38px] items-center justify-center rounded-full bg-[var(--btn-primary-bg)] px-4 text-[13.5px] font-medium whitespace-nowrap text-[var(--btn-primary-ink)] md:inline-flex [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
           >
             Book a demo
           </Link>
@@ -156,8 +146,7 @@ export function TopNav() {
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-nav-drawer"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            className="btn-tactile inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-transparent md:hidden [@media(hover:hover)]:hover:bg-[var(--bg-surface-subtle)]"
-            style={{ color: "var(--ink-primary)" }}
+            className="btn-tactile inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-transparent text-[var(--ink-primary)] md:hidden [@media(hover:hover)]:hover:bg-[var(--bg-surface-subtle)]"
           >
             {mobileMenuOpen ? (
               <X className="h-5 w-5 shrink-0" strokeWidth={1.75} />
@@ -204,12 +193,8 @@ export function TopNav() {
                   ? REDUCED_TRANSITION
                   : { duration: 0.2, ease: [0.22, 1, 0.36, 1] }
               }
-              className="relative z-40 overscroll-contain border-t md:hidden"
-              style={{
-                borderColor: "var(--border-whisper)",
-                backgroundColor: "var(--bg-surface-solid)",
-                boxShadow: "var(--shadow-stage)",
-              }}
+              className="relative z-40 overscroll-contain border-t border-[var(--border-whisper)] bg-[var(--bg-surface-solid)] md:hidden"
+              style={{ boxShadow: "var(--shadow-stage)" }}
             >
               <div className="spanrail-container flex flex-col gap-1 py-4">
                 {NAV_LINKS.map((link) => (
@@ -217,25 +202,17 @@ export function TopNav() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="inline-flex min-h-[48px] items-center rounded-xl px-3.5 text-[15.5px] font-medium active:bg-[var(--bg-surface-subtle)]"
-                    style={{ color: "var(--ink-primary)" }}
+                    className="inline-flex min-h-[48px] items-center rounded-xl px-3.5 text-[15.5px] font-medium text-[var(--ink-primary)] active:bg-[var(--bg-surface-subtle)]"
                   >
                     {link.label}
                   </Link>
                 ))}
 
-                <div
-                  className="mt-2 border-t pt-3"
-                  style={{ borderColor: "var(--border-whisper)" }}
-                >
+                <div className="mt-2 border-t border-[var(--border-whisper)] pt-3">
                   <Link
                     href="/#demo"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="btn-tactile flex min-h-[48px] w-full items-center justify-center rounded-full text-[15px] font-medium"
-                    style={{
-                      backgroundColor: "var(--btn-primary-bg)",
-                      color: "var(--btn-primary-ink)",
-                    }}
+                    className="btn-tactile flex min-h-[48px] w-full items-center justify-center rounded-full bg-[var(--btn-primary-bg)] text-[15px] font-medium text-[var(--btn-primary-ink)]"
                   >
                     Book a demo
                   </Link>

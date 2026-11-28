@@ -104,6 +104,12 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media (max-width: 767px) {
+  html {
+    scroll-padding-bottom: 92px;
+  }
+}
+
 @media (pointer: fine) {
   html {
     overscroll-behavior: none;
@@ -274,7 +280,6 @@ p {
   }
 }
 
-/* Layout containment isolates slider/form/comparison updates from full-page reflow */
 #compare,
 #demo {
   contain: layout style;
@@ -284,7 +289,6 @@ p {
   contain: style;
 }
 
-/* Lighter elevation shadows on mobile/tablet GPUs (< 1024px) */
 @media (max-width: 1023px) {
   :root,
   [data-theme="dark"] {

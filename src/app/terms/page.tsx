@@ -24,45 +24,30 @@ export default function TermsPage() {
         <div className="spanrail-container max-w-[740px]">
           <Link
             href="/"
-            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-medium lg:text-[13.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
-            style={{ color: "var(--ink-secondary)" }}
+            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-medium text-[var(--ink-secondary)] transition-colors duration-200 lg:text-[13.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
           >
             <ArrowLeft className="h-4 w-4 shrink-0" />
             <span>Back to Spanrail</span>
           </Link>
 
           <h1 className="display-h2 mt-3">Terms of service</h1>
-          <p
-            className="tabular-telemetry mt-2 text-[11.5px] lg:text-[12.5px]"
-            style={{ color: "var(--ink-muted)" }}
-          >
+          <p className="tabular-telemetry mt-2 text-[11.5px] text-[var(--ink-muted)] lg:text-[12.5px]">
             Updated November 2026
           </p>
 
-          <div
-            className="mt-6 rounded-2xl border p-4 sm:p-5"
-            style={{
-              backgroundColor: "var(--bg-surface)",
-              borderColor: "var(--border-whisper)",
-            }}
-          >
-            <p
-              className="text-[13px] font-medium"
-              style={{ color: "var(--ink-primary)" }}
-            >
+          <div className="mt-6 rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] p-4 sm:p-5">
+            <p className="text-[13px] font-medium text-[var(--ink-primary)]">
               Key terms overview
             </p>
             <ul className="mt-2.5 space-y-2 text-[12.5px] leading-[1.55] md:text-[13px] lg:text-[14px]">
               {TERMS_SUMMARY.map((line) => (
                 <li
                   key={line}
-                  className="flex items-start gap-2.5"
-                  style={{ color: "var(--ink-secondary)" }}
+                  className="flex items-start gap-2.5 text-[var(--ink-secondary)]"
                 >
                   <span
                     aria-hidden="true"
-                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full"
-                    style={{ backgroundColor: "var(--accent-brand)" }}
+                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent-brand)]"
                   />
                   <span>{line}</span>
                 </li>
@@ -70,10 +55,7 @@ export default function TermsPage() {
             </ul>
           </div>
 
-          <div
-            className="mt-8 max-w-[62ch] space-y-7 divide-y divide-[var(--border-whisper)] text-[13.5px] leading-[1.65] md:text-[14px] lg:text-[15px] lg:leading-[1.7]"
-            style={{ color: "var(--ink-secondary)" }}
-          >
+          <div className="mt-8 max-w-[62ch] space-y-7 divide-y divide-[var(--border-whisper)] text-[13.5px] leading-[1.65] text-[var(--ink-secondary)] md:text-[14px] lg:text-[15px] lg:leading-[1.7]">
             <p>
               By accessing Spanrail documentation, interactive sandboxes, or
               OpenTelemetry ingestion services, you agree to use the service in
@@ -82,10 +64,7 @@ export default function TermsPage() {
             </p>
 
             <section className="pt-7">
-              <h2
-                className="text-[16.5px] font-medium lg:text-[18px]"
-                style={{ color: "var(--ink-primary)" }}
-              >
+              <h2 className="text-[16.5px] font-medium text-[var(--ink-primary)] lg:text-[18px]">
                 1. Usage metering and billing
               </h2>
               <p className="mt-2">
@@ -97,10 +76,7 @@ export default function TermsPage() {
             </section>
 
             <section className="pt-7">
-              <h2
-                className="text-[16.5px] font-medium lg:text-[18px]"
-                style={{ color: "var(--ink-primary)" }}
-              >
+              <h2 className="text-[16.5px] font-medium text-[var(--ink-primary)] lg:text-[18px]">
                 2. OpenTelemetry portability
               </h2>
               <p className="mt-2">
@@ -111,29 +87,16 @@ export default function TermsPage() {
             </section>
           </div>
 
-          <div
-            className="mt-10 flex flex-wrap gap-3 border-t pt-6"
-            style={{ borderColor: "var(--border-whisper)" }}
-          >
+          <div className="mt-10 flex flex-wrap gap-3 border-t border-[var(--border-whisper)] pt-6">
             <Link
               href="/privacy"
-              className="btn-tactile inline-flex min-h-[44px] items-center rounded-full border px-4 text-[13.5px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)]"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-whisper)",
-                color: "var(--ink-primary)",
-              }}
+              className="btn-tactile inline-flex min-h-[44px] items-center rounded-full border border-[var(--border-whisper)] bg-[var(--bg-surface)] px-4 text-[13.5px] font-medium text-[var(--ink-primary)] [@media(hover:hover)]:hover:border-[var(--border-hover)]"
             >
               Privacy policy
             </Link>
             <Link
               href="/security"
-              className="btn-tactile inline-flex min-h-[44px] items-center rounded-full border px-4 text-[13.5px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)]"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-whisper)",
-                color: "var(--ink-primary)",
-              }}
+              className="btn-tactile inline-flex min-h-[44px] items-center rounded-full border border-[var(--border-whisper)] bg-[var(--bg-surface)] px-4 text-[13.5px] font-medium text-[var(--ink-primary)] [@media(hover:hover)]:hover:border-[var(--border-hover)]"
             >
               Security architecture
             </Link>

@@ -22,7 +22,6 @@ type CapabilityId = "router" | "sdk" | "prompts" | "spend";
 
 const CAPABILITY_INDEX: readonly {
   id: CapabilityId;
-  code: string;
   title: string;
   mobileTitle: string;
   mobileMeta: string;
@@ -30,7 +29,6 @@ const CAPABILITY_INDEX: readonly {
 }[] = [
   {
     id: "router",
-    code: "01",
     title: "Inline Guardrail Router",
     mobileTitle: "Guardrail router",
     mobileMeta: "1.4ms edge",
@@ -39,7 +37,6 @@ const CAPABILITY_INDEX: readonly {
   },
   {
     id: "sdk",
-    code: "02",
     title: "Two-Line Drop-In SDK",
     mobileTitle: "Drop-in SDK",
     mobileMeta: "OTLP native",
@@ -48,7 +45,6 @@ const CAPABILITY_INDEX: readonly {
   },
   {
     id: "prompts",
-    code: "03",
     title: "Prompt Version Comparison",
     mobileTitle: "Prompt diff",
     mobileMeta: "Replay evals",
@@ -57,7 +53,6 @@ const CAPABILITY_INDEX: readonly {
   },
   {
     id: "spend",
-    code: "04",
     title: "Multi-Provider Token Spend",
     mobileTitle: "Token spend",
     mobileMeta: "6 providers",
@@ -111,24 +106,15 @@ function GuardrailRouterStage() {
     <div className="flex h-full flex-col justify-between">
       <div>
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h3
-            className="text-[17.5px] font-medium tracking-[-0.02em] md:text-[18.5px] lg:text-[20px]"
-            style={{ color: "var(--ink-primary)" }}
-          >
+          <h3 className="text-[17.5px] font-medium tracking-[-0.02em] text-[var(--ink-primary)] md:text-[18.5px] lg:text-[20px]">
             Inline Guardrail Router
           </h3>
-          <span
-            className="tabular-telemetry text-[11.5px] font-medium lg:text-[12.5px]"
-            style={{ color: "var(--accent-brand-text)" }}
-          >
+          <span className="tabular-telemetry text-[11.5px] font-medium text-[var(--accent-brand-text)] lg:text-[12.5px]">
             {current.readoutLatency}
           </span>
         </div>
 
-        <p
-          className="mt-1.5 max-w-[52ch] text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-2 lg:text-[14.5px] lg:leading-[1.6]"
-          style={{ color: "var(--ink-secondary)" }}
-        >
+        <p className="mt-1.5 max-w-[52ch] text-[12.5px] leading-[1.55] text-[var(--ink-secondary)] md:text-[13px] lg:mt-2 lg:text-[14.5px] lg:leading-[1.6]">
           Switch policies below to inspect real-time request-path routing and
           edge evaluation latency.
         </p>
@@ -155,18 +141,11 @@ function GuardrailRouterStage() {
                   setActiveRule(rule.id);
                   playSwitchClick(true);
                 }}
-                className="btn-tactile flex min-h-[44px] cursor-pointer items-center justify-center rounded-xl border px-2 text-center text-[12.5px] font-medium sm:min-h-[40px] sm:rounded-full sm:px-4 sm:text-[13px]"
-                style={{
-                  backgroundColor: isSelected
-                    ? "var(--accent-brand-soft)"
-                    : "var(--bg-surface-subtle)",
-                  borderColor: isSelected
-                    ? "var(--accent-brand)"
-                    : "var(--border-whisper)",
-                  color: isSelected
-                    ? "var(--accent-brand-text)"
-                    : "var(--ink-secondary)",
-                }}
+                className={`btn-tactile flex min-h-[44px] cursor-pointer items-center justify-center rounded-xl border px-2 text-center text-[12.5px] font-medium sm:min-h-[40px] sm:rounded-full sm:px-4 sm:text-[13px] ${
+                  isSelected
+                    ? "border-[var(--accent-brand)] bg-[var(--accent-brand-soft)] text-[var(--accent-brand-text)]"
+                    : "border-[var(--border-whisper)] bg-[var(--bg-surface-subtle)] text-[var(--ink-secondary)] [@media(hover:hover)]:hover:border-[var(--border-hover)] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
+                }`}
               >
                 <span className="sm:hidden">{rule.shortLabel}</span>
                 <span className="hidden sm:inline">{rule.label}</span>
@@ -175,13 +154,7 @@ function GuardrailRouterStage() {
           })}
         </div>
 
-        <div
-          className="mt-5 flex items-center gap-2.5 border-t pt-4 text-[12px] lg:text-[13.5px]"
-          style={{
-            borderColor: "var(--border-whisper)",
-            color: "var(--ink-muted)",
-          }}
-        >
+        <div className="mt-5 flex items-center gap-2.5 border-t border-[var(--border-whisper)] pt-4 text-[12px] text-[var(--ink-muted)] lg:text-[13.5px]">
           <span
             aria-hidden="true"
             className="h-2 w-2 shrink-0 rounded-full"
@@ -196,7 +169,7 @@ function GuardrailRouterStage() {
 
 type SdkTabId = "typescript" | "python" | "curl";
 
-const INGEST_ENDPOINT = "https" + "://ingest.spanrail.dev/v1/traces";
+const INGEST_ENDPOINT = "https://ingest.spanrail.dev/v1/traces";
 
 const SDK_SNIPPETS: Record<
   SdkTabId,
@@ -263,16 +236,10 @@ function DropInSdkStage() {
   return (
     <div className="flex h-full flex-col justify-between">
       <div>
-        <h3
-          className="text-[17.5px] font-medium tracking-[-0.02em] md:text-[18.5px] lg:text-[20px]"
-          style={{ color: "var(--ink-primary)" }}
-        >
+        <h3 className="text-[17.5px] font-medium tracking-[-0.02em] text-[var(--ink-primary)] md:text-[18.5px] lg:text-[20px]">
           Two-Line Drop-In SDK
         </h3>
-        <p
-          className="mt-1.5 max-w-[52ch] text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-2 lg:text-[14.5px] lg:leading-[1.6]"
-          style={{ color: "var(--ink-secondary)" }}
-        >
+        <p className="mt-1.5 max-w-[52ch] text-[12.5px] leading-[1.55] text-[var(--ink-secondary)] md:text-[13px] lg:mt-2 lg:text-[14.5px] lg:leading-[1.6]">
           Standard OpenTelemetry exporters with automatic span capture across
           LangGraph, Vercel AI SDK, OpenAI Agents, and custom OTLP pipelines.
         </p>
@@ -298,21 +265,11 @@ function DropInSdkStage() {
 
           {(["typescript", "python", "curl"] as const).map((lang) => (
             <SoftTabsContent key={lang} value={lang} className="mt-3.5 sm:mt-4">
-              <div
-                className="overflow-hidden rounded-2xl border"
-                style={{
-                  backgroundColor: "var(--code-bg)",
-                  borderColor: "var(--border-whisper)",
-                }}
-              >
-                <div
-                  className="flex items-center justify-between gap-2 border-b px-3.5 py-2 sm:px-4"
-                  style={{ borderColor: "var(--border-whisper)" }}
-                >
+              <div className="overflow-hidden rounded-2xl border border-[var(--border-whisper)] bg-[var(--code-bg)]">
+                <div className="flex items-center justify-between gap-2 border-b border-[var(--border-whisper)] px-3.5 py-2 sm:px-4">
                   <span
                     translate="no"
-                    className="tabular-telemetry truncate text-[11.5px] lg:text-[12px]"
-                    style={{ color: "var(--ink-muted)" }}
+                    className="tabular-telemetry truncate text-[11.5px] text-[var(--ink-muted)] lg:text-[12px]"
                   >
                     {SDK_SNIPPETS[lang].filename}
                   </span>
@@ -325,16 +282,11 @@ function DropInSdkStage() {
                         ? `${SDK_SNIPPETS[lang].label} snippet copied`
                         : `Copy ${SDK_SNIPPETS[lang].label} snippet`
                     }
-                    className="btn-tactile inline-grid min-h-[36px] shrink-0 cursor-pointer items-center justify-items-center rounded-full border px-3 text-[12px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)]"
-                    style={{
-                      backgroundColor: "var(--bg-surface-subtle)",
-                      borderColor: copied
-                        ? "var(--status-pass-dot)"
-                        : "var(--border-whisper)",
-                      color: copied
-                        ? "var(--status-pass-text)"
-                        : "var(--ink-primary)",
-                    }}
+                    className={`btn-tactile inline-grid min-h-[36px] shrink-0 cursor-pointer items-center justify-items-center rounded-full border bg-[var(--bg-surface-subtle)] px-3 text-[12px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)] ${
+                      copied
+                        ? "border-[var(--status-pass-dot)] text-[var(--status-pass-text)]"
+                        : "border-[var(--border-whisper)] text-[var(--ink-primary)]"
+                    }`}
                   >
                     <span
                       aria-hidden={copied}
@@ -351,10 +303,7 @@ function DropInSdkStage() {
                         copied ? "opacity-100" : "opacity-0"
                       }`}
                     >
-                      <Check
-                        className="h-3.5 w-3.5 shrink-0"
-                        style={{ color: "var(--status-pass-text)" }}
-                      />
+                      <Check className="h-3.5 w-3.5 shrink-0 text-[var(--status-pass-text)]" />
                       <span>Copied</span>
                     </span>
                   </button>
@@ -362,8 +311,7 @@ function DropInSdkStage() {
 
                 <pre
                   translate="no"
-                  className="tabular-telemetry min-h-[152px] overflow-x-auto p-4 text-[12px] leading-[1.7] sm:min-h-[164px] sm:p-5 sm:text-[13px] sm:leading-[1.75]"
-                  style={{ color: "var(--ink-primary)" }}
+                  className="tabular-telemetry min-h-[152px] overflow-x-auto p-4 text-[12px] leading-[1.7] text-[var(--ink-primary)] sm:min-h-[164px] sm:p-5 sm:text-[13px] sm:leading-[1.75]"
                 >
                   <code>{SDK_SNIPPETS[lang].code}</code>
                 </pre>
@@ -373,13 +321,7 @@ function DropInSdkStage() {
         </SoftTabs>
       </div>
 
-      <p
-        className="mt-5 border-t pt-4 text-[12px] lg:mt-6 lg:text-[13px]"
-        style={{
-          borderColor: "var(--border-whisper)",
-          color: "var(--ink-muted)",
-        }}
-      >
+      <p className="mt-5 border-t border-[var(--border-whisper)] pt-4 text-[12px] text-[var(--ink-muted)] lg:mt-6 lg:text-[13px]">
         Zero proprietary wrappers — export straight to OTLP/HTTP + Protobuf.
       </p>
     </div>
@@ -447,10 +389,7 @@ function PromptComparisonStage() {
     <div className="flex h-full flex-col justify-between">
       <div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <h3
-            className="text-[17.5px] font-medium tracking-[-0.02em] md:text-[18.5px] lg:text-[20px]"
-            style={{ color: "var(--ink-primary)" }}
-          >
+          <h3 className="text-[17.5px] font-medium tracking-[-0.02em] text-[var(--ink-primary)] md:text-[18.5px] lg:text-[20px]">
             Prompt Version Comparison
           </h3>
 
@@ -472,10 +411,7 @@ function PromptComparisonStage() {
           </div>
         </div>
 
-        <p
-          className="mt-2 max-w-[52ch] text-[12.5px] leading-[1.55] md:text-[13px] lg:text-[14.5px] lg:leading-[1.6]"
-          style={{ color: "var(--ink-secondary)" }}
-        >
+        <p className="mt-2 max-w-[52ch] text-[12.5px] leading-[1.55] text-[var(--ink-secondary)] md:text-[13px] lg:text-[14.5px] lg:leading-[1.6]">
           Replay historical production traces against candidate prompts and
           measure accuracy, tail latency, and dollar impact side by side.
         </p>
@@ -484,34 +420,22 @@ function PromptComparisonStage() {
           {rows.map((row) => (
             <div key={row.label}>
               <div className="mb-2 flex items-baseline justify-between gap-3">
-                <span
-                  className="text-[12.5px] font-medium md:text-[13px] lg:text-[14px]"
-                  style={{ color: "var(--ink-secondary)" }}
-                >
+                <span className="text-[12.5px] font-medium text-[var(--ink-secondary)] md:text-[13px] lg:text-[14px]">
                   {row.label}
                 </span>
                 <div className="tabular-telemetry flex items-baseline gap-2.5">
                   {row.delta && (
-                    <span
-                      className="text-[11.5px] font-medium lg:text-[12.5px]"
-                      style={{ color: "var(--status-pass-text)" }}
-                    >
+                    <span className="text-[11.5px] font-medium text-[var(--status-pass-text)] lg:text-[12.5px]">
                       {row.delta}
                     </span>
                   )}
-                  <span
-                    className="min-w-[64px] text-right text-[17px] font-medium sm:min-w-[66px] sm:text-[18px]"
-                    style={{ color: "var(--ink-primary)" }}
-                  >
+                  <span className="min-w-[64px] text-right text-[17px] font-medium text-[var(--ink-primary)] sm:min-w-[66px] sm:text-[18px]">
                     {row.value}
                   </span>
                 </div>
               </div>
 
-              <div
-                className="h-2 w-full overflow-hidden rounded-full"
-                style={{ backgroundColor: "var(--bg-surface-subtle)" }}
-              >
+              <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg-surface-subtle)]">
                 <m.div
                   initial={false}
                   animate={{ scaleX: row.pct / 100 }}
@@ -527,13 +451,7 @@ function PromptComparisonStage() {
         </div>
       </div>
 
-      <p
-        className="mt-6 border-t pt-4 text-[12px] lg:mt-7 lg:text-[13px]"
-        style={{
-          borderColor: "var(--border-whisper)",
-          color: "var(--ink-muted)",
-        }}
-      >
+      <p className="mt-6 border-t border-[var(--border-whisper)] pt-4 text-[12px] text-[var(--ink-muted)] lg:mt-7 lg:text-[13px]">
         {data.summary}
       </p>
     </div>
@@ -608,16 +526,10 @@ function ProviderSpendStage() {
   return (
     <div className="flex h-full flex-col justify-between">
       <div>
-        <h3
-          className="text-[17.5px] font-medium tracking-[-0.02em] md:text-[18.5px] lg:text-[20px]"
-          style={{ color: "var(--ink-primary)" }}
-        >
+        <h3 className="text-[17.5px] font-medium tracking-[-0.02em] text-[var(--ink-primary)] md:text-[18.5px] lg:text-[20px]">
           Multi-Provider Token Spend
         </h3>
-        <p
-          className="mt-1.5 max-w-[52ch] text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-2 lg:text-[14.5px] lg:leading-[1.6]"
-          style={{ color: "var(--ink-secondary)" }}
-        >
+        <p className="mt-1.5 max-w-[52ch] text-[12.5px] leading-[1.55] text-[var(--ink-secondary)] md:text-[13px] lg:mt-2 lg:text-[14.5px] lg:leading-[1.6]">
           Attribute token costs per tenant, prompt, and model provider across
           hosted APIs and private inference clusters.
         </p>
@@ -655,15 +567,11 @@ function ProviderSpendStage() {
                   setSelectedId(slice.id);
                   playSwitchClick(true);
                 }}
-                className="btn-tactile flex min-h-[56px] cursor-pointer flex-col justify-between rounded-xl border px-3 py-2.5 text-left sm:min-h-[48px] sm:flex-row sm:items-center sm:px-3.5"
-                style={{
-                  backgroundColor: isSelected
-                    ? "var(--bg-surface-subtle)"
-                    : "transparent",
-                  borderColor: isSelected
-                    ? "var(--accent-brand)"
-                    : "var(--border-whisper)",
-                }}
+                className={`btn-tactile flex min-h-[56px] cursor-pointer flex-col justify-between rounded-xl border px-3 py-2.5 text-left sm:min-h-[48px] sm:flex-row sm:items-center sm:px-3.5 ${
+                  isSelected
+                    ? "border-[var(--accent-brand)] bg-[var(--bg-surface-subtle)]"
+                    : "border-[var(--border-whisper)] bg-transparent [@media(hover:hover)]:hover:border-[var(--border-hover)]"
+                }`}
               >
                 <span className="flex w-full items-center justify-between gap-2 sm:w-auto sm:min-w-0 sm:justify-start">
                   <span className="inline-flex min-w-0 items-center gap-2">
@@ -672,32 +580,20 @@ function ProviderSpendStage() {
                       className="h-2 w-2 shrink-0 rounded-full"
                       style={{ backgroundColor: slice.color }}
                     />
-                    <span
-                      className="hidden truncate text-[13px] font-medium sm:inline"
-                      style={{ color: "var(--ink-primary)" }}
-                    >
+                    <span className="hidden truncate text-[13px] font-medium text-[var(--ink-primary)] sm:inline">
                       {slice.name}
                     </span>
                   </span>
-                  <span
-                    className="tabular-telemetry text-[11.5px] sm:hidden"
-                    style={{ color: "var(--ink-muted)" }}
-                  >
+                  <span className="tabular-telemetry text-[11.5px] text-[var(--ink-muted)] sm:hidden">
                     {slice.sharePct}%
                   </span>
                 </span>
 
-                <span
-                  className="mt-1 block truncate text-[13px] font-medium sm:hidden"
-                  style={{ color: "var(--ink-primary)" }}
-                >
+                <span className="mt-1 block truncate text-[13px] font-medium text-[var(--ink-primary)] sm:hidden">
                   {slice.name}
                 </span>
 
-                <span
-                  className="tabular-telemetry hidden shrink-0 text-[12px] lg:text-[12.5px] sm:inline"
-                  style={{ color: "var(--ink-muted)" }}
-                >
+                <span className="tabular-telemetry hidden shrink-0 text-[12px] text-[var(--ink-muted)] sm:inline lg:text-[12.5px]">
                   {slice.sharePct}%
                 </span>
               </button>
@@ -706,30 +602,18 @@ function ProviderSpendStage() {
         </div>
       </div>
 
-      <div
-        className="mt-6 flex flex-col gap-1.5 border-t pt-4 sm:mt-7 sm:flex-row sm:items-baseline sm:justify-between sm:gap-2"
-        style={{ borderColor: "var(--border-whisper)" }}
-      >
-        <span
-          className="text-[12px] lg:text-[13px]"
-          style={{ color: "var(--ink-muted)" }}
-        >
-          <strong className="font-medium" style={{ color: "var(--ink-primary)" }}>
+      <div className="mt-6 flex flex-col gap-1.5 border-t border-[var(--border-whisper)] pt-4 sm:mt-7 sm:flex-row sm:items-baseline sm:justify-between sm:gap-2">
+        <span className="text-[12px] text-[var(--ink-muted)] lg:text-[13px]">
+          <strong className="font-medium text-[var(--ink-primary)]">
             {active.name}
           </strong>{" "}
           — {active.avgTokens}
         </span>
         <div className="tabular-telemetry sm:text-right">
-          <span
-            className="text-[18px] font-medium"
-            style={{ color: "var(--ink-primary)" }}
-          >
+          <span className="text-[18px] font-medium text-[var(--ink-primary)]">
             {active.costPer1k}
           </span>
-          <span
-            className="ml-1 text-[12px] lg:text-[12.5px]"
-            style={{ color: "var(--ink-muted)" }}
-          >
+          <span className="ml-1 text-[12px] text-[var(--ink-muted)] lg:text-[12.5px]">
             / 1k runs
           </span>
         </div>
@@ -754,10 +638,7 @@ export function CapabilitiesGrid() {
             <h2 id="capabilities-heading" className="display-h2">
               Built for teams shipping real agents.
             </h2>
-            <p
-              className="mt-2.5 max-w-[46ch] text-[13.5px] leading-[1.6] md:text-[14px] lg:mt-3 lg:max-w-[54ch] lg:text-[17px] lg:leading-[1.65]"
-              style={{ color: "var(--ink-secondary)" }}
-            >
+            <p className="mt-2.5 max-w-[46ch] text-[13.5px] leading-[1.6] text-[var(--ink-secondary)] md:text-[14px] lg:mt-3 lg:max-w-[54ch] lg:text-[17px] lg:leading-[1.65]">
               One quiet telemetry layer for inline safety switches, prompt
               regressions, and exact token accounting.
             </p>
@@ -783,14 +664,12 @@ export function CapabilitiesGrid() {
                     setActiveTab(item.id);
                     playSwitchClick(true);
                   }}
-                  className="btn-tactile flex min-h-[68px] cursor-pointer flex-col justify-between rounded-2xl border px-3.5 py-3 text-left sm:min-h-[76px] sm:px-4"
+                  className={`btn-tactile flex min-h-[68px] cursor-pointer flex-col justify-between rounded-2xl border px-3.5 py-3 text-left sm:min-h-[76px] sm:px-4 ${
+                    isSelected
+                      ? "border-[var(--accent-brand)] bg-[var(--bg-surface)]"
+                      : "border-[var(--border-whisper)] bg-[var(--bg-surface-subtle)]"
+                  }`}
                   style={{
-                    backgroundColor: isSelected
-                      ? "var(--bg-surface)"
-                      : "var(--bg-surface-subtle)",
-                    borderColor: isSelected
-                      ? "var(--accent-brand)"
-                      : "var(--border-whisper)",
                     boxShadow: isSelected
                       ? "0 0 0 1px var(--accent-brand-soft)"
                       : "none",
@@ -798,34 +677,30 @@ export function CapabilitiesGrid() {
                 >
                   <div className="flex w-full items-center justify-between gap-2">
                     <span
-                      className="tabular-telemetry text-[10.5px] font-medium"
-                      style={{
-                        color: isSelected
-                          ? "var(--accent-brand-text)"
-                          : "var(--ink-muted)",
-                      }}
-                    >
-                      {item.code}
-                    </span>
+                      aria-hidden="true"
+                      className={`h-1.5 w-1.5 rounded-full ${
+                        isSelected
+                          ? "bg-[var(--accent-brand)]"
+                          : "bg-[var(--ink-muted)]/50"
+                      }`}
+                    />
                     <span
-                      className="tabular-telemetry text-[10.5px]"
-                      style={{
-                        color: isSelected
-                          ? "var(--accent-brand-text)"
-                          : "var(--ink-muted)",
-                      }}
+                      className={`tabular-telemetry text-[10.5px] ${
+                        isSelected
+                          ? "text-[var(--accent-brand-text)]"
+                          : "text-[var(--ink-muted)]"
+                      }`}
                     >
                       {item.mobileMeta}
                     </span>
                   </div>
 
                   <span
-                    className="mt-1.5 text-[13.5px] font-medium leading-[1.25] sm:text-[15px]"
-                    style={{
-                      color: isSelected
-                        ? "var(--ink-primary)"
-                        : "var(--ink-secondary)",
-                    }}
+                    className={`mt-1.5 text-[13.5px] font-medium leading-[1.25] sm:text-[15px] ${
+                      isSelected
+                        ? "text-[var(--ink-primary)]"
+                        : "text-[var(--ink-secondary)]"
+                    }`}
                   >
                     <span className="sm:hidden">{item.mobileTitle}</span>
                     <span className="hidden sm:inline">{item.title}</span>
@@ -839,8 +714,7 @@ export function CapabilitiesGrid() {
             <div
               role="tablist"
               aria-label="Core Spanrail capabilities"
-              className="hidden flex-col divide-y divide-[var(--border-whisper)] border-y lg:col-span-5 lg:flex"
-              style={{ borderColor: "var(--border-whisper)" }}
+              className="hidden flex-col divide-y divide-[var(--border-whisper)] border-y border-[var(--border-whisper)] lg:col-span-5 lg:flex"
             >
               {CAPABILITY_INDEX.map((item) => {
                 const isSelected = item.id === activeTab;
@@ -871,33 +745,25 @@ export function CapabilitiesGrid() {
                             ? REDUCED_TRANSITION
                             : TACTILE_SPRING
                         }
-                        className="absolute inset-y-3 left-0 w-[2.5px] rounded-full"
-                        style={{ backgroundColor: "var(--accent-brand)" }}
+                        className="absolute inset-y-3 left-0 w-[2.5px] rounded-full bg-[var(--accent-brand)]"
                       />
                     )}
 
-                    <div className="flex items-baseline gap-2.5">
-                      <span
-                        className="tabular-telemetry text-[12px] font-medium"
-                        style={{
-                          color: isSelected
-                            ? "var(--accent-brand-text)"
-                            : "var(--ink-muted)",
-                        }}
-                      >
-                        {item.code}
-                      </span>
-                      <span
-                        className="text-[16px] font-medium tracking-[-0.015em]"
-                        style={{ color: "var(--ink-primary)" }}
-                      >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-[16px] font-medium tracking-[-0.015em] text-[var(--ink-primary)]">
                         {item.title}
                       </span>
+                      <span
+                        className={`tabular-telemetry text-[11.5px] ${
+                          isSelected
+                            ? "text-[var(--accent-brand-text)]"
+                            : "text-[var(--ink-muted)]"
+                        }`}
+                      >
+                        {item.mobileMeta}
+                      </span>
                     </div>
-                    <p
-                      className="mt-1.5 pl-6 text-[13.5px] leading-[1.55]"
-                      style={{ color: "var(--ink-secondary)" }}
-                    >
+                    <p className="mt-1.5 text-[13.5px] leading-[1.55] text-[var(--ink-secondary)]">
                       {item.summary}
                     </p>
                   </button>
@@ -908,12 +774,8 @@ export function CapabilitiesGrid() {
             <div
               id="capabilities-stage-panel"
               role="tabpanel"
-              className="surface-fade min-h-[380px] rounded-2xl border p-4 sm:min-h-[410px] sm:rounded-3xl sm:p-7 md:p-9 lg:col-span-7"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-whisper)",
-                boxShadow: "var(--shadow-stage)",
-              }}
+              className="surface-fade min-h-[380px] rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] p-4 sm:min-h-[410px] sm:rounded-3xl sm:p-7 md:p-9 lg:col-span-7"
+              style={{ boxShadow: "var(--shadow-stage)" }}
             >
               <AnimatePresence mode="wait" initial={false}>
                 <m.div

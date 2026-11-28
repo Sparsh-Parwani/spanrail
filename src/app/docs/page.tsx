@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "Install the Spanrail OpenTelemetry SDK for TypeScript, Python, or raw OTLP/HTTP in two lines.",
 };
 
-const INGEST_ENDPOINT = "https" + "://ingest.spanrail.dev/v1/traces";
+const INGEST_ENDPOINT = "https://ingest.spanrail.dev/v1/traces";
 
 const TS_SNIPPET = `npm install @spanrail/otel
 
@@ -59,18 +59,14 @@ export default function DocsPage() {
         <div className="spanrail-container max-w-[820px]">
           <Link
             href="/"
-            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-medium lg:text-[13.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
-            style={{ color: "var(--ink-secondary)" }}
+            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-medium text-[var(--ink-secondary)] transition-colors duration-200 lg:text-[13.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
           >
             <ArrowLeft className="h-4 w-4 shrink-0" />
             <span>Back to Spanrail</span>
           </Link>
 
           <h1 className="display-h2 mt-3">Quickstart and OTLP reference</h1>
-          <p
-            className="mt-2.5 max-w-[54ch] text-[13.5px] leading-[1.6] md:text-[14px] lg:mt-3 lg:max-w-[58ch] lg:text-[16px] lg:leading-[1.65]"
-            style={{ color: "var(--ink-secondary)" }}
-          >
+          <p className="mt-2.5 max-w-[54ch] text-[13.5px] leading-[1.6] text-[var(--ink-secondary)] md:text-[14px] lg:mt-3 lg:max-w-[58ch] lg:text-[16px] lg:leading-[1.65]">
             Spanrail ingests standard OpenTelemetry traces over OTLP/HTTP
             Protobuf and gRPC with zero proprietary wrapper lock-in.
           </p>
@@ -87,12 +83,7 @@ export default function DocsPage() {
               <a
                 key={item.href}
                 href={item.href}
-                className="btn-tactile flex min-h-[44px] items-center justify-center rounded-xl border px-3 text-[13px] font-medium sm:rounded-full sm:px-4 [@media(hover:hover)]:hover:border-[var(--border-hover)]"
-                style={{
-                  backgroundColor: "var(--bg-surface)",
-                  borderColor: "var(--border-whisper)",
-                  color: "var(--ink-primary)",
-                }}
+                className="btn-tactile flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] px-3 text-[13px] font-medium text-[var(--ink-primary)] sm:rounded-full sm:px-4 [@media(hover:hover)]:hover:border-[var(--border-hover)]"
               >
                 {item.label}
               </a>
@@ -101,16 +92,10 @@ export default function DocsPage() {
 
           <section id="sdk" className="mt-10 scroll-mt-24 space-y-4 sm:mt-12">
             <div>
-              <h2
-                className="text-[17.5px] font-medium tracking-[-0.015em] md:text-[18.5px] lg:text-[20px]"
-                style={{ color: "var(--ink-primary)" }}
-              >
+              <h2 className="text-[17.5px] font-medium tracking-[-0.015em] text-[var(--ink-primary)] md:text-[18.5px] lg:text-[20px]">
                 1. Drop-in TypeScript SDK
               </h2>
-              <p
-                className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-1.5 lg:text-[14.5px] lg:leading-[1.6]"
-                style={{ color: "var(--ink-secondary)" }}
-              >
+              <p className="mt-1 text-[12.5px] leading-[1.55] text-[var(--ink-secondary)] md:text-[13px] lg:mt-1.5 lg:text-[14.5px] lg:leading-[1.6]">
                 Auto-instruments Vercel AI SDK, OpenAI Agents, and Node.js
                 fetch/HTTP tool spans.
               </p>
@@ -125,16 +110,10 @@ export default function DocsPage() {
 
           <section id="python" className="mt-10 scroll-mt-24 space-y-4">
             <div>
-              <h2
-                className="text-[17.5px] font-medium tracking-[-0.015em] md:text-[18.5px] lg:text-[20px]"
-                style={{ color: "var(--ink-primary)" }}
-              >
+              <h2 className="text-[17.5px] font-medium tracking-[-0.015em] text-[var(--ink-primary)] md:text-[18.5px] lg:text-[20px]">
                 2. Python SDK for LangGraph and OpenAI Agents
               </h2>
-              <p
-                className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-1.5 lg:text-[14.5px] lg:leading-[1.6]"
-                style={{ color: "var(--ink-secondary)" }}
-              >
+              <p className="mt-1 text-[12.5px] leading-[1.55] text-[var(--ink-secondary)] md:text-[13px] lg:mt-1.5 lg:text-[14.5px] lg:leading-[1.6]">
                 Exports OpenTelemetry spans asynchronously without blocking
                 async worker loops.
               </p>
@@ -149,49 +128,34 @@ export default function DocsPage() {
 
           <section
             id="otlp"
-            className="mt-10 scroll-mt-24 space-y-5 border-t pt-9 sm:mt-12 sm:pt-10"
-            style={{ borderColor: "var(--border-whisper)" }}
+            className="mt-10 scroll-mt-24 space-y-5 border-t border-[var(--border-whisper)] pt-9 sm:mt-12 sm:pt-10"
           >
             <div>
-              <h2
-                className="text-[17.5px] font-medium tracking-[-0.015em] md:text-[18.5px] lg:text-[20px]"
-                style={{ color: "var(--ink-primary)" }}
-              >
+              <h2 className="text-[17.5px] font-medium tracking-[-0.015em] text-[var(--ink-primary)] md:text-[18.5px] lg:text-[20px]">
                 3. Direct OTLP collector endpoint
               </h2>
-              <p
-                className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-1.5 lg:text-[15px] lg:leading-[1.65]"
-                style={{ color: "var(--ink-secondary)" }}
-              >
+              <p className="mt-1 text-[12.5px] leading-[1.55] text-[var(--ink-secondary)] md:text-[13px] lg:mt-1.5 lg:text-[15px] lg:leading-[1.65]">
                 Already running an OpenTelemetry Collector? Point your OTLP/HTTP
                 exporter straight to the endpoint below.
               </p>
             </div>
 
-            <dl
-              className="divide-y divide-[var(--border-whisper)] rounded-2xl border px-4 sm:px-5"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-whisper)",
-              }}
-            >
+            <dl className="divide-y divide-[var(--border-whisper)] rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] px-4 sm:px-5">
               {OTLP_SPECS.map((spec) => (
                 <div
                   key={spec.label}
                   className="flex flex-col gap-1 py-3.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4"
                 >
-                  <dt
-                    className="shrink-0 text-[12px] font-medium lg:text-[13px]"
-                    style={{ color: "var(--ink-muted)" }}
-                  >
+                  <dt className="shrink-0 text-[12px] font-medium text-[var(--ink-muted)] lg:text-[13px]">
                     {spec.label}
                   </dt>
                   <dd
                     translate={spec.mono ? "no" : undefined}
-                    className={`${
-                      spec.mono ? "tabular-telemetry break-all text-[12px] lg:text-[12.5px]" : "text-[13px] lg:text-[13.5px]"
+                    className={`text-[var(--ink-primary)] ${
+                      spec.mono
+                        ? "tabular-telemetry break-all text-[12px] lg:text-[12.5px]"
+                        : "text-[13px] lg:text-[13.5px]"
                     } sm:text-right`}
-                    style={{ color: "var(--ink-primary)" }}
                   >
                     {spec.value}
                   </dd>
@@ -208,22 +172,13 @@ export default function DocsPage() {
             <div className="flex flex-col gap-2.5 pt-2 sm:flex-row sm:items-center sm:gap-3">
               <Link
                 href="/#demo"
-                className="btn-tactile flex min-h-[46px] w-full items-center justify-center rounded-full px-5 text-[14px] font-medium sm:w-auto [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
-                style={{
-                  backgroundColor: "var(--btn-primary-bg)",
-                  color: "var(--btn-primary-ink)",
-                }}
+                className="btn-tactile flex min-h-[46px] w-full items-center justify-center rounded-full bg-[var(--btn-primary-bg)] px-5 text-[14px] font-medium text-[var(--btn-primary-ink)] sm:w-auto [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
               >
                 Book an architecture review
               </Link>
               <Link
                 href="/security"
-                className="btn-tactile flex min-h-[46px] w-full items-center justify-center rounded-full border px-5 text-[14px] font-medium sm:w-auto [@media(hover:hover)]:hover:border-[var(--border-hover)]"
-                style={{
-                  backgroundColor: "var(--bg-surface)",
-                  borderColor: "var(--border-whisper)",
-                  color: "var(--ink-primary)",
-                }}
+                className="btn-tactile flex min-h-[46px] w-full items-center justify-center rounded-full border border-[var(--border-whisper)] bg-[var(--bg-surface)] px-5 text-[14px] font-medium text-[var(--ink-primary)] sm:w-auto [@media(hover:hover)]:hover:border-[var(--border-hover)]"
               >
                 Review security and VPC specs
               </Link>

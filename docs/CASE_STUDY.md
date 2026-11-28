@@ -31,38 +31,24 @@ Technical buyers evaluating AI observability and inline guardrail tooling inspec
 
 ### Layer 2 — Interface, Motion & Bundle Hygiene
 
-- **Server Components & Dynamic Splits (`src/app/page.tsx`):** Root shell, `Footer`, `/docs`, `/security`, `/privacy`, and `/terms` stay Server Components (`191 B` static route JS on legal/security pages); below-the-fold interactive modules split via `next/dynamic` (`ssr: true`).
+- **Server Components & Static Routes (`src/app/`):** Root shell, `Footer`, `/docs` (`1.28 kB`), `/security`, `/privacy`, `/terms` (`192 B` each), custom dark `not-found.tsx`, `/robots.txt`, and `/sitemap.xml` (`136 B` each) are Server Components; heavy WebGL2 and R3F canvases mount strictly post-LCP via `next/dynamic(..., { ssr: false })` + `requestIdleCallback`.
 - **Motion Constraints:** Async `<LazyMotion features={domMax} strict>` with `m.*` across components; GPU-only `transform` (`x`, `scaleX`, `translate3d`) and `opacity` (zero layout `width`/`left` animations); zero `backdrop-filter: blur()` over animating WebGL; solid opaque surfaces (`alpha = 1`) for GPU occlusion culling; pure CSS `translate3d(-50%, 0, 0)` infinite logo marquee.
 - **Single Breakpoint Subscription (`src/lib/useBreakpoint.ts`):** One module-level `useSyncExternalStore` backed by 3 `matchMedia` listeners — zero `window.resize` listener spam.
 
 ---
 
-## 3. Real-Device QA & Lighthouse Debugging Log
+## 3. Real-Device QA, Lighthouse & Third-Party Audit Log
 
-Testing on real hardware (**Intel Iris Xe 1080p**, **OnePlus 12R ~3× AMOLED**, **820×1180 tablet**) and **Google PageSpeed Insights (Lighthouse 13.6)** surfaced concrete engineering wins:
+Testing on real hardware (**Intel Iris Xe 1080p**, **OnePlus 12R ~3× AMOLED**, **820×1180 tablet**), **Google PageSpeed Insights (Lighthouse 13.6)**, and a live-HTML third-party engineering audit surfaced 8 concrete engineering upgrades:
 
-1. **Copy Button Layout Shift (CLS) on Phone:**
-   - *Symptom:* Tapping `Copy` inside `CapabilitiesGrid` expanded the label to `Copied`, wrapping the button onto a new line below the SDK tabs and shifting the page downward.
-   - *Fix:* Moved `Copy` into an anchored code-pane header (`CodeBlock`, `DropInSdkStage`, `HeroSection`, `PricingCalculator`) and overlaid both labels in the same CSS Grid cell (`col-start-1 row-start-1`), locking button width to **0px delta / 0 CLS**.
-2. **Shrunken-Desktop Components Rebuilt Native per Breakpoint:**
-   - *Capabilities Switcher:* Replaced horizontal scrolling pills (hiding 2 of 4 items on Phone & `820px` Tablet) with a full-visibility **2×2 grid** (`< 1024px`).
-   - *Inline Guardrail Pipeline (`pipeline.tsx`):* Replaced cramped 4-column chips (`< 65px` each) with a **vertical animated timeline** on `< 640px`.
-   - *Production Comparison (`paired-bars.tsx`):* Replaced the `min-w-[600px]` horizontal scrolling table with **vertical stacked metric cards** on `< 768px` and sized tablet columns (`136px / minmax(220px,1fr) / 108px`) so `820px` fits without horizontal scroll.
-   - *Pricing Retention (`PricingCalculator.tsx` / `Primitives.tsx`):* `365 days +35%` overflowed horizontal `SegmentedControl`; added `stackSublabelOnMobile` (`grid auto-cols-fr grid-flow-col`) fitting cleanly down to `320px`.
-   - *Duplicate Mobile Floating Bars:* Observed `#pricing` inside `MobileBottomDock.tsx` so the bottom dock hides whenever `#pricing` or `#demo` is already visible.
-   - *Touch-Inaccessible Stat Context:* Converted `StatsBand` from a 1,200px single-column wall to a compact **2×3 telemetry grid** with tap-to-toggle context (`data-active`) and gated `:hover` behind `@media (hover: hover)`.
-3. **Inline `style` Specificity Overriding Responsive Tailwind (`md:bg-transparent`):**
-   - *Symptom:* Mobile containers in `HeroSection` and `PricingCalculator` rendered sharp `#14232b` rectangular boxes on desktop because inline `style={{ backgroundColor }}` (`1,0,0,0`) beat Tailwind's `md:bg-transparent` (`0,1,0`).
-   - *Fix:* Migrated breakpoint-dependent surface/border tokens to Tailwind arbitrary CSS-var utilities (`bg-[var(--bg-surface-subtle)] md:bg-transparent md:border-0`).
-4. **Mobile & Tablet Typographic Hierarchy Audit:**
-   - *Symptom:* `16–17px` section subtitles rendered larger than `14.5–15px` primary card/metric titles on phone and tablet.
-   - *Fix:* Established a strict `< 1024px` hierarchy staircase (`13.5–14px` section leads, `12.5–13px` card descriptions, `11.5–12px` helper captions in `--ink-muted`) verified mathematically against WCAG 2.2 AA (`>= 4.65:1` even on subtle `#14232b` surfaces).
-5. **Lighthouse Accessibility Tree & Software-WebGL Audit:**
-   - *Symptom:* Putting `role="button"` on a `<div>` inside `<dl>` in `StatsBand` triggered both `<dl>` semantic warnings and Lighthouse's `agent-accessibility-tree` audit; running `GhostFibers` on software SwiftShader WebGL caused a 32s desktop TBT stall.
-   - *Fix:* Refactored `StatsBand` to semantic `<ul>` → `<li>` → `<button type="button">` with phrasing `<span>` children (passing `agent-accessibility-tree` and all list semantics) and added `failIfMajorPerformanceCaveat: true` to `GhostFibers.tsx`.
-6. **Silent Unclosed Tailwind Bracket Scan:**
-   - *Symptom:* `tsc --noEmit` and `next build` passed while 7 corrupted Tailwind tokens (`border-[t`, `text-[center`, `leading-[none`, `text-[left`, `text-[right`) silently broke styling.
-   - *Fix:* Ran a repo-wide regex scan (`[a-z]+-\[[a-z0-9]+(?=\s)`), fixed all 7 instances across 4 files, and confirmed zero remaining matches.
+1. **Copy Button Layout Shift (CLS) on Phone:** Moved `Copy` into anchored code headers (`CodeBlock`, `DropInSdkStage`, `HeroSection`, `PricingCalculator`) using CSS Grid overlap (`col-start-1 row-start-1`) so `Copy` ↔ `Copied` produces **0px width shift / 0 CLS**.
+2. **Shrunken-Desktop Components Rebuilt Native per Breakpoint:** 2×2 all-visible `CapabilitiesGrid` (`< 1024px`), vertical `<Pipeline>` timeline (`< 640px`), stacked vertical `PairedBars` metric cards (`< 768px`), 3-column `auto-cols-fr` retention control fitting `320px`, 2×3 tap-to-toggle `StatsBand`, and `MobileBottomDock` auto-hiding over both `#pricing` and `#demo`.
+3. **Inline `style` Specificity Overriding Responsive & Hover Utilities:** Found inline `style={{ color / backgroundColor / borderColor }}` (`1,0,0,0`) silently overriding both responsive classes (`md:bg-transparent`) and 33 `[@media(hover:hover)]:hover:*` rules across 11 files. Migrated all interactive and breakpoint-reactive styling to Tailwind CSS-var utilities so every hover state and desktop container renders cleanly.
+4. **Mobile & Tablet Typographic Hierarchy Audit:** Stepped `< 1024px` secondary copy cleanly below `14.5–15px` primary labels (`13.5–14px` section leads, `12.5–13px` card copy, `11.5–12px` `--ink-muted` helpers), verified `>= 4.65:1` WCAG 2.2 AA across every surface.
+5. **Lighthouse Accessibility Tree & Software-WebGL Audit:** Refactored `StatsBand` from `<dl>` + `role="button"` to semantic `<ul>` → `<li>` → `<button type="button">` with phrasing `<span>` children (passing `agent-accessibility-tree` and all list audits) and added `failIfMajorPerformanceCaveat: true` to `GhostFibers.tsx`.
+6. **WCAG 2.1.4 (Character Key Shortcuts) & SC 2.4.11 (Focus Not Obscured):** Upgraded single-key shortcuts (`M`, `1`, `2`) to modifier shortcuts (`Alt+M`, `Alt+1`, `Alt+2` keyed on `event.code` for macOS Option-key reliability), placed the hint inside the Hero sandbox toolbar (Law of Proximity), upgraded footer links to `min-h-[44px] [@media(pointer:fine)]:min-h-0` for tablet touch targets, added mobile `scroll-padding-bottom: 92px`, and switched phone toasts to `top-center` (`68px` offset) via `AppToaster.tsx`.
+7. **Silent Unclosed Tailwind Bracket Scan:** Fixed all 7 corrupted Tailwind utility brackets (`border-[t`, `text-[center`, `leading-[none`, `text-[left`, `text-[right`) caught by regex scanning across `src/`.
+8. **Production SEO & Error Boundaries:** Shipped full SEO `<title>`, branded dark `src/app/not-found.tsx`, `src/app/robots.ts`, and `src/app/sitemap.ts`.
 
 ---
 

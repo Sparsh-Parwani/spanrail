@@ -1,25 +1,27 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/plus-jakarta-sans";
 import "@fontsource-variable/jetbrains-mono";
-import { Toaster } from "sonner";
 import { MotionProvider } from "@/components/ui/MotionProvider";
+import { AppToaster } from "@/components/ui/AppToaster";
 import "./globals.css";
+
+const SITE_URL = "https://spanrail.vercel.app";
 
 export const metadata: Metadata = {
   title: {
-    default: "Spanrail",
+    default: "Spanrail — Real-Time Observability & Guardrails for AI Agents",
     template: "%s · Spanrail",
   },
   description:
     "Real-time OpenTelemetry trace inspection, inline PII and retry-loop guardrails, and exact per-run token cost accounting for production AI agents.",
-  metadataBase: new URL("https://spanrail.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   openGraph: {
     title: "Spanrail — Real-Time Observability & Guardrails for AI Agents",
     description:
       "See every agent step. Catch slow tool calls and retry loops, mask customer PII inline, and keep token bills predictable.",
     type: "website",
     siteName: "Spanrail",
-    url: "https://spanrail.vercel.app",
+    url: SITE_URL,
   },
   twitter: {
     card: "summary_large_image",
@@ -51,21 +53,7 @@ export default function RootLayout({
         </a>
 
         <MotionProvider>{children}</MotionProvider>
-
-        <Toaster
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: "var(--bg-surface-solid)",
-              color: "var(--ink-primary)",
-              border: "1px solid var(--border-whisper)",
-              boxShadow: "var(--shadow-card)",
-              borderRadius: "14px",
-              fontSize: "13.5px",
-              fontFamily: "var(--font-sans)",
-            },
-          }}
-        />
+        <AppToaster />
       </body>
     </html>
   );

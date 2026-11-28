@@ -65,15 +65,18 @@ export function PageShellEffects() {
     };
   }, [mounted, prefersReducedMotion, isPhone]);
 
+  // Modifier-gated shortcuts (Alt+M, Alt+1, Alt+2) for WCAG 2.1.4 Level A compliance
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (!event.altKey || event.metaKey || event.ctrlKey || event.shiftKey) {
+        return;
+      }
       if (isTypingTarget(event.target)) return;
 
-      const key = event.key.toLowerCase();
       const store = useSpanrailStore.getState();
 
-      if (key === "m") {
+      if (event.code === "KeyM") {
+        event.preventDefault();
         if (!store.isSoundEnabled) {
           initSoundEngine();
         }
@@ -84,7 +87,7 @@ export function PageShellEffects() {
         return;
       }
 
-      if (key === "1" || key === "2") {
+      if (event.code === "Digit1" || event.code === "Digit2") {
         const sandbox = document.getElementById("sandbox");
         if (!sandbox) return;
         const rect = sandbox.getBoundingClientRect();
@@ -92,7 +95,8 @@ export function PageShellEffects() {
           rect.bottom > 80 && rect.top < window.innerHeight - 80;
         if (!sandboxVisible) return;
 
-        const targetScenario = key === "1" ? "refund" : "sql";
+        event.preventDefault();
+        const targetScenario = event.code === "Digit1" ? "refund" : "sql";
         if (store.scenarioId !== targetScenario) {
           store.setScenarioId(targetScenario);
           playSwitchClick(true);

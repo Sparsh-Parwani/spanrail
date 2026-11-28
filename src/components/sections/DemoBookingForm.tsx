@@ -52,7 +52,7 @@ const contentVariants = {
   },
 };
 
-const INGEST_ENDPOINT = "https" + "://ingest.spanrail.dev/v1/traces";
+const INGEST_ENDPOINT = "https://ingest.spanrail.dev/v1/traces";
 
 const GENERIC_STARTER_CONFIG = `import { initSpanrail } from "@spanrail/otel";
 
@@ -247,10 +247,7 @@ export function DemoBookingForm() {
             <h2 id="demo-heading" className="display-h2">
               Walk through your agent traces with engineering.
             </h2>
-            <p
-              className="mx-auto mt-2.5 max-w-[44ch] text-[13.5px] leading-[1.6] md:text-[14px] lg:mt-3 lg:max-w-[48ch] lg:text-[15.5px]"
-              style={{ color: "var(--ink-secondary)" }}
-            >
+            <p className="mx-auto mt-2.5 max-w-[44ch] text-[13.5px] leading-[1.6] text-[var(--ink-secondary)] md:text-[14px] lg:mt-3 lg:max-w-[48ch] lg:text-[15.5px]">
               Book a 25-minute review with a systems engineer, or grab the
               starter OpenTelemetry config below with zero signup.
             </p>
@@ -294,13 +291,11 @@ export function DemoBookingForm() {
                           }}
                         />
                         <span
-                          className="text-[12px] lg:text-[13px]"
-                          style={{
-                            color: isActive
-                              ? "var(--ink-primary)"
-                              : "var(--ink-muted)",
-                            fontWeight: isActive ? 500 : 400,
-                          }}
+                          className={`text-[12px] lg:text-[13px] ${
+                            isActive
+                              ? "font-medium text-[var(--ink-primary)]"
+                              : "font-normal text-[var(--ink-muted)]"
+                          }`}
                         >
                           <span className="sm:hidden">{step.shortTitle}</span>
                           <span className="hidden sm:inline">{step.title}</span>
@@ -310,13 +305,9 @@ export function DemoBookingForm() {
                   })}
                 </div>
 
-                <div
-                  className="h-1.5 w-full overflow-hidden rounded-full"
-                  style={{ backgroundColor: "var(--bg-surface-subtle)" }}
-                >
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg-surface-subtle)]">
                   <m.div
-                    className="h-full w-full origin-left rounded-full"
-                    style={{ backgroundColor: "var(--accent-spark)" }}
+                    className="h-full w-full origin-left rounded-full bg-[var(--accent-spark)]"
                     initial={false}
                     animate={{ scaleX: currentStep === 0 ? 0.5 : 1 }}
                     transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -326,12 +317,8 @@ export function DemoBookingForm() {
             )}
 
             <div
-              className="surface-fade overflow-hidden rounded-2xl border sm:rounded-3xl"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-whisper)",
-                boxShadow: "var(--shadow-stage)",
-              }}
+              className="surface-fade overflow-hidden rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] sm:rounded-3xl"
+              style={{ boxShadow: "var(--shadow-stage)" }}
             >
               {confirmation ? (
                 <m.div
@@ -344,36 +331,22 @@ export function DemoBookingForm() {
                     <QuietStatusPill tone="pass">
                       Architecture briefing confirmed
                     </QuietStatusPill>
-                    <span
-                      className="tabular-telemetry text-[11.5px] font-medium lg:text-[12.5px]"
-                      style={{ color: "var(--ink-muted)" }}
-                    >
+                    <span className="tabular-telemetry text-[11.5px] font-medium text-[var(--ink-muted)] lg:text-[12.5px]">
                       Ref · {confirmation.bookingRef}
                     </span>
                   </div>
 
-                  <h3
-                    className="mt-5 text-[19px] font-medium tracking-[-0.02em] lg:text-[21px]"
-                    style={{ color: "var(--ink-primary)" }}
-                  >
+                  <h3 className="mt-5 text-[19px] font-medium tracking-[-0.02em] text-[var(--ink-primary)] lg:text-[21px]">
                     Your starter environment is ready.
                   </h3>
 
-                  <p
-                    className="mt-2 text-[13px] leading-[1.6] md:text-[13.5px] lg:mt-2.5 lg:text-[14.5px] lg:leading-[1.65]"
-                    style={{ color: "var(--ink-secondary)" }}
-                  >
+                  <p className="mt-2 text-[13px] leading-[1.6] text-[var(--ink-secondary)] md:text-[13.5px] lg:mt-2.5 lg:text-[14.5px] lg:leading-[1.65]">
                     {confirmation.summary}
                   </p>
 
                   <pre
                     translate="no"
-                    className="tabular-telemetry mt-5 max-h-[210px] overflow-auto rounded-2xl border p-3.5 text-[11.5px] leading-[1.65] sm:p-4 sm:text-[12px]"
-                    style={{
-                      backgroundColor: "var(--code-bg)",
-                      borderColor: "var(--border-whisper)",
-                      color: "var(--ink-primary)",
-                    }}
+                    className="tabular-telemetry mt-5 max-h-[210px] overflow-auto rounded-2xl border border-[var(--border-whisper)] bg-[var(--code-bg)] p-3.5 text-[11.5px] leading-[1.65] text-[var(--ink-primary)] sm:p-4 sm:text-[12px]"
                   >
                     <code>{confirmation.otelConfigContent}</code>
                   </pre>
@@ -387,11 +360,7 @@ export function DemoBookingForm() {
                           confirmation.otelConfigContent
                         )
                       }
-                      className="btn-tactile inline-flex min-h-[46px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl px-5 text-[14px] font-medium"
-                      style={{
-                        backgroundColor: "var(--btn-primary-bg)",
-                        color: "var(--btn-primary-ink)",
-                      }}
+                      className="btn-tactile inline-flex min-h-[46px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[var(--btn-primary-bg)] px-5 text-[14px] font-medium text-[var(--btn-primary-ink)] [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
                     >
                       <Download className="h-4 w-4 shrink-0" />
                       <span>Download starter spanrail.otel.ts</span>
@@ -400,11 +369,7 @@ export function DemoBookingForm() {
                     <button
                       type="button"
                       onClick={handleReset}
-                      className="btn-tactile inline-flex min-h-[46px] cursor-pointer items-center justify-center gap-1.5 rounded-2xl border px-4 text-[13px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)]"
-                      style={{
-                        borderColor: "var(--border-whisper)",
-                        color: "var(--ink-secondary)",
-                      }}
+                      className="btn-tactile inline-flex min-h-[46px] cursor-pointer items-center justify-center gap-1.5 rounded-2xl border border-[var(--border-whisper)] px-4 text-[13px] font-medium text-[var(--ink-secondary)] [@media(hover:hover)]:hover:border-[var(--border-hover)] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
                     >
                       <RotateCcw className="h-3.5 w-3.5 shrink-0" />
                       <span>Reset</span>
@@ -431,8 +396,7 @@ export function DemoBookingForm() {
                             <div>
                               <label
                                 htmlFor="demo-work-email"
-                                className="block text-[13.5px] font-medium"
-                                style={{ color: "var(--ink-primary)" }}
+                                className="block text-[13.5px] font-medium text-[var(--ink-primary)]"
                               >
                                 Work email
                               </label>
@@ -456,24 +420,20 @@ export function DemoBookingForm() {
                                 }}
                                 aria-invalid={Boolean(emailError)}
                                 aria-describedby="demo-email-err"
-                                className="mt-2 h-12 w-full rounded-xl border px-3.5 text-[16px] placeholder:text-[var(--ink-muted)] sm:px-4 sm:text-[15px]"
-                                style={{
-                                  backgroundColor: "var(--bg-surface-subtle)",
-                                  borderColor: emailError
-                                    ? "var(--status-warn-dot)"
-                                    : "var(--border-whisper)",
-                                  color: "var(--ink-primary)",
-                                }}
+                                className={`mt-2 h-12 w-full rounded-xl border bg-[var(--bg-surface-subtle)] px-3.5 text-[16px] text-[var(--ink-primary)] placeholder:text-[var(--ink-muted)] sm:px-4 sm:text-[15px] ${
+                                  emailError
+                                    ? "border-[var(--status-warn-dot)]"
+                                    : "border-[var(--border-whisper)]"
+                                }`}
                               />
                               <p
                                 id="demo-email-err"
                                 role={emailError ? "alert" : undefined}
-                                className="mt-1.5 min-h-[18px] text-[11.5px] lg:text-[12px]"
-                                style={{
-                                  color: emailError
-                                    ? "var(--status-warn-text)"
-                                    : "var(--ink-muted)",
-                                }}
+                                className={`mt-1.5 min-h-[18px] text-[11.5px] lg:text-[12px] ${
+                                  emailError
+                                    ? "text-[var(--status-warn-text)]"
+                                    : "text-[var(--ink-muted)]"
+                                }`}
                               >
                                 {emailError ??
                                   "Work email required for dedicated sandbox provisioning."}
@@ -482,17 +442,11 @@ export function DemoBookingForm() {
 
                             <div className="space-y-2.5">
                               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                                <span
-                                  className="text-[13.5px] font-medium"
-                                  style={{ color: "var(--ink-primary)" }}
-                                >
+                                <span className="text-[13.5px] font-medium text-[var(--ink-primary)]">
                                   Monthly trace volume
                                 </span>
                                 {!userOverrodeVolumeRef.current && (
-                                  <span
-                                    className="text-[11.5px] lg:text-[12px]"
-                                    style={{ color: "var(--ink-muted)" }}
-                                  >
+                                  <span className="text-[11.5px] text-[var(--ink-muted)] lg:text-[12px]">
                                     Synced from calculator
                                   </span>
                                 )}
@@ -510,18 +464,11 @@ export function DemoBookingForm() {
                                         setVolumeTier(tier);
                                         playSwitchClick(true);
                                       }}
-                                      className="btn-tactile tabular-telemetry min-h-[46px] cursor-pointer rounded-xl border px-3 text-[13.5px] font-medium"
-                                      style={{
-                                        backgroundColor: active
-                                          ? "var(--accent-brand-soft)"
-                                          : "var(--bg-surface-subtle)",
-                                        borderColor: active
-                                          ? "var(--accent-brand)"
-                                          : "var(--border-whisper)",
-                                        color: active
-                                          ? "var(--accent-brand-text)"
-                                          : "var(--ink-primary)",
-                                      }}
+                                      className={`btn-tactile tabular-telemetry min-h-[46px] cursor-pointer rounded-xl border px-3 text-[13.5px] font-medium ${
+                                        active
+                                          ? "border-[var(--accent-brand)] bg-[var(--accent-brand-soft)] text-[var(--accent-brand-text)]"
+                                          : "border-[var(--border-whisper)] bg-[var(--bg-surface-subtle)] text-[var(--ink-primary)] [@media(hover:hover)]:hover:border-[var(--border-hover)]"
+                                      }`}
                                     >
                                       {tier}
                                     </button>
@@ -535,10 +482,7 @@ export function DemoBookingForm() {
                         {currentStep === 1 && (
                           <div className="space-y-5">
                             <div className="space-y-2.5">
-                              <span
-                                className="block text-[13.5px] font-medium"
-                                style={{ color: "var(--ink-primary)" }}
-                              >
+                              <span className="block text-[13.5px] font-medium text-[var(--ink-primary)]">
                                 Primary agent stack
                               </span>
                               <div className="grid grid-cols-2 gap-2">
@@ -550,18 +494,11 @@ export function DemoBookingForm() {
                                       type="button"
                                       aria-pressed={active}
                                       onClick={() => toggleStack(stack)}
-                                      className="btn-tactile flex min-h-[46px] cursor-pointer items-center justify-between gap-2 rounded-xl border px-3 text-left text-[13px] font-medium sm:px-3.5"
-                                      style={{
-                                        backgroundColor: active
-                                          ? "var(--accent-spark-soft)"
-                                          : "var(--bg-surface-subtle)",
-                                        borderColor: active
-                                          ? "var(--accent-spark)"
-                                          : "var(--border-whisper)",
-                                        color: active
-                                          ? "var(--accent-spark-text)"
-                                          : "var(--ink-primary)",
-                                      }}
+                                      className={`btn-tactile flex min-h-[46px] cursor-pointer items-center justify-between gap-2 rounded-xl border px-3 text-left text-[13px] font-medium sm:px-3.5 ${
+                                        active
+                                          ? "border-[var(--accent-spark)] bg-[var(--accent-spark-soft)] text-[var(--accent-spark-text)]"
+                                          : "border-[var(--border-whisper)] bg-[var(--bg-surface-subtle)] text-[var(--ink-primary)] [@media(hover:hover)]:hover:border-[var(--border-hover)]"
+                                      }`}
                                     >
                                       <span className="truncate">{stack}</span>
                                       {active && (
@@ -574,10 +511,7 @@ export function DemoBookingForm() {
                             </div>
 
                             <div className="space-y-2.5">
-                              <span
-                                className="block text-[13.5px] font-medium"
-                                style={{ color: "var(--ink-primary)" }}
-                              >
+                              <span className="block text-[13.5px] font-medium text-[var(--ink-primary)]">
                                 Main engineering goal
                               </span>
                               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -592,18 +526,11 @@ export function DemoBookingForm() {
                                         setPrimaryGoal(goal);
                                         playSwitchClick(true);
                                       }}
-                                      className="btn-tactile flex min-h-[46px] cursor-pointer items-center justify-between rounded-xl border px-3.5 text-left text-[13px] font-medium"
-                                      style={{
-                                        backgroundColor: active
-                                          ? "var(--accent-brand-soft)"
-                                          : "var(--bg-surface-subtle)",
-                                        borderColor: active
-                                          ? "var(--accent-brand)"
-                                          : "var(--border-whisper)",
-                                        color: active
-                                          ? "var(--accent-brand-text)"
-                                          : "var(--ink-primary)",
-                                      }}
+                                      className={`btn-tactile flex min-h-[46px] cursor-pointer items-center justify-between rounded-xl border px-3.5 text-left text-[13px] font-medium ${
+                                        active
+                                          ? "border-[var(--accent-brand)] bg-[var(--accent-brand-soft)] text-[var(--accent-brand-text)]"
+                                          : "border-[var(--border-whisper)] bg-[var(--bg-surface-subtle)] text-[var(--ink-primary)] [@media(hover:hover)]:hover:border-[var(--border-hover)]"
+                                      }`}
                                     >
                                       <span>{goal}</span>
                                     </button>
@@ -615,11 +542,7 @@ export function DemoBookingForm() {
                             {submitError && (
                               <div
                                 role="alert"
-                                className="rounded-xl px-3.5 py-2.5 text-[12.5px] lg:text-[13px]"
-                                style={{
-                                  backgroundColor: "var(--status-warn-soft)",
-                                  color: "var(--status-warn-text)",
-                                }}
+                                className="rounded-xl bg-[var(--status-warn-soft)] px-3.5 py-2.5 text-[12.5px] text-[var(--status-warn-text)] lg:text-[13px]"
                               >
                                 {submitError}
                               </div>
@@ -630,10 +553,7 @@ export function DemoBookingForm() {
                     </AnimatePresence>
                   </div>
 
-                  <div
-                    className="flex items-center justify-between gap-2.5 border-t px-4 py-3.5 sm:px-8 sm:py-4"
-                    style={{ borderColor: "var(--border-whisper)" }}
-                  >
+                  <div className="flex items-center justify-between gap-2.5 border-t border-[var(--border-whisper)] px-4 py-3.5 sm:px-8 sm:py-4">
                     <button
                       type="button"
                       onClick={() => {
@@ -641,12 +561,7 @@ export function DemoBookingForm() {
                         playSwitchClick(false);
                       }}
                       disabled={currentStep === 0 || isSubmitting}
-                      className="btn-tactile inline-flex min-h-[46px] flex-1 cursor-pointer items-center justify-center gap-1 rounded-2xl border px-4 text-[14px] font-medium sm:min-h-[42px] sm:flex-none sm:text-[13.5px] disabled:cursor-not-allowed disabled:opacity-40"
-                      style={{
-                        borderColor: "var(--border-whisper)",
-                        backgroundColor: "var(--bg-surface-subtle)",
-                        color: "var(--ink-primary)",
-                      }}
+                      className="btn-tactile inline-flex min-h-[46px] flex-1 cursor-pointer items-center justify-center gap-1 rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface-subtle)] px-4 text-[14px] font-medium text-[var(--ink-primary)] sm:min-h-[42px] sm:flex-none sm:text-[13.5px] [@media(hover:hover)]:hover:border-[var(--border-hover)] disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       <ChevronLeft className="h-4 w-4 shrink-0" />
                       <span>Back</span>
@@ -660,11 +575,7 @@ export function DemoBookingForm() {
                           : handleNext
                       }
                       disabled={!isStepValid() || isSubmitting}
-                      className="btn-tactile inline-flex min-h-[46px] flex-[1.5] cursor-pointer items-center justify-center gap-1.5 rounded-2xl px-5 text-[14px] font-medium sm:min-h-[42px] sm:flex-none sm:text-[13.5px] disabled:cursor-not-allowed disabled:opacity-45"
-                      style={{
-                        backgroundColor: "var(--btn-primary-bg)",
-                        color: "var(--btn-primary-ink)",
-                      }}
+                      className="btn-tactile inline-flex min-h-[46px] flex-[1.5] cursor-pointer items-center justify-center gap-1.5 rounded-2xl bg-[var(--btn-primary-bg)] px-5 text-[14px] font-medium text-[var(--btn-primary-ink)] sm:min-h-[42px] sm:flex-none sm:text-[13.5px] [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)] disabled:cursor-not-allowed disabled:opacity-45"
                     >
                       {isSubmitting ? (
                         <>
@@ -690,10 +601,7 @@ export function DemoBookingForm() {
 
             {!confirmation && (
               <div className="mt-4 flex flex-col items-start justify-between gap-1.5 px-1 text-[12px] sm:flex-row sm:items-center sm:gap-2 lg:text-[12.5px]">
-                <span
-                  className="tabular-telemetry"
-                  style={{ color: "var(--ink-muted)" }}
-                >
+                <span className="tabular-telemetry text-[var(--ink-muted)]">
                   Step {currentStep + 1} of 2 — {STEPS[currentStep]!.title}
                 </span>
                 <button
@@ -701,8 +609,7 @@ export function DemoBookingForm() {
                   onClick={() =>
                     triggerDownload("spanrail.otel.ts", GENERIC_STARTER_CONFIG)
                   }
-                  className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 font-medium underline-offset-4 sm:min-h-0 [@media(hover:hover)]:hover:underline"
-                  style={{ color: "var(--accent-brand-text)" }}
+                  className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 font-medium text-[var(--accent-brand-text)] underline-offset-4 sm:min-h-0 [@media(hover:hover)]:hover:underline"
                 >
                   <Download className="h-3.5 w-3.5 shrink-0" />
                   <span>Just evaluating? Download generic OTel config</span>

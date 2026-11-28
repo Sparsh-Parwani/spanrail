@@ -52,31 +52,33 @@ All screenshots and metrics below are captured directly from the live production
 
 | Engineering Pillar | Verified Result | Verifiable Proof |
 |---|---|---|
-| **CI &amp; Strict Type Safety** | **`11/11` routes** · **`0` TS errors** (`strict: true`) · **`0` lint warnings** | [Live GitHub Actions CI](https://github.com/Sparsh-Parwani/spanrail/actions/workflows/ci.yml) (`tsc --noEmit` + `next build`) |
-| **Route JS Footprint** | **`59.5 kB`** home (`215 kB` FLJS incl. R3F/Motion) · **`1.3 kB`** `/docs` · **`191 B`** `/security`, `/privacy`, `/terms` | Server Components + `next/dynamic` splits (`src/app/page.tsx`) |
-| **WCAG 2.2 AA Contrast Floor** | **`18.01:1`** primary · **`7.26:1`** secondary · **`4.65:1`–`5.29:1`** muted across all 3 dark surfaces | Mathematically verified from [`src/app/globals.css`](src/app/globals.css) |
+| **CI &amp; Strict Type Safety** | **`13/13` routes** · **`0` TS errors** (`strict: true`) · **`0` lint warnings** | [Live GitHub Actions CI](https://github.com/Sparsh-Parwani/spanrail/actions/workflows/ci.yml) (`tsc --noEmit` + `next build`) |
+| **Route JS Footprint** | **`59.9 kB`** home (`216 kB` FLJS incl. R3F/Motion) · **`1.28 kB`** `/docs` · **`192 B`** `/security`, `/privacy`, `/terms` · **`136 B`** `/404`, `/robots.txt`, `/sitemap.xml` | Server Component shells + post-LCP WebGL2/R3F &amp; async `LazyMotion` |
+| **WCAG 2.2 AA &amp; Keyboard Hygiene** | **`18.01:1`** primary · **`7.26:1`** secondary · **`4.65:1`–`5.29:1`** muted · modifier shortcuts (`Alt+M`, `Alt+1/2`, SC 2.1.4) · `scroll-padding-bottom` (SC 2.4.11) | Mathematically verified from [`src/app/globals.css`](src/app/globals.css) &amp; [`PageShellEffects.tsx`](src/components/layout/PageShellEffects.tsx) |
 | **WebGL2 / 3D Frame Hygiene** | **`0` per-frame heap allocs** · **max `1` WebGL context** `< 768px` (`dpr <= 1.25`) · software-WebGL safe (`failIfMajorPerformanceCaveat: true`) | [`GhostFibers.tsx`](src/components/GhostFibers.tsx) · [`NeuralBrain.tsx`](src/components/three/NeuralBrain.tsx) |
-| **Zero-CLS &amp; Real-Device QA** | **`0px` button-swap shift** (`grid-area: 1 / 1`) · **`0px` horizontal overflow** (`390px`–`1920px`) | Verified on **OnePlus 12R** (`~3×` AMOLED), `820×1180` tablet, &amp; `1920×1080` Intel Iris Xe (`chrome://gpu`) |
+| **Zero-CLS &amp; Real-Device QA** | **`0px` button-swap shift** (`grid-area: 1 / 1`) · **`0px` horizontal overflow** (`390px`–`1920px`) · `44px` touch targets on phone &amp; tablet | Verified on **OnePlus 12R** (`~3×` AMOLED), `820×1180` tablet, &amp; `1920×1080` Intel Iris Xe (`chrome://gpu`) |
 
 <details>
 <summary><strong>Proof 1 — Production Build Manifest (<code>Next.js 15.5.29</code>)</strong></summary>
 
 ```text
- ✓ Compiled successfully in 5.2s
+ ✓ Compiled successfully in 5.4s
  ✓ Linting and checking validity of types
  ✓ Collecting page data
- ✓ Generating static pages (11/11)
+ ✓ Generating static pages (13/13)
 
 Route (app)                                 Size  First Load JS
-┌ ○ /                                    59.5 kB         215 kB
-├ ○ /_not-found                            997 B         104 kB
-├ ƒ /api/demo-booking                      128 B         103 kB
-├ ○ /docs                                 1.3 kB         157 kB
+┌ ○ /                                    59.9 kB         216 kB
+├ ○ /_not-found                            136 B         103 kB
+├ ƒ /api/demo-booking                      136 B         103 kB
+├ ○ /docs                                1.28 kB         157 kB
 ├ ○ /icon.svg                                0 B            0 B
-├ ○ /opengraph-image                       128 B         103 kB
-├ ○ /privacy                               191 B         146 kB
-├ ○ /security                              191 B         146 kB
-└ ○ /terms                                 191 B         146 kB
+├ ○ /opengraph-image                       136 B         103 kB
+├ ○ /privacy                               192 B         146 kB
+├ ○ /robots.txt                            136 B         103 kB
+├ ○ /security                              192 B         146 kB
+├ ○ /sitemap.xml                           136 B         103 kB
+└ ○ /terms                                 192 B         146 kB
 + First Load JS shared by all             103 kB
 ```
 
@@ -111,7 +113,7 @@ Route (app)                                 Size  First Load JS
 </table>
 
 - **Perceptual Dark Design System:** Built on a 3-tier token architecture (`#050b0f` deep canvas, `#0c161c` opaque occlusion-friendly surfaces, `#14232b` subtle controls, `rgba(240,245,247,0.09)` 1px hairlines, Ocean `#2ea8d1` brand, Amber `#f2994a` spark) paired with self-hosted `@fontsource-variable/plus-jakarta-sans` and `@fontsource-variable/jetbrains-mono` (`tabular-nums` across all dynamic telemetry).
-- **Product-as-Hero Interaction Coupling:** Above-the-fold `HeroSection` renders at Frame-0 `opacity: 1` (zero splash gate). Toggling **Semantic Cache**, **Inline PII Redaction**, and **Loop Breaker** simultaneously updates deterministic latency (`2,840ms → 780ms`), run cost (`$0.048 → $0.014`), GPU `x` + `scaleX` waterfall bars, JSON payload redaction (`[EXPOSED]` → `[REDACTED_PII]`), Web Audio opt-in tactile cues (`M`), and the 3D `NeuralBrain` vertex/color state.
+- **Product-as-Hero Interaction Coupling:** Above-the-fold `HeroSection` renders at Frame-0 `opacity: 1` (zero splash gate). Toggling **Semantic Cache**, **Inline PII Redaction**, and **Loop Breaker** simultaneously updates deterministic latency (`2,840ms → 780ms`), run cost (`$0.048 → $0.014`), GPU `x` + `scaleX` waterfall bars, JSON payload redaction (`[EXPOSED]` → `[REDACTED_PII]`), Web Audio opt-in tactile cues (`Alt+M`), and the 3D `NeuralBrain` vertex/color state.
 - **Compositor-Only Motion Discipline:** Powered by async `<LazyMotion features={domMax} strict>` (`m.*`). Zero `width`/`left` layout animations, zero `backdrop-filter: blur()` over animating WebGL, zero JS rAF marquees (pure CSS `translate3d(-50%, 0, 0)`), and full `prefers-reduced-motion` support (`frameloop="demand"` rather than `"never"`).
 
 ---
@@ -144,11 +146,11 @@ Rather than squeezing desktop grids onto phones, every interactive surface adapt
 
 | Component / Concern | Phone (`320px–767px` · OnePlus 12R) | Tablet (`768px–1023px` · `820×1180`) | Desktop (`>= 1024px` · `1024–1920px`) |
 |---|---|---|---|
-| **Navigation &amp; Docks** | `56px` bar + backdrop-scrim drawer (`overscroll-contain`); `MobileBottomDock` auto-hides over `#pricing` &amp; `#demo` | Balanced `1fr_auto_1fr` nav (`px-3` links) with zero collision | Centered `1fr_auto_1fr` nav + opt-in Web Audio + `M` / `1` / `2` shortcuts |
+| **Navigation, Docks &amp; Toasts** | `56px` bar + backdrop-scrim drawer (`overscroll-contain`); `MobileBottomDock` auto-hides over `#pricing` &amp; `#demo`; toasts drop `top-center` below `TopNav` | Balanced `1fr_auto_1fr` nav (`px-3` links) + `44px` touch targets via `@media(pointer:fine)` | Centered `1fr_auto_1fr` nav + `bottom-right` toasts + `Alt+M` / `Alt+1/2` modifier shortcuts |
 | **WebGL &amp; 3D Budget** | Max **1 context** (`GhostFibers` skipped `< 768px`), `NeuralBrain` at `dpr <= 1.25` with `128×128` mipmap sprites &amp; `onPointerCancel` | Full dual-layer (`GhostFibers` + `NeuralBrain`, `dpr <= 1.5`) | Full dual-layer native VSync + hardware GPU guard (`failIfMajorPerformanceCaveat: true`) |
 | **Capabilities &amp; Code** | 2×2 all-visible grid + vertical `<Pipeline>` + code-header **0px CLS** `Copy` (`grid-area: 1 / 1`) | 2×2 all-visible grid + horizontal `<Pipeline>` + 0px CLS `Copy` | 5/7 vertical hairline index + spacious interactive showcase stage |
 | **Comparison &amp; Stats** | Vertical stacked metric cards (`PairedBars`) + compact **2×3 tap-to-toggle** `StatsBand` (`@media (hover: hover)` gated) | Full-fit horizontal `PairedBars` ledger + 2×3 `StatsBand` | Full 3-column `PairedBars` ledger + 3×2 `StatsBand` with hover/focus swap |
-| **Typography &amp; Forms** | Modular mobile staircase (`13.5–14px` leads, `12.5px` cards, `11.5–12px` muted AA); `>= 16px` inputs (anti-iOS zoom), `>= 44×44px` tap targets | Mid-tier staircase (`14px` leads, `13px` cards, `12px` helpers) | Full editorial scale (`16–17px` leads, `14.5px` cards, `12.5–13px` helpers) |
+| **Typography &amp; Forms** | Modular mobile staircase (`13.5–14px` leads, `12.5px` cards, `11.5–12px` muted AA); `>= 16px` inputs (anti-iOS zoom), `scroll-padding-bottom: 92px` | Mid-tier staircase (`14px` leads, `13px` cards, `12px` helpers) | Full editorial scale (`16–17px` leads, `14.5px` cards, `12.5–13px` helpers) |
 
 ---
 
@@ -160,8 +162,8 @@ Rather than squeezing desktop grids onto phones, every interactive surface adapt
   <img alt="Spanrail dual-layer WebGL2 and Next.js rendering architecture" src="docs/assets/arch-dark.svg" width="100%" />
 </picture>
 
-- **Deep Engineering Writeup:** Read [`docs/CASE_STUDY.md`](docs/CASE_STUDY.md) for the full architectural trade-offs and real-device debugging log (144Hz native VSync fill-rate budgeting, software-WebGL protection, welded 3D synaptic vertices, CSS Grid `0px` CLS state swaps, inline-style vs. Tailwind specificity fixes, and semantic list accessibility).
-- **Real Multi-Route App:** Ships live Server Component routes for [`/docs`](https://spanrail.vercel.app/docs), [`/security`](https://spanrail.vercel.app/security), [`/privacy`](https://spanrail.vercel.app/privacy), [`/terms`](https://spanrail.vercel.app/terms), dynamic Satori `/opengraph-image`, and [`POST /api/demo-booking`](src/app/api/demo-booking/route.ts) (Zod validation + SHA-256 booking reference + downloadable `spanrail.otel.ts` config).
+- **Deep Engineering Writeup:** Read [`docs/CASE_STUDY.md`](docs/CASE_STUDY.md) for the full architectural trade-offs and real-device debugging log (144Hz native VSync fill-rate budgeting, software-WebGL protection, welded 3D synaptic vertices, CSS Grid `0px` CLS state swaps, inline-style vs. Tailwind specificity fixes, WCAG 2.1.4/2.4.11 audits, and semantic list accessibility).
+- **Production App Router Surface:** Ships live Server Component routes for [`/docs`](https://spanrail.vercel.app/docs), [`/security`](https://spanrail.vercel.app/security), [`/privacy`](https://spanrail.vercel.app/privacy), [`/terms`](https://spanrail.vercel.app/terms), branded dark `not-found.tsx`, `/robots.txt`, `/sitemap.xml`, dynamic Satori `/opengraph-image`, and [`POST /api/demo-booking`](src/app/api/demo-booking/route.ts) (Zod validation + SHA-256 booking reference + downloadable `spanrail.otel.ts` config).
 
 ---
 

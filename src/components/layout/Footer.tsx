@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SpanrailMark } from "@/components/ui/SpanrailMark";
 
-const PORTFOLIO_URL = "https" + "://sparshparwaniportfolio.vercel.app/";
+const PORTFOLIO_URL = "https://sparshparwaniportfolio.vercel.app/";
 
 const FOOTER_COLUMNS = [
   {
@@ -43,38 +43,29 @@ const FOOTER_COLUMNS = [
 
 export function Footer() {
   return (
-    <footer
-      className="border-t pt-12 pb-28 md:pt-20 md:pb-14"
-      style={{ borderColor: "var(--border-whisper)" }}
-    >
+    <footer className="border-t border-[var(--border-whisper)] pt-12 pb-28 md:pt-20 md:pb-14">
       <div className="spanrail-container">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-4">
             <Link
               href="/"
-              className="inline-flex min-h-[44px] items-center gap-2.5 text-[15.5px] font-medium tracking-[-0.02em]"
-              style={{ color: "var(--ink-primary)" }}
+              className="inline-flex min-h-[44px] items-center gap-2.5 text-[15.5px] font-medium tracking-[-0.02em] text-[var(--ink-primary)]"
             >
               <SpanrailMark className="h-[22px] w-[22px] shrink-0" />
               <span translate="no">Spanrail</span>
             </Link>
-            <p
-              className="mt-2 max-w-[30ch] text-[12.5px] leading-[1.55] lg:mt-2.5 lg:text-[13.5px] lg:leading-[1.6]"
-              style={{ color: "var(--ink-muted)" }}
-            >
+            <p className="mt-2 max-w-[30ch] text-[12.5px] leading-[1.55] text-[var(--ink-muted)] lg:mt-2.5 lg:text-[13.5px] lg:leading-[1.6]">
               Real-time trace observability and inline safety switches for
               production AI agents.
             </p>
 
             <Link
               href="/security"
-              className="mt-4 inline-flex min-h-[36px] items-center gap-2 text-[12px] lg:text-[12.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
-              style={{ color: "var(--ink-secondary)" }}
+              className="mt-4 inline-flex min-h-[44px] items-center gap-2 text-[12px] text-[var(--ink-secondary)] transition-colors duration-200 [@media(pointer:fine)]:min-h-0 lg:text-[12.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
             >
               <span
                 aria-hidden="true"
-                className="h-1.5 w-1.5 shrink-0 rounded-full"
-                style={{ backgroundColor: "var(--status-pass-dot)" }}
+                className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--status-pass-dot)]"
               />
               <span>Multi-region OTLP architecture</span>
             </Link>
@@ -83,22 +74,15 @@ export function Footer() {
           <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4 md:col-span-8">
             {FOOTER_COLUMNS.map((col) => (
               <div key={col.title}>
-                <h3
-                  className="text-[13px] font-medium"
-                  style={{ color: "var(--ink-primary)" }}
-                >
+                <h3 className="text-[13px] font-medium text-[var(--ink-primary)]">
                   {col.title}
                 </h3>
-                <ul className="mt-3 space-y-1 sm:mt-3.5 sm:space-y-2.5">
+                <ul className="mt-3 space-y-0.5 [@media(pointer:fine)]:space-y-2.5 sm:mt-3.5">
                   {col.links.map((item) => (
                     <li key={item.label}>
                       <Link
                         href={item.href}
-                        className="inline-flex min-h-[36px] items-center text-[12.5px] sm:min-h-0 lg:text-[13px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
-                        style={{
-                          color: "var(--ink-secondary)",
-                          transition: "color 180ms var(--ease-enter)",
-                        }}
+                        className="inline-flex min-h-[44px] items-center text-[12.5px] text-[var(--ink-secondary)] transition-colors duration-200 [@media(pointer:fine)]:min-h-0 lg:text-[13px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
                       >
                         {item.label}
                       </Link>
@@ -110,16 +94,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div
-          className="mt-12 flex flex-col items-start justify-between gap-3 border-t pt-6 text-[12px] sm:mt-14 sm:flex-row sm:items-center lg:text-[12.5px]"
-          style={{
-            borderColor: "var(--border-whisper)",
-            color: "var(--ink-muted)",
-          }}
-        >
+        <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-[var(--border-whisper)] pt-6 text-[12px] text-[var(--ink-muted)] sm:mt-14 sm:flex-row sm:items-center lg:text-[12.5px]">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <p>© 2026 Spanrail Inc. All rights reserved.</p>
-            <span aria-hidden="true" style={{ opacity: 0.4 }}>
+            <span aria-hidden="true" className="opacity-40">
               ·
             </span>
             <p>
@@ -128,18 +106,14 @@ export function Footer() {
                 href={PORTFOLIO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium underline-offset-4 [@media(hover:hover)]:hover:underline"
-                style={{
-                  color: "var(--accent-brand-text)",
-                  transition: "color 180ms var(--ease-enter)",
-                }}
+                className="font-medium text-[var(--accent-brand-text)] underline-offset-4 transition-colors duration-200 [@media(hover:hover)]:hover:underline"
               >
                 Sparsh Parwani
               </a>
             </p>
           </div>
-          <p className="hidden tabular-telemetry text-[12px] lg:block">
-            Shortcuts: M sound · 1 / 2 trace scenario
+          <p className="tabular-telemetry hidden text-[11.5px] text-[var(--ink-muted)] lg:block">
+            OpenTelemetry OTLP/HTTP + Protobuf
           </p>
         </div>
       </div>

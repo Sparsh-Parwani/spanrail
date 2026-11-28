@@ -154,10 +154,7 @@ export function PricingCalculator() {
               <h2 id="pricing-heading" className="display-h2">
                 Simple usage pricing. Zero surprise overages.
               </h2>
-              <p
-                className="mt-2.5 max-w-[46ch] text-[13.5px] leading-[1.6] md:text-[14px] lg:mt-3 lg:max-w-[48ch] lg:text-[17px] lg:leading-[1.65]"
-                style={{ color: "var(--ink-secondary)" }}
-              >
+              <p className="mt-2.5 max-w-[46ch] text-[13.5px] leading-[1.6] text-[var(--ink-secondary)] md:text-[14px] lg:mt-3 lg:max-w-[48ch] lg:text-[17px] lg:leading-[1.65]">
                 Metered strictly on traces and automated evals. Adjust volume
                 below to preview exact monthly spend.
               </p>
@@ -185,39 +182,23 @@ export function PricingCalculator() {
 
           {/* Mobile Sticky Live Estimate Pill */}
           <div
-            className="sticky top-[62px] z-20 mt-6 mb-4 flex items-center justify-between gap-3 rounded-2xl border px-3.5 py-2.5 md:hidden"
-            style={{
-              backgroundColor: "var(--bg-nav-glass)",
-              borderColor: "var(--border-whisper)",
-              boxShadow: "var(--shadow-card)",
-            }}
+            className="sticky top-[62px] z-20 mt-6 mb-4 flex items-center justify-between gap-3 rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-nav-glass)] px-3.5 py-2.5 md:hidden"
+            style={{ boxShadow: "var(--shadow-card)" }}
           >
             <div className="min-w-0">
-              <span
-                className="block truncate text-[11px] font-medium"
-                style={{ color: "var(--ink-muted)" }}
-              >
+              <span className="block truncate text-[11px] font-medium text-[var(--ink-muted)]">
                 {breakdown.tracesLabel} traces · {breakdown.retentionDays}d ·{" "}
                 {breakdown.seats} seats
               </span>
-              <span
-                className="block truncate text-[11.5px]"
-                style={{ color: "var(--status-pass-text)" }}
-              >
+              <span className="block truncate text-[11.5px] text-[var(--status-pass-text)]">
                 Save {formatUsd(breakdown.monthlySavingsVsLegacyUsd)}/mo vs list APM
               </span>
             </div>
             <div className="tabular-telemetry shrink-0 text-right">
-              <span
-                className="text-[21px] font-medium"
-                style={{ color: "var(--ink-primary)" }}
-              >
+              <span className="text-[21px] font-medium text-[var(--ink-primary)]">
                 {formatUsd(displayTotal)}
               </span>
-              <span
-                className="text-[11.5px]"
-                style={{ color: "var(--ink-secondary)" }}
-              >
+              <span className="text-[11.5px] text-[var(--ink-secondary)]">
                 /mo
               </span>
             </div>
@@ -226,34 +207,23 @@ export function PricingCalculator() {
           <div className="mt-5 grid grid-cols-1 items-stretch gap-5 md:mt-10 md:grid-cols-12 md:gap-6 lg:gap-8">
             {/* Controls Column */}
             <div
-              className="surface-fade flex flex-col justify-between space-y-7 rounded-2xl border p-4 sm:rounded-3xl sm:p-6 md:col-span-7 md:space-y-8 md:p-8"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-whisper)",
-                boxShadow: "var(--shadow-card)",
-              }}
+              className="surface-fade flex flex-col justify-between space-y-7 rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] p-4 sm:rounded-3xl sm:p-6 md:col-span-7 md:space-y-8 md:p-8"
+              style={{ boxShadow: "var(--shadow-card)" }}
             >
               {/* Traces Slider */}
               <div>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <span
                     id="label-traces"
-                    className="text-[15px] font-medium"
-                    style={{ color: "var(--ink-primary)" }}
+                    className="text-[15px] font-medium text-[var(--ink-primary)]"
                   >
                     Monthly agent traces
                   </span>
-                  <span
-                    className="tabular-telemetry text-[15.5px] font-medium lg:text-[16px]"
-                    style={{ color: "var(--accent-brand-text)" }}
-                  >
+                  <span className="tabular-telemetry text-[15.5px] font-medium text-[var(--accent-brand-text)] lg:text-[16px]">
                     {breakdown.tracesLabel} / mo
                   </span>
                 </div>
-                <p
-                  className="mt-1 text-[12px] leading-[1.45] lg:text-[13px] lg:leading-[1.5]"
-                  style={{ color: "var(--ink-muted)" }}
-                >
+                <p className="mt-1 text-[12px] leading-[1.45] text-[var(--ink-muted)] lg:text-[13px] lg:leading-[1.5]">
                   First {(INCLUDED_TRACES / 1000).toFixed(0)}k traces included.
                   $0.18 per 10k up to 10M, then $0.12 per 10k.
                 </p>
@@ -274,10 +244,7 @@ export function PricingCalculator() {
                       }
                     }}
                   />
-                  <div
-                    className="tabular-telemetry mt-1 flex items-center justify-between text-[11px] lg:text-[11.5px]"
-                    style={{ color: "var(--ink-secondary)" }}
-                  >
+                  <div className="tabular-telemetry mt-1 flex items-center justify-between text-[11px] lg:text-[11.5px]">
                     {TRACE_TIERS.map((tier, idx) => (
                       <button
                         key={tier.label}
@@ -287,18 +254,15 @@ export function PricingCalculator() {
                           setTraceTierIndex(idx);
                           playSliderTick();
                         }}
-                        className={`min-h-[32px] cursor-pointer rounded px-1.5 py-1 [@media(hover:hover)]:hover:text-[var(--ink-primary)] ${
+                        className={`min-h-[32px] cursor-pointer rounded px-1.5 py-1 transition-colors duration-150 [@media(hover:hover)]:hover:text-[var(--ink-primary)] ${
                           idx % 2 === 1 && idx !== TRACE_TIERS.length - 1
                             ? "hidden sm:inline-flex sm:items-center"
                             : "inline-flex items-center"
+                        } ${
+                          idx === traceTierIndex
+                            ? "font-medium text-[var(--ink-primary)]"
+                            : "font-normal text-[var(--ink-muted)]"
                         }`}
-                        style={{
-                          color:
-                            idx === traceTierIndex
-                              ? "var(--ink-primary)"
-                              : "var(--ink-muted)",
-                          fontWeight: idx === traceTierIndex ? 500 : 400,
-                        }}
                       >
                         {tier.label}
                       </button>
@@ -307,29 +271,22 @@ export function PricingCalculator() {
                 </div>
               </div>
 
-              <hr style={{ borderColor: "var(--border-whisper)" }} />
+              <hr className="border-[var(--border-whisper)]" />
 
               {/* Evals Slider */}
               <div>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <span
                     id="label-evals"
-                    className="text-[15px] font-medium"
-                    style={{ color: "var(--ink-primary)" }}
+                    className="text-[15px] font-medium text-[var(--ink-primary)]"
                   >
                     Automated eval runs
                   </span>
-                  <span
-                    className="tabular-telemetry text-[15.5px] font-medium lg:text-[16px]"
-                    style={{ color: "var(--accent-brand-text)" }}
-                  >
+                  <span className="tabular-telemetry text-[15.5px] font-medium text-[var(--accent-brand-text)] lg:text-[16px]">
                     {breakdown.evalsLabel} / mo
                   </span>
                 </div>
-                <p
-                  className="mt-1 text-[12px] leading-[1.45] lg:text-[13px] lg:leading-[1.5]"
-                  style={{ color: "var(--ink-muted)" }}
-                >
+                <p className="mt-1 text-[12px] leading-[1.45] text-[var(--ink-muted)] lg:text-[13px] lg:leading-[1.5]">
                   First {(INCLUDED_EVALS / 1000).toFixed(0)}k evals included.
                   $0.40 per 10k additional online or CI eval runs.
                 </p>
@@ -350,10 +307,7 @@ export function PricingCalculator() {
                       }
                     }}
                   />
-                  <div
-                    className="tabular-telemetry mt-1 flex items-center justify-between text-[11px] lg:text-[11.5px]"
-                    style={{ color: "var(--ink-secondary)" }}
-                  >
+                  <div className="tabular-telemetry mt-1 flex items-center justify-between text-[11px] lg:text-[11.5px]">
                     {EVAL_TIERS.map((tier, idx) => (
                       <button
                         key={tier.label}
@@ -363,14 +317,11 @@ export function PricingCalculator() {
                           setEvalTierIndex(idx);
                           playSliderTick();
                         }}
-                        className="inline-flex min-h-[32px] cursor-pointer items-center rounded px-1.5 py-1 [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
-                        style={{
-                          color:
-                            idx === evalTierIndex
-                              ? "var(--ink-primary)"
-                              : "var(--ink-muted)",
-                          fontWeight: idx === evalTierIndex ? 500 : 400,
-                        }}
+                        className={`inline-flex min-h-[32px] cursor-pointer items-center rounded px-1.5 py-1 transition-colors duration-150 [@media(hover:hover)]:hover:text-[var(--ink-primary)] ${
+                          idx === evalTierIndex
+                            ? "font-medium text-[var(--ink-primary)]"
+                            : "font-normal text-[var(--ink-muted)]"
+                        }`}
                       >
                         {tier.label}
                       </button>
@@ -379,21 +330,15 @@ export function PricingCalculator() {
                 </div>
               </div>
 
-              <hr style={{ borderColor: "var(--border-whisper)" }} />
+              <hr className="border-[var(--border-whisper)]" />
 
               {/* Retention Selector */}
               <div>
                 <div className="mb-3 flex flex-wrap items-baseline justify-between gap-1.5">
-                  <span
-                    className="text-[15px] font-medium"
-                    style={{ color: "var(--ink-primary)" }}
-                  >
+                  <span className="text-[15px] font-medium text-[var(--ink-primary)]">
                     Trace retention
                   </span>
-                  <span
-                    className="text-[12px] lg:text-[13px]"
-                    style={{ color: "var(--ink-muted)" }}
-                  >
+                  <span className="text-[12px] text-[var(--ink-muted)] lg:text-[13px]">
                     Applied to trace storage subtotal
                   </span>
                 </div>
@@ -418,21 +363,15 @@ export function PricingCalculator() {
                 />
               </div>
 
-              <hr style={{ borderColor: "var(--border-whisper)" }} />
+              <hr className="border-[var(--border-whisper)]" />
 
-              {/* Team Seats Stepper: Mobile track -> clean transparent inline stepper on >=640px */}
+              {/* Team Seats Stepper */}
               <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div>
-                  <span
-                    className="block text-[15px] font-medium"
-                    style={{ color: "var(--ink-primary)" }}
-                  >
+                  <span className="block text-[15px] font-medium text-[var(--ink-primary)]">
                     Team seats
                   </span>
-                  <span
-                    className="mt-0.5 block text-[12px] lg:text-[13px]"
-                    style={{ color: "var(--ink-muted)" }}
-                  >
+                  <span className="mt-0.5 block text-[12px] text-[var(--ink-muted)] lg:text-[13px]">
                     First {INCLUDED_SEATS} seats included · $
                     {PRICE_PER_EXTRA_SEAT}/seat above {INCLUDED_SEATS}
                   </span>
@@ -455,14 +394,10 @@ export function PricingCalculator() {
 
                   <span
                     aria-live="polite"
-                    className="tabular-telemetry min-w-[36px] text-center text-[16px] font-medium"
-                    style={{ color: "var(--ink-primary)" }}
+                    className="tabular-telemetry min-w-[36px] text-center text-[16px] font-medium text-[var(--ink-primary)]"
                   >
                     {seats}
-                    <span
-                      className="ml-1.5 text-[12px] font-normal sm:hidden"
-                      style={{ color: "var(--ink-secondary)" }}
-                    >
+                    <span className="ml-1.5 text-[12px] font-normal text-[var(--ink-secondary)] sm:hidden">
                       {seats === 1 ? "seat" : "seats"}
                     </span>
                   </span>
@@ -487,80 +422,49 @@ export function PricingCalculator() {
             {/* Summary Column */}
             <div className="flex flex-col md:col-span-5">
               <div
-                className="surface-fade flex flex-1 flex-col justify-between rounded-2xl border p-5 sm:rounded-3xl sm:p-6 md:p-8"
-                style={{
-                  backgroundColor: "var(--bg-surface)",
-                  borderColor: "var(--border-whisper)",
-                  boxShadow: "var(--shadow-stage)",
-                }}
+                className="surface-fade flex flex-1 flex-col justify-between rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] p-5 sm:rounded-3xl sm:p-6 md:p-8"
+                style={{ boxShadow: "var(--shadow-stage)" }}
               >
                 <div>
                   <div className="flex items-center justify-between gap-2">
-                    <span
-                      className="text-[12.5px] font-medium lg:text-[13.5px]"
-                      style={{ color: "var(--ink-secondary)" }}
-                    >
+                    <span className="text-[12.5px] font-medium text-[var(--ink-secondary)] lg:text-[13.5px]">
                       Estimated monthly total
                     </span>
-                    <span
-                      className="shrink-0 rounded-full px-2.5 py-0.5 text-[11.5px] font-medium lg:text-[12px]"
-                      style={{
-                        backgroundColor: "var(--accent-spark-soft)",
-                        color: "var(--accent-spark-text)",
-                      }}
-                    >
+                    <span className="shrink-0 rounded-full bg-[var(--accent-spark-soft)] px-2.5 py-0.5 text-[11.5px] font-medium text-[var(--accent-spark-text)] lg:text-[12px]">
                       {billingCycle === "annual" ? "Billed annually" : "Monthly"}
                     </span>
                   </div>
 
                   <div className="mt-3 flex items-baseline gap-1.5">
-                    <span
-                      className="tabular-telemetry text-[2.75rem] leading-none font-medium tracking-[-0.035em] md:text-[3.25rem]"
-                      style={{ color: "var(--ink-primary)" }}
-                    >
+                    <span className="tabular-telemetry text-[2.75rem] leading-none font-medium tracking-[-0.035em] text-[var(--ink-primary)] md:text-[3.25rem]">
                       {formatUsd(displayTotal)}
                     </span>
-                    <span
-                      className="text-[14px] lg:text-[15px]"
-                      style={{ color: "var(--ink-secondary)" }}
-                    >
+                    <span className="text-[14px] text-[var(--ink-secondary)] lg:text-[15px]">
                       /mo
                     </span>
                   </div>
 
-                  <p
-                    className="mt-2 min-h-[18px] text-[12px] lg:text-[13px]"
-                    style={{ color: "var(--ink-muted)" }}
-                  >
+                  <p className="mt-2 min-h-[18px] text-[12px] text-[var(--ink-muted)] lg:text-[13px]">
                     {billingCycle === "annual"
                       ? `Saves ${formatUsd(breakdown.annualSavingsPerYearUsd)}/yr with annual billing`
                       : "Switch to annual billing to save 20%"}
                   </p>
 
-                  <dl
-                    className="mt-5 space-y-2.5 border-t pt-4 text-[12.5px] lg:mt-6 lg:space-y-3 lg:pt-5 lg:text-[13.5px]"
-                    style={{ borderColor: "var(--border-whisper)" }}
-                  >
+                  <dl className="mt-5 space-y-2.5 border-t border-[var(--border-whisper)] pt-4 text-[12.5px] lg:mt-6 lg:space-y-3 lg:pt-5 lg:text-[13.5px]">
                     <div className="flex items-baseline justify-between gap-3">
-                      <dt style={{ color: "var(--ink-secondary)" }}>
+                      <dt className="text-[var(--ink-secondary)]">
                         Platform base
                       </dt>
-                      <dd
-                        className="tabular-telemetry font-medium"
-                        style={{ color: "var(--ink-primary)" }}
-                      >
+                      <dd className="tabular-telemetry font-medium text-[var(--ink-primary)]">
                         {formatUsd(breakdown.platformBaseUsd)}
                       </dd>
                     </div>
 
                     <div className="flex items-baseline justify-between gap-3">
-                      <dt style={{ color: "var(--ink-secondary)" }}>
+                      <dt className="text-[var(--ink-secondary)]">
                         Traces ({breakdown.tracesLabel})
                       </dt>
-                      <dd
-                        className="tabular-telemetry font-medium"
-                        style={{ color: "var(--ink-primary)" }}
-                      >
+                      <dd className="tabular-telemetry font-medium text-[var(--ink-primary)]">
                         {breakdown.tracesBaseUsd === 0
                           ? "Included"
                           : formatUsd(breakdown.tracesBaseUsd)}
@@ -568,13 +472,10 @@ export function PricingCalculator() {
                     </div>
 
                     <div className="flex items-baseline justify-between gap-3">
-                      <dt style={{ color: "var(--ink-secondary)" }}>
+                      <dt className="text-[var(--ink-secondary)]">
                         Evaluations ({breakdown.evalsLabel})
                       </dt>
-                      <dd
-                        className="tabular-telemetry font-medium"
-                        style={{ color: "var(--ink-primary)" }}
-                      >
+                      <dd className="tabular-telemetry font-medium text-[var(--ink-primary)]">
                         {breakdown.evalsUsd === 0
                           ? "Included"
                           : formatUsd(breakdown.evalsUsd)}
@@ -582,14 +483,11 @@ export function PricingCalculator() {
                     </div>
 
                     <div className="flex items-baseline justify-between gap-3">
-                      <dt style={{ color: "var(--ink-secondary)" }}>
+                      <dt className="text-[var(--ink-secondary)]">
                         Seats &amp; retention ({breakdown.seats} ·{" "}
                         {breakdown.retentionDays}d)
                       </dt>
-                      <dd
-                        className="tabular-telemetry font-medium"
-                        style={{ color: "var(--ink-primary)" }}
-                      >
+                      <dd className="tabular-telemetry font-medium text-[var(--ink-primary)]">
                         {breakdown.seatsAndRetentionUsd === 0
                           ? "Included"
                           : formatUsd(breakdown.seatsAndRetentionUsd)}
@@ -597,17 +495,11 @@ export function PricingCalculator() {
                     </div>
 
                     {billingCycle === "annual" && (
-                      <div
-                        className="flex items-baseline justify-between gap-3 border-t pt-2.5 lg:pt-3"
-                        style={{ borderColor: "var(--border-whisper)" }}
-                      >
-                        <dt style={{ color: "var(--status-pass-text)" }}>
+                      <div className="flex items-baseline justify-between gap-3 border-t border-[var(--border-whisper)] pt-2.5 lg:pt-3">
+                        <dt className="text-[var(--status-pass-text)]">
                           Annual discount (-20%)
                         </dt>
-                        <dd
-                          className="tabular-telemetry font-medium"
-                          style={{ color: "var(--status-pass-text)" }}
-                        >
+                        <dd className="tabular-telemetry font-medium text-[var(--status-pass-text)]">
                           -
                           {formatUsd(
                             breakdown.monthlyUndiscountedUsd -
@@ -620,17 +512,10 @@ export function PricingCalculator() {
                 </div>
 
                 <div className="mt-6">
-                  <div
-                    className="flex items-start gap-2.5 rounded-xl p-3.5 text-[12px] leading-[1.5] lg:text-[12.5px]"
-                    style={{
-                      backgroundColor: "var(--status-pass-soft)",
-                      color: "var(--status-pass-text)",
-                    }}
-                  >
+                  <div className="flex items-start gap-2.5 rounded-xl bg-[var(--status-pass-soft)] p-3.5 text-[12px] leading-[1.5] text-[var(--status-pass-text)] lg:text-[12.5px]">
                     <span
                       aria-hidden="true"
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
-                      style={{ backgroundColor: "var(--status-pass-dot)" }}
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--status-pass-dot)]"
                     />
                     <span>
                       Est.{" "}
@@ -645,11 +530,7 @@ export function PricingCalculator() {
                   <div className="mt-5 flex flex-col gap-2.5">
                     <a
                       href="#demo"
-                      className="btn-tactile flex min-h-[48px] w-full items-center justify-center rounded-full px-5 text-center text-[14.5px] font-medium [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
-                      style={{
-                        backgroundColor: "var(--btn-primary-bg)",
-                        color: "var(--btn-primary-ink)",
-                      }}
+                      className="btn-tactile flex min-h-[48px] w-full items-center justify-center rounded-full bg-[var(--btn-primary-bg)] px-5 text-center text-[14.5px] font-medium text-[var(--btn-primary-ink)] [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
                     >
                       Configure sandbox &amp; book briefing
                     </a>
@@ -657,8 +538,10 @@ export function PricingCalculator() {
                     <button
                       type="button"
                       onClick={() => void handleCopyEstimateLink()}
-                      className="btn-tactile inline-grid min-h-[44px] w-full cursor-pointer items-center justify-items-center rounded-full text-[12.5px] font-medium lg:text-[13px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
-                      style={{ color: "var(--ink-secondary)" }}
+                      aria-label={
+                        copiedUrl ? "Estimate link copied" : "Copy estimate link"
+                      }
+                      className="btn-tactile inline-grid min-h-[44px] w-full cursor-pointer items-center justify-items-center rounded-full text-[12.5px] font-medium text-[var(--ink-secondary)] lg:text-[13px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
                     >
                       <span
                         aria-hidden={copiedUrl}
@@ -671,15 +554,17 @@ export function PricingCalculator() {
                       </span>
                       <span
                         aria-hidden={!copiedUrl}
-                        className={`col-start-1 row-start-1 inline-flex items-center gap-1.5 transition-opacity duration-150 ${
+                        className={`col-start-1 row-start-1 inline-flex items-center gap-1.5 text-[var(--status-pass-text)] transition-opacity duration-150 ${
                           copiedUrl ? "opacity-100" : "opacity-0"
                         }`}
-                        style={{ color: "var(--status-pass-text)" }}
                       >
                         <Check className="h-3.5 w-3.5 shrink-0" />
                         <span>Estimate link copied</span>
                       </span>
                     </button>
+                    <span className="sr-only" aria-live="polite">
+                      {copiedUrl ? "Estimate link copied to clipboard." : ""}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -688,24 +573,14 @@ export function PricingCalculator() {
 
           {/* Enterprise / VPC Bar */}
           <div
-            className="surface-fade mt-5 flex flex-col items-start justify-between gap-5 rounded-2xl border px-5 py-5 sm:mt-6 sm:rounded-3xl sm:px-6 sm:py-6 md:flex-row md:items-center md:gap-6 md:px-8 md:py-7"
-            style={{
-              backgroundColor: "var(--bg-surface)",
-              borderColor: "var(--border-whisper)",
-              boxShadow: "var(--shadow-card)",
-            }}
+            className="surface-fade mt-5 flex flex-col items-start justify-between gap-5 rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] px-5 py-5 sm:mt-6 sm:rounded-3xl sm:px-6 sm:py-6 md:flex-row md:items-center md:gap-6 md:px-8 md:py-7"
+            style={{ boxShadow: "var(--shadow-card)" }}
           >
             <div className="max-w-[660px]">
-              <h3
-                className="text-[16px] font-medium tracking-[-0.015em] lg:text-[17px]"
-                style={{ color: "var(--ink-primary)" }}
-              >
+              <h3 className="text-[16px] font-medium tracking-[-0.015em] text-[var(--ink-primary)] lg:text-[17px]">
                 50M+ traces or VPC deployment?
               </h3>
-              <p
-                className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:mt-1.5 lg:text-[14.5px] lg:leading-[1.6]"
-                style={{ color: "var(--ink-secondary)" }}
-              >
+              <p className="mt-1 text-[12.5px] leading-[1.55] text-[var(--ink-secondary)] md:text-[13px] lg:mt-1.5 lg:text-[14.5px] lg:leading-[1.6]">
                 Dedicated cluster, HIPAA BAA, custom retention windows, and a
                 direct Slack channel with our systems team.
               </p>
@@ -713,19 +588,13 @@ export function PricingCalculator() {
 
             <Link
               href="/security"
-              className="btn-tactile group inline-flex min-h-[46px] w-full shrink-0 items-center justify-center gap-2 rounded-full border px-5 text-[14px] font-medium sm:w-auto [@media(hover:hover)]:hover:border-[var(--border-hover)]"
-              style={{
-                backgroundColor: "var(--bg-surface-solid)",
-                borderColor: "var(--border-whisper)",
-                color: "var(--ink-primary)",
-              }}
+              className="btn-tactile group inline-flex min-h-[46px] w-full shrink-0 items-center justify-center gap-2 rounded-full border border-[var(--border-whisper)] bg-[var(--bg-surface-solid)] px-5 text-[14px] font-medium text-[var(--ink-primary)] sm:w-auto [@media(hover:hover)]:hover:border-[var(--border-hover)]"
             >
               <span>Security &amp; VPC specs</span>
               <ArrowRight
                 aria-hidden="true"
-                className="h-4 w-4 shrink-0 transition-transform duration-200 [@media(hover:hover)]:group-hover:translate-x-0.5"
+                className="h-4 w-4 shrink-0 text-[var(--accent-spark)] transition-transform duration-200 [@media(hover:hover)]:group-hover:translate-x-0.5"
                 strokeWidth={1.85}
-                style={{ color: "var(--accent-spark)" }}
               />
             </Link>
           </div>

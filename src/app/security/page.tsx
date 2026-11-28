@@ -54,8 +54,7 @@ export default function SecurityPage() {
         <div className="spanrail-container max-w-[820px]">
           <Link
             href="/"
-            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-medium lg:text-[13.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
-            style={{ color: "var(--ink-secondary)" }}
+            className="inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-medium text-[var(--ink-secondary)] transition-colors duration-200 lg:text-[13.5px] [@media(hover:hover)]:hover:text-[var(--ink-primary)]"
           >
             <ArrowLeft className="h-4 w-4 shrink-0" />
             <span>Back to Spanrail</span>
@@ -64,52 +63,31 @@ export default function SecurityPage() {
           <h1 className="display-h2 mt-3">
             Designed for regulated production agents.
           </h1>
-          <p
-            className="mt-2.5 max-w-[54ch] text-[13.5px] leading-[1.6] md:text-[14px] lg:mt-3 lg:max-w-[58ch] lg:text-[16px] lg:leading-[1.65]"
-            style={{ color: "var(--ink-secondary)" }}
-          >
+          <p className="mt-2.5 max-w-[54ch] text-[13.5px] leading-[1.6] text-[var(--ink-secondary)] md:text-[14px] lg:mt-3 lg:max-w-[58ch] lg:text-[16px] lg:leading-[1.65]">
             Spanrail masks sensitive fields before span payloads reach storage,
             supports EU, US, and APAC data residency, and deploys inside private
             customer VPCs.
           </p>
 
-          <dl
-            className="mt-7 grid grid-cols-1 divide-y divide-[var(--border-whisper)] overflow-hidden rounded-2xl border sm:grid-cols-3 sm:divide-x sm:divide-y-0"
-            style={{
-              backgroundColor: "var(--bg-surface)",
-              borderColor: "var(--border-whisper)",
-            }}
-          >
+          <dl className="mt-7 grid grid-cols-1 divide-y divide-[var(--border-whisper)] overflow-hidden rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             {SECURITY_METRICS.map((item) => (
               <div
                 key={item.label}
                 className="flex items-center justify-between gap-3 px-4 py-3.5 sm:flex-col sm:items-start sm:justify-start sm:p-5"
               >
                 <div>
-                  <dt
-                    className="text-[12px] font-medium"
-                    style={{ color: "var(--ink-secondary)" }}
-                  >
+                  <dt className="text-[12px] font-medium text-[var(--ink-secondary)]">
                     {item.label}
                   </dt>
-                  <p
-                    className="mt-0.5 text-[11px] sm:hidden"
-                    style={{ color: "var(--ink-muted)" }}
-                  >
+                  <p className="mt-0.5 text-[11px] text-[var(--ink-muted)] sm:hidden">
                     {item.sub}
                   </p>
                 </div>
                 <div className="text-right sm:mt-2 sm:text-left">
-                  <dd
-                    className="tabular-telemetry text-[20px] font-medium sm:text-[24px]"
-                    style={{ color: "var(--ink-primary)" }}
-                  >
+                  <dd className="tabular-telemetry text-[20px] font-medium text-[var(--ink-primary)] sm:text-[24px]">
                     {item.value}
                   </dd>
-                  <p
-                    className="mt-1 hidden text-[11.5px] lg:text-[12px] sm:block"
-                    style={{ color: "var(--ink-muted)" }}
-                  >
+                  <p className="mt-1 hidden text-[11.5px] text-[var(--ink-muted)] sm:block lg:text-[12px]">
                     {item.sub}
                   </p>
                 </div>
@@ -120,16 +98,9 @@ export default function SecurityPage() {
           <div className="mt-7 space-y-5 sm:mt-9 sm:space-y-6">
             <section
               id="pii"
-              className="scroll-mt-24 rounded-2xl border p-5 sm:rounded-3xl sm:p-7 md:p-8"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-whisper)",
-              }}
+              className="scroll-mt-24 rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] p-5 sm:rounded-3xl sm:p-7 md:p-8"
             >
-              <h2
-                className="text-[17.5px] font-medium tracking-[-0.015em] lg:text-[19px]"
-                style={{ color: "var(--ink-primary)" }}
-              >
+              <h2 className="text-[17.5px] font-medium tracking-[-0.015em] text-[var(--ink-primary)] lg:text-[19px]">
                 Inline edge PII redaction (&lt; 6ms p99)
               </h2>
               <dl className="mt-4 divide-y divide-[var(--border-whisper)]">
@@ -138,16 +109,10 @@ export default function SecurityPage() {
                     key={item.name}
                     className="py-3.5 first:pt-1 last:pb-0"
                   >
-                    <dt
-                      className="text-[14px] font-medium"
-                      style={{ color: "var(--ink-primary)" }}
-                    >
+                    <dt className="text-[14px] font-medium text-[var(--ink-primary)]">
                       {item.name}
                     </dt>
-                    <dd
-                      className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:text-[14px] lg:leading-[1.6]"
-                      style={{ color: "var(--ink-secondary)" }}
-                    >
+                    <dd className="mt-1 text-[12.5px] leading-[1.55] text-[var(--ink-secondary)] md:text-[13px] lg:text-[14px] lg:leading-[1.6]">
                       {item.detail}
                     </dd>
                   </div>
@@ -157,16 +122,9 @@ export default function SecurityPage() {
 
             <section
               id="vpc"
-              className="scroll-mt-24 rounded-2xl border p-5 sm:rounded-3xl sm:p-7 md:p-8"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-whisper)",
-              }}
+              className="scroll-mt-24 rounded-2xl border border-[var(--border-whisper)] bg-[var(--bg-surface)] p-5 sm:rounded-3xl sm:p-7 md:p-8"
             >
-              <h2
-                className="text-[17.5px] font-medium tracking-[-0.015em] lg:text-[19px]"
-                style={{ color: "var(--ink-primary)" }}
-              >
+              <h2 className="text-[17.5px] font-medium tracking-[-0.015em] text-[var(--ink-primary)] lg:text-[19px]">
                 Dedicated VPC, GDPR, and HIPAA BAA
               </h2>
               <dl className="mt-4 divide-y divide-[var(--border-whisper)]">
@@ -175,16 +133,10 @@ export default function SecurityPage() {
                     key={item.name}
                     className="py-3.5 first:pt-1 last:pb-0"
                   >
-                    <dt
-                      className="text-[14px] font-medium"
-                      style={{ color: "var(--ink-primary)" }}
-                    >
+                    <dt className="text-[14px] font-medium text-[var(--ink-primary)]">
                       {item.name}
                     </dt>
-                    <dd
-                      className="mt-1 text-[12.5px] leading-[1.55] md:text-[13px] lg:text-[14px] lg:leading-[1.6]"
-                      style={{ color: "var(--ink-secondary)" }}
-                    >
+                    <dd className="mt-1 text-[12.5px] leading-[1.55] text-[var(--ink-secondary)] md:text-[13px] lg:text-[14px] lg:leading-[1.6]">
                       {item.detail}
                     </dd>
                   </div>
@@ -194,22 +146,13 @@ export default function SecurityPage() {
               <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3">
                 <Link
                   href="/#demo"
-                  className="btn-tactile flex min-h-[46px] w-full items-center justify-center rounded-full px-5 text-[14px] font-medium sm:w-auto [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
-                  style={{
-                    backgroundColor: "var(--btn-primary-bg)",
-                    color: "var(--btn-primary-ink)",
-                  }}
+                  className="btn-tactile flex min-h-[46px] w-full items-center justify-center rounded-full bg-[var(--btn-primary-bg)] px-5 text-[14px] font-medium text-[var(--btn-primary-ink)] sm:w-auto [@media(hover:hover)]:hover:bg-[var(--btn-primary-bg-hover)]"
                 >
                   Request security packet and VPC review
                 </Link>
                 <Link
                   href="/docs"
-                  className="btn-tactile flex min-h-[46px] w-full items-center justify-center rounded-full border px-5 text-[14px] font-medium sm:w-auto [@media(hover:hover)]:hover:border-[var(--border-hover)]"
-                  style={{
-                    backgroundColor: "var(--bg-surface-solid)",
-                    borderColor: "var(--border-whisper)",
-                    color: "var(--ink-primary)",
-                  }}
+                  className="btn-tactile flex min-h-[46px] w-full items-center justify-center rounded-full border border-[var(--border-whisper)] bg-[var(--bg-surface-solid)] px-5 text-[14px] font-medium text-[var(--ink-primary)] sm:w-auto [@media(hover:hover)]:hover:border-[var(--border-hover)]"
                 >
                   Inspect OTLP docs
                 </Link>

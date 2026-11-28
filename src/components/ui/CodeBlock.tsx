@@ -39,21 +39,11 @@ export function CodeBlock({ filename, label, code }: CodeBlockProps) {
   };
 
   return (
-    <div
-      className="overflow-hidden rounded-2xl border"
-      style={{
-        backgroundColor: "var(--code-bg)",
-        borderColor: "var(--border-whisper)",
-      }}
-    >
-      <div
-        className="flex items-center justify-between gap-2 border-b px-3.5 py-2 sm:px-4"
-        style={{ borderColor: "var(--border-whisper)" }}
-      >
+    <div className="overflow-hidden rounded-2xl border border-[var(--border-whisper)] bg-[var(--code-bg)]">
+      <div className="flex items-center justify-between gap-2 border-b border-[var(--border-whisper)] px-3.5 py-2 sm:px-4">
         <span
           translate="no"
-          className="tabular-telemetry truncate text-[12px]"
-          style={{ color: "var(--ink-secondary)" }}
+          className="tabular-telemetry truncate text-[12px] text-[var(--ink-secondary)]"
         >
           {filename}
         </span>
@@ -62,14 +52,11 @@ export function CodeBlock({ filename, label, code }: CodeBlockProps) {
           type="button"
           onClick={() => void handleCopy()}
           aria-label={copied ? `${label} snippet copied` : `Copy ${label} snippet`}
-          className="btn-tactile inline-grid min-h-[36px] shrink-0 cursor-pointer items-center justify-items-center rounded-full border px-3 text-[12px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)]"
-          style={{
-            backgroundColor: "var(--bg-surface-subtle)",
-            borderColor: copied
-              ? "var(--status-pass-dot)"
-              : "var(--border-whisper)",
-            color: copied ? "var(--status-pass-text)" : "var(--ink-primary)",
-          }}
+          className={`btn-tactile inline-grid min-h-[36px] shrink-0 cursor-pointer items-center justify-items-center rounded-full border bg-[var(--bg-surface-subtle)] px-3 text-[12px] font-medium [@media(hover:hover)]:hover:border-[var(--border-hover)] ${
+            copied
+              ? "border-[var(--status-pass-dot)] text-[var(--status-pass-text)]"
+              : "border-[var(--border-whisper)] text-[var(--ink-primary)]"
+          }`}
         >
           <span
             aria-hidden={copied}
@@ -86,10 +73,7 @@ export function CodeBlock({ filename, label, code }: CodeBlockProps) {
               copied ? "opacity-100" : "opacity-0"
             }`}
           >
-            <Check
-              className="h-3.5 w-3.5 shrink-0"
-              style={{ color: "var(--status-pass-text)" }}
-            />
+            <Check className="h-3.5 w-3.5 shrink-0 text-[var(--status-pass-text)]" />
             <span>Copied</span>
           </span>
         </button>
@@ -97,8 +81,7 @@ export function CodeBlock({ filename, label, code }: CodeBlockProps) {
 
       <pre
         translate="no"
-        className="tabular-telemetry overflow-x-auto p-3.5 text-[12px] leading-[1.7] sm:p-5 sm:text-[13px] sm:leading-[1.75]"
-        style={{ color: "var(--ink-primary)" }}
+        className="tabular-telemetry overflow-x-auto p-3.5 text-[12px] leading-[1.7] text-[var(--ink-primary)] sm:p-5 sm:text-[13px] sm:leading-[1.75]"
       >
         <code>{code}</code>
       </pre>
