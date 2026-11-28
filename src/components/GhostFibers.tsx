@@ -443,6 +443,30 @@ type RenderTargetEntry = {
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
+// Pure-JS hex/rgb parser (avoids 2D canvas getImageData fingerprinting blocked by Brave Shields)
+const parseColorToRgb = (value: string, fallback: number[]): number[] => {
+  const v = value.trim();
+  if (!v) return fallback;
+  const hexMatch = v.match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hexMatch) {
+    let hex = hexMatch[1];
+    if (hex.length === 3) {
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    const n = parseInt(hex, 16);
+    return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+  }
+  const rgbMatch = v.match(/^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i);
+  if (rgbMatch) {
+    return [
+      clamp(Number(rgbMatch[1]) / 255, 0, 1),
+      clamp(Number(rgbMatch[2]) / 255, 0, 1),
+      clamp(Number(rgbMatch[3]) / 255, 0, 1),
+    ];
+  }
+  return fallback;
+};
+
 const fillFrustum = (
   out: Float32Array,
   fov: number,
@@ -680,7 +704,6 @@ export default function GhostFibers({
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
 
-  // Rebuild WebGL programs/FBOs cleanly whenever contextEpoch increments after webglcontextrestored
   useEffect(() => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
@@ -755,10 +778,6 @@ export default function GhostFibers({
     const chain = Array.from({ length: BLOOM_LEVELS }, makeTarget);
     const vao = gl.createVertexArray();
 
-    const probe = document.createElement("canvas");
-    probe.width = 1;
-    probe.height = 1;
-    const probeContext = probe.getContext("2d", { willReadFrequently: true });
     const reduce =
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
@@ -796,26 +815,15 @@ export default function GhostFibers({
     let visible = true;
     let alive = true;
 
-    const toRgb = (value: string, fallback: number[]) => {
-      if (!probeContext || !value) return fallback;
-      const css = /^[0-9a-f]{3,8}$/i.test(value) ? `#${value}` : value;
-      probeContext.clearRect(0, 0, 1, 1);
-      probeContext.fillStyle = "#000000";
-      probeContext.fillStyle = css;
-      probeContext.fillRect(0, 0, 1, 1);
-      const [r, g, b] = probeContext.getImageData(0, 0, 1, 1).data;
-      return [r / 255, g / 255, b / 255];
-    };
-
     const resolveColors = (s: typeof settings) => {
       const key = `${s.glowColor}|${s.lineColor}|${s.secondaryColor}|${s.lightMode}`;
       if (key === state.colorKey) return;
       state.colorKey = key;
-      state.glow = toRgb(s.glowColor, [0.18, 0.66, 0.82]);
+      state.glow = parseColorToRgb(s.glowColor, [0.18, 0.66, 0.82]);
       state.secondary = s.secondaryColor
-        ? toRgb(s.secondaryColor, state.glow)
+        ? parseColorToRgb(s.secondaryColor, state.glow)
         : state.glow.map((c) => c * 0.8);
-      if (s.lineColor) state.line = toRgb(s.lineColor, state.glow);
+      if (s.lineColor) state.line = parseColorToRgb(s.lineColor, state.glow);
       else
         state.line = s.lightMode
           ? state.glow

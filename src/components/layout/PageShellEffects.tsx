@@ -33,13 +33,20 @@ export function PageShellEffects() {
 
     const nav = navigator as Navigator & {
       connection?: { saveData?: boolean };
+      deviceMemory?: number;
     };
-    const lowCoreCpu =
-      typeof navigator.hardwareConcurrency === "number" &&
-      navigator.hardwareConcurrency <= 2;
+    const cores = navigator.hardwareConcurrency;
+    const mem = nav.deviceMemory;
+    // Guard genuine low-spec devices without false-blocking Brave/Firefox privacy-spoofed hardwareConcurrency=2 desktops
+    const lowSpecDevice =
+      (typeof cores === "number" && cores <= 1) ||
+      (typeof cores === "number" &&
+        cores <= 2 &&
+        typeof mem === "number" &&
+        mem <= 2);
     const saveData = Boolean(nav.connection?.saveData);
 
-    if (lowCoreCpu || saveData) {
+    if (lowSpecDevice || saveData) {
       setAllowWebglBg(false);
       return;
     }
